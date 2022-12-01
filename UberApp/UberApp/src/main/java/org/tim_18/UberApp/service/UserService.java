@@ -30,13 +30,13 @@ public class UserService {
     }
 
 
-
     public User findUserById(Integer id) {
         return userRepository.findUserById(id)
                 .orElseThrow(() -> new UserNotFoundException("User by id " + id + " was not found"));
     }
 
-    public void deleteUser(Integer id){
-        userRepository.deleteUserById(id);
+    public void deleteUser(Integer id) {
+        userRepository.deleteById(id);
     }
+
 }
