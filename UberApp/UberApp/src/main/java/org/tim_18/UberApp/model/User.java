@@ -11,7 +11,7 @@ public class User implements Serializable{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
-    private Long id;
+    private Integer id;
 
     private String firstName;
     private String lastName;
@@ -26,93 +26,93 @@ public class User implements Serializable{
     private boolean active;
 
     public User(String firstName, String lastName, String imageLink, String telephoneNumber, String email, String address, String password, boolean blocked, boolean active) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.imageLink = imageLink;
+        this.firstName       = firstName;
+        this.lastName        = lastName;
+        this.imageLink       = imageLink;
         this.telephoneNumber = telephoneNumber;
-        this.email = email;
-        this.address = address;
-        this.password = password;
-        this.blocked = blocked;
-        this.active = active;
+        this.email           = email;
+        this.address         = address;
+        this.password        = password;
+        this.blocked         = blocked;
+        this.active          = active;
     }
+    public User() {}
 
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
-
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
+
 
     public String getFirstName() {
         return firstName;
     }
-
     public void setFirstName(String firstName) {
         this.firstName = firstName;
     }
 
+
     public String getLastName() {
         return lastName;
     }
-
     public void setLastName(String lastName) {
         this.lastName = lastName;
     }
 
+
     public String getImageLink() {
         return imageLink;
     }
-
     public void setImageLink(String imageLink) {
         this.imageLink = imageLink;
     }
 
+
     public String getTelephoneNumber() {
         return telephoneNumber;
     }
-
     public void setTelephoneNumber(String telephoneNumber) {
         this.telephoneNumber = telephoneNumber;
     }
 
+
     public String getEmail() {
         return email;
     }
-
     public void setEmail(String email) {
         this.email = email;
     }
 
+
     public String getAddress() {
         return address;
     }
-
     public void setAddress(String address) {
         this.address = address;
     }
 
+
     public String getPassword() {
         return password;
     }
-
     public void setPassword(String password) {
         this.password = password;
     }
 
+
     public boolean isBlocked() {
         return blocked;
     }
-
     public void setBlocked(boolean blocked) {
         this.blocked = blocked;
     }
 
+
     public boolean isActive() {
         return active;
     }
-
     public void setActive(boolean active) {
         this.active = active;
     }

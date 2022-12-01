@@ -4,7 +4,7 @@ package org.tim_18.UberApp.dto;
 import org.tim_18.UberApp.model.User;
 
 public class UserDTO {
-    private Long id;
+    private Integer id;
     private String firstName;
     private String lastName;
     private String imageLink;
@@ -22,20 +22,20 @@ public class UserDTO {
         this(user.getId(), user.getFirstName(), user.getLastName(), user.getImageLink(), user.getTelephoneNumber(), user.getEmail(), user.getAddress(), user.getPassword(), user.isBlocked(), user.isActive());
     }
 
-    public UserDTO(Long id, String firstName, String lastName, String imageLink, String telephoneNumber, String email, String address, String password, boolean blocked, boolean active) {
-        this.id = id;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.imageLink = imageLink;
+    public UserDTO(Integer id, String firstName, String lastName, String imageLink, String telephoneNumber, String email, String address, String password, boolean blocked, boolean active) {
+        this.id              = id;
+        this.firstName       = firstName;
+        this.lastName        = lastName;
+        this.imageLink       = imageLink;
         this.telephoneNumber = telephoneNumber;
-        this.email = email;
-        this.address = address;
-        this.password = password;
-        this.blocked = blocked;
-        this.active = active;
+        this.email           = email;
+        this.address         = address;
+        this.password        = password;
+        this.blocked         = blocked;
+        this.active          = active;
     }
 
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 

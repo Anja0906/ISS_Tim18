@@ -24,25 +24,25 @@ public class UserController {
     }
 
     @GetMapping("/find/{id}")
-    public ResponseEntity<User> getUserById (@PathVariable("id") Long id) {
+    public ResponseEntity<User> getUserById (@PathVariable("id") Integer id) {
         User user = userService.findUserById(id);
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
     @PostMapping("/add")
-    public ResponseEntity<User> addUser(@RequestBody User User) {
-        User newUser = userService.addUser(User);
+    public ResponseEntity<User> addUser(@RequestBody User user) {
+        User newUser = userService.addUser(user);
         return new ResponseEntity<>(newUser, HttpStatus.CREATED);
     }
 
     @PutMapping("/update")
-    public ResponseEntity<User> updateUser(@RequestBody User User) {
-        User updateUser = userService.updateUser(User);
+    public ResponseEntity<User> updateUser(@RequestBody User user) {
+        User updateUser = userService.updateUser(user);
         return new ResponseEntity<>(updateUser, HttpStatus.OK);
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<?> deleteUser(@PathVariable("id") Long id) {
+    public ResponseEntity<?> deleteUser(@PathVariable("id") Integer id) {
         userService.deleteUser(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }

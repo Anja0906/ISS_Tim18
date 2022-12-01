@@ -5,9 +5,9 @@ import org.tim_18.UberApp.model.User;
 
 import java.util.Optional;
 
-public interface UserRepository extends JpaRepository<User, Long> {
-    Optional<User> findUserById(Long id);
-    void deleteUserById(Long id);
+public interface UserRepository extends JpaRepository<User, Integer> {
+    Optional<User> findUserById(Integer id);
+    void deleteUserById(Integer id);
 
 
 }
