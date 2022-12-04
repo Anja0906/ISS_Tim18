@@ -35,6 +35,9 @@ public class UserDTO {
         this.active          = active;
     }
 
+    public UserDTO(String firstName, String lastName, String imageLink, String telephoneNumber, String email, String address, String password, boolean blocked, boolean active) {
+    }
+
     public Integer getId() {
         return id;
     }

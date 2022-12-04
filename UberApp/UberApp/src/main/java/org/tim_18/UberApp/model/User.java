@@ -4,7 +4,8 @@ import jakarta.persistence.*;
 
 import java.io.Serializable;
 
-
+@Inheritance(strategy = InheritanceType.JOINED)
+@MappedSuperclass
 @Entity
 @Table(name = "users")
 public class User implements Serializable{
@@ -12,7 +13,6 @@ public class User implements Serializable{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Integer id;
-
     private String firstName;
     private String lastName;
     private String imageLink;
