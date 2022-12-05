@@ -12,7 +12,7 @@ public class UserActivation implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Integer id;
-    @OneToOne
+    @ManyToOne(cascade = {CascadeType.ALL})
     @JoinColumn(name = "user_id",nullable = false)
     private User user;
     private LocalDate creationDate;

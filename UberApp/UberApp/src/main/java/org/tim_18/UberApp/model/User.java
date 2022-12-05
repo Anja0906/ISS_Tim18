@@ -5,7 +5,6 @@ import jakarta.persistence.*;
 import java.io.Serializable;
 
 @Inheritance(strategy = InheritanceType.JOINED)
-@MappedSuperclass
 @Entity
 @Table(name = "users")
 public class User implements Serializable{
