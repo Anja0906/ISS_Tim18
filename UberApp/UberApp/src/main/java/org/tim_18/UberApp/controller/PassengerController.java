@@ -54,7 +54,7 @@ public class PassengerController {
         HashSet<Location> locs = new HashSet<>();
         HashSet<Ride> rides = new HashSet<>();
         passenger.setFavouriteLocations(locs);
-        passenger.setRides(rides);
+//        passenger.setRides(rides);
         return new ResponseEntity<>(retDTO, HttpStatus.CREATED);
     }
 

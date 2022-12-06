@@ -35,19 +35,12 @@ public class Rejection {
     public void setTime(Date time) {
         this.time = time;
     }
-    public Ride getRide() {
-        return ride;
-    }
-
-    public void setRide(Ride ride) {
-        this.ride = ride;
-    }
 
     public Rejection(Integer id, String reason, Date time, Ride ride) {
         this.reason = reason;
         this.time = time;
         this.id = id;
-        this.ride = ride;
+//        this.ride = ride;
     }
 
     public void setId(Integer id) {
@@ -58,5 +51,7 @@ public class Rejection {
     public Integer getId() {
         return id;
     }
+
+
 
 }

@@ -24,7 +24,6 @@ public class Driver extends User{
 
     public Driver() {}
 
-    @OneToMany
     public HashSet<Ride> getRides() {return rides;}
     public void setRides(HashSet<Ride> rides) {this.rides = rides;}
 

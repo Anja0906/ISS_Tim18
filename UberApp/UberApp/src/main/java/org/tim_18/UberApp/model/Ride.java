@@ -32,7 +32,7 @@ public class Ride {
     private Date startTime;
     private Date endTime;
     private long totalCost;
-    @ManyToOne
+        @ManyToOne
     @JoinColumn(name = "driver_id")
     private Driver driver;
     @ManyToMany
@@ -41,8 +41,8 @@ public class Ride {
     private VehicleType vehicleType;
     private boolean babyTransport;
     private boolean petTransport;
-
-    @OneToOne()
+//
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "rejection_id", referencedColumnName = "id")
     private Rejection rejection;
 
@@ -50,8 +50,8 @@ public class Ride {
     private HashSet<Location> locations;
     private Status status;
 
-//    @OneToMany(targetEntity = Review.class,cascade = {CascadeType.ALL}, fetch = FetchType.LAZY, mappedBy = "ride")
-//    private HashSet<Review> reviews;
+    @OneToMany(targetEntity = Review.class,cascade = {CascadeType.ALL}, fetch = FetchType.LAZY, mappedBy = "ride")
+    private HashSet<Review> reviews;
 
     public Ride(Date startTime, Date endTime, long totalCost, Driver driver, HashSet<Passenger> passengers, int estimatedTimeInMinutes, VehicleType vehicleType, boolean babyTransport, boolean petTransport, Rejection rejection, HashSet<Location> locations, Status status, HashSet<Review> reviews) {
         this.startTime = startTime;
@@ -66,7 +66,7 @@ public class Ride {
         this.rejection = rejection;
         this.locations = locations;
         this.status = status;
-//        this.reviews = reviews;
+        this.reviews = reviews;
     }
 
     public Ride() {
@@ -78,7 +78,9 @@ public class Ride {
         return id;
     }
 
-    public void setId(Integer id) { this.id = id; }
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
     public Date getStartTime() {
         return startTime;
@@ -111,7 +113,7 @@ public class Ride {
     public void setDriver(Driver driver) {
         this.driver = driver;
     }
-
+//
     public HashSet<Passenger> getPassengers() {
         return passengers;
     }
@@ -176,11 +178,11 @@ public class Ride {
         this.status = status;
     }
 
-//    public HashSet<Review> getReviews() {
-//        return reviews;
-//    }
-//
-//    public void setReviews(HashSet<Review> reviews) {
-//        this.reviews = reviews;
-//    }
+    public HashSet<Review> getReviews() {
+        return reviews;
+    }
+
+    public void setReviews(HashSet<Review> reviews) {
+        this.reviews = reviews;
+    }
 }

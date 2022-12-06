@@ -17,9 +17,9 @@ public class Review {
     @OneToMany
     private HashSet<Passenger> passengers;
 
-//    @ManyToOne
-//    @JoinColumn(name = "ride_id")
-//    private Ride ride;
+    @ManyToOne
+    @JoinColumn(name = "ride_id")
+    private Ride ride;
 
     public Review() {}
 
@@ -35,5 +35,29 @@ public class Review {
     }
     public Integer getId() {
         return id;
+    }
+
+    public Integer getRating() {
+        return rating;
+    }
+
+    public void setRating(Integer rating) {
+        this.rating = rating;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
+
+    public HashSet<Passenger> getPassengers() {
+        return passengers;
+    }
+
+    public void setPassengers(HashSet<Passenger> passengers) {
+        this.passengers = passengers;
     }
 }
