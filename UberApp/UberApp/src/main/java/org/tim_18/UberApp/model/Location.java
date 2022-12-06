@@ -14,6 +14,9 @@ public class Location {
     private Double latitude;
     private String address;
 
+    @ManyToOne
+    private Ride ride;
+
     public Location() {
     }
 
