@@ -46,6 +46,10 @@ public class Ride {
     @JoinColumn(name = "rejection_id", referencedColumnName = "id")
     private Rejection rejection;
 
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "panic_id", referencedColumnName = "id")
+    private Panic panic;
+
     @OneToMany(targetEntity = Location.class,cascade = {CascadeType.ALL}, fetch = FetchType.LAZY, mappedBy = "ride")
     private HashSet<Location> locations;
     private Status status;
@@ -53,7 +57,7 @@ public class Ride {
     @OneToMany(targetEntity = Review.class,cascade = {CascadeType.ALL}, fetch = FetchType.LAZY, mappedBy = "ride")
     private HashSet<Review> reviews;
 
-    public Ride(Date startTime, Date endTime, long totalCost, Driver driver, HashSet<Passenger> passengers, int estimatedTimeInMinutes, VehicleType vehicleType, boolean babyTransport, boolean petTransport, Rejection rejection, HashSet<Location> locations, Status status, HashSet<Review> reviews) {
+    public Ride(Date startTime, Date endTime, long totalCost, Driver driver, HashSet<Passenger> passengers, int estimatedTimeInMinutes, VehicleType vehicleType, boolean babyTransport, boolean petTransport, Rejection rejection, HashSet<Location> locations, Status status, HashSet<Review> reviews, Panic panic) {
         this.startTime = startTime;
         this.endTime = endTime;
         this.totalCost = totalCost;
@@ -67,6 +71,7 @@ public class Ride {
         this.locations = locations;
         this.status = status;
         this.reviews = reviews;
+        this.panic = panic;
     }
 
     public Ride() {
@@ -184,5 +189,13 @@ public class Ride {
 
     public void setReviews(HashSet<Review> reviews) {
         this.reviews = reviews;
+    }
+
+    public Panic getPanic() {
+        return panic;
+    }
+
+    public void setPanic(Panic panic) {
+        this.panic = panic;
     }
 }
