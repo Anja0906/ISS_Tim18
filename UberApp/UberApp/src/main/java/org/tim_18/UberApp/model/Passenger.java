@@ -23,6 +23,7 @@ public class Passenger extends User {
     @JoinColumn(name = "passenger_id")
     private Review review;
 
+
     public Passenger(){}
 
     public Passenger(String firstName, String lastName, String imageLink, String telephoneNumber, String email, String address, String password, boolean blocked, boolean active, Integer id, HashSet<Location> favouriteLocations, HashSet<Ride> rides) {
