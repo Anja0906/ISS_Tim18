@@ -7,6 +7,7 @@ import org.tim_18.UberApp.model.User;
 import org.tim_18.UberApp.repository.UserRepository;
 
 import java.util.List;
+import java.util.Set;
 
 @Service("userService")
 public class UserService {
@@ -38,5 +39,6 @@ public class UserService {
     public void deleteUser(Integer id) {
         userRepository.deleteById(id);
     }
+
 
 }
