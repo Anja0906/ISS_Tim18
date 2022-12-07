@@ -1,8 +1,15 @@
 package org.tim_18.UberApp.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import java.util.HashSet;
+import lombok.Getter;
+import lombok.Setter;
 
+import java.util.HashSet;
+import java.util.Set;
+
+@Getter
+@Setter
 @Entity
 @Table(name = "drivers")
 public class Driver extends User{
@@ -11,55 +18,23 @@ public class Driver extends User{
     @Column(name = "id", nullable = false)
     private Integer id;
     @OneToMany(targetEntity = Document.class,cascade = {CascadeType.ALL}, fetch = FetchType.LAZY, mappedBy = "driver")
-    private HashSet<Document> documents;
-    @OneToMany(targetEntity = Document.class,cascade = {CascadeType.ALL}, fetch = FetchType.LAZY)
-    private HashSet<Ride> rides;
+    private Set<Document> documents = new HashSet<Document>();
+    @OneToMany(targetEntity = Ride.class,cascade = {CascadeType.ALL}, fetch = FetchType.LAZY, mappedBy = "driver")
+    private Set<Ride> rides = new HashSet<Ride>();
 
+    @JsonIgnore
     @OneToOne
     private Vehicle vehicle;
 
     public Driver() {
     }
 
-    public Driver(String name, String surname, String imageLink, String telephoneNumber, String email, String address, String password, boolean blocked, boolean active, Integer id, HashSet<Document> documents, HashSet<Ride> rides, Vehicle vehicle) {
+    public Driver(String name, String surname, String imageLink, String telephoneNumber, String email, String address, String password, boolean blocked, boolean active, Integer id) {
         super(name, surname, imageLink, telephoneNumber, email, address, password, blocked, active);
         this.id = id;
-        this.documents = documents;
-        this.rides = rides;
+//        this.documents = new HashSet<Document>();
+//        this.rides = new HashSet<Ride>();
         this.vehicle = vehicle;
     }
 
-    @Override
-    public Integer getId() {
-        return id;
-    }
-
-    @Override
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public HashSet<Document> getDocuments() {
-        return documents;
-    }
-
-    public void setDocuments(HashSet<Document> documents) {
-        this.documents = documents;
-    }
-
-    public HashSet<Ride> getRides() {
-        return rides;
-    }
-
-    public void setRides(HashSet<Ride> rides) {
-        this.rides = rides;
-    }
-
-    public Vehicle getVehicle() {
-        return vehicle;
-    }
-
-    public void setVehicle(Vehicle vehicle) {
-        this.vehicle = vehicle;
-    }
 }

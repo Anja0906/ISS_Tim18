@@ -1,5 +1,6 @@
 package org.tim_18.UberApp.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 @Entity
@@ -11,8 +12,9 @@ public class Document {
     private Integer id;
     private String name;
     private String image;
-    @ManyToOne
-    @JoinColumn(name = "driver_id")
+    @JsonIgnore
+    @ManyToOne(cascade = {})
+    @JoinColumn(name = "driver_id", nullable=false)
     private Driver driver;
 
     public Document() {

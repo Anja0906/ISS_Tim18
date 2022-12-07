@@ -17,7 +17,6 @@ public class Rejection {
     private Date time;
 
     public Rejection() {}
-
     public String getReason() {
         return reason;
     }
