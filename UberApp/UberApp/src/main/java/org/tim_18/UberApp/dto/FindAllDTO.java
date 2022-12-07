@@ -2,18 +2,25 @@ package org.tim_18.UberApp.dto;
 
 import lombok.Data;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 @Data
 public class FindAllDTO<T> {
     private long totalCount;
-    private List<T> objects;
+    private Collection<T> objects;
 
     public FindAllDTO() {}
     public FindAllDTO(List<T> objs) {
         this.objects = objs;
         this.totalCount = objs.size();
     }
+    public FindAllDTO(Set<T> objs) {
+        this.objects = objs;
+        this.totalCount = objs.size();
+    }
+
 
     @Override
     public String toString() {
