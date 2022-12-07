@@ -33,10 +33,17 @@ public class PassengerService {
     public List<Passenger> findAll() {
         return passengerRepository.findAll();
     }
-
-    public Passenger updatePassenger(Passenger passenger) {
-        return passengerRepository.save(passenger);
+    public List<Passenger> findAll(Pageable page) {
+        return (List<Passenger>) passengerRepository.findAll(page);
     }
+
+    public Page<Passenger> findPassengerById(String title, Pageable pageable) {
+        return passengerRepository.findPassengerById(title, pageable);
+    }
+
+//    public PassengerDTOwithPassword updatePassenger(PassengerDTOwithPassword passenger) {
+//        return passengerRepository.save(passenger);
+//    }
 
     ;
 
