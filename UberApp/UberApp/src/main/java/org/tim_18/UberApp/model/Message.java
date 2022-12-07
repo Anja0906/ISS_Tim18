@@ -15,6 +15,7 @@ public class Message {
     private User sender;
     @ManyToOne(cascade = {CascadeType.ALL})
     private User receiver;
+    private String message;
     private LocalDateTime time;
     private String messageType;
     @ManyToOne(cascade = {CascadeType.ALL})
@@ -23,31 +24,69 @@ public class Message {
 
     public Message() {}
 
-    public Message(Integer id, User sender, User receiver, LocalDateTime time, String messageType, Ride ride) {
-        this.id          = id;
-        this.sender      = sender;
-        this.receiver    = receiver;
-        this.time        = time;
+    public Message(Integer id, User sender, User receiver, String message, LocalDateTime time, String messageType, Ride ride) {
+        this.id = id;
+        this.sender = sender;
+        this.receiver = receiver;
+        this.message = message;
+        this.time = time;
         this.messageType = messageType;
-        this.ride        = ride;
+        this.ride = ride;
     }
 
-    public User getSender() {return sender;}
-    public void setSender(User sender) {this.sender = sender;}
+    public Integer getId() {
+        return id;
+    }
 
-    public User getReceiver() {return receiver;}
-    public void setReceiver(User receiver) {this.receiver = receiver;}
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-    public LocalDateTime getTime() {return time;}
-    public void setTime(LocalDateTime time) {this.time = time;}
+    public User getSender() {
+        return sender;
+    }
 
-    public String getMessageType() {return messageType;}
-    public void setMessageType(String messageType) {this.messageType = messageType;}
+    public void setSender(User sender) {
+        this.sender = sender;
+    }
 
-    public Ride getRide() {return ride;}
-    public void setRide(Ride ride) {this.ride = ride;}
+    public User getReceiver() {
+        return receiver;
+    }
 
-    public Integer getId() {return id;}
-    public void setId(Integer id) {this.id = id;}
+    public void setReceiver(User receiver) {
+        this.receiver = receiver;
+    }
 
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public LocalDateTime getTime() {
+        return time;
+    }
+
+    public void setTime(LocalDateTime time) {
+        this.time = time;
+    }
+
+    public String getMessageType() {
+        return messageType;
+    }
+
+    public void setMessageType(String messageType) {
+        this.messageType = messageType;
+    }
+
+    public Ride getRide() {
+        return ride;
+    }
+
+    public void setRide(Ride ride) {
+        this.ride = ride;
+    }
 }

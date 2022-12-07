@@ -16,10 +16,10 @@ public class User implements Serializable{
     private String lastName;
     private String imageLink;
     private String telephoneNumber;
-    @javax.persistence.Column(nullable = false)
+    @Column(nullable = false)
     private String email;
     private String address;
-    @javax.persistence.Column(nullable = false)
+    @Column(nullable = false)
     private String password;
     private boolean blocked;
     private boolean active;

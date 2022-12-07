@@ -15,25 +15,51 @@ public class Driver extends User{
     @OneToMany(targetEntity = Document.class,cascade = {CascadeType.ALL}, fetch = FetchType.LAZY)
     private HashSet<Ride> rides;
 
-    public Driver(String firstName, String lastName, String imageLink, String telephoneNumber, String email, String address, String password, boolean blocked, boolean active, Integer id, HashSet<Document> documents, HashSet<Ride> rides) {
-        super(firstName, lastName, imageLink, telephoneNumber, email, address, password, blocked, active);
-        this.id         = id;
-        this.documents  = documents;
-        this.rides      = rides;
+    @OneToOne
+    private Vehicle vehicle;
+
+    public Driver() {
     }
 
-    public Driver() {}
+    public Driver(String firstName, String lastName, String imageLink, String telephoneNumber, String email, String address, String password, boolean blocked, boolean active, Integer id, HashSet<Document> documents, HashSet<Ride> rides, Vehicle vehicle) {
+        super(firstName, lastName, imageLink, telephoneNumber, email, address, password, blocked, active);
+        this.id = id;
+        this.documents = documents;
+        this.rides = rides;
+        this.vehicle = vehicle;
+    }
 
-    public HashSet<Ride> getRides() {return rides;}
-    public void setRides(HashSet<Ride> rides) {this.rides = rides;}
-
-    public HashSet<Document> getDocuments() {return documents;}
-    public void setDocuments(HashSet<Document> documents) {this.documents = documents;}
-
+    @Override
     public Integer getId() {
         return id;
     }
+
+    @Override
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public HashSet<Document> getDocuments() {
+        return documents;
+    }
+
+    public void setDocuments(HashSet<Document> documents) {
+        this.documents = documents;
+    }
+
+    public HashSet<Ride> getRides() {
+        return rides;
+    }
+
+    public void setRides(HashSet<Ride> rides) {
+        this.rides = rides;
+    }
+
+    public Vehicle getVehicle() {
+        return vehicle;
+    }
+
+    public void setVehicle(Vehicle vehicle) {
+        this.vehicle = vehicle;
     }
 }
