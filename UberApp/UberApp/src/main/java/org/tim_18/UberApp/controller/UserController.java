@@ -3,22 +3,53 @@ package org.tim_18.UberApp.controller;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.tim_18.UberApp.dto.DocumentDTO;
+import org.tim_18.UberApp.model.Document;
+import org.tim_18.UberApp.model.Ride;
 import org.tim_18.UberApp.model.User;
 import org.tim_18.UberApp.service.UserService;
 
+import javax.naming.ldap.HasControls;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/api/user")
 public class UserController {
     private final UserService userService;
+   // private final RideService rideService;
+    //Napises funkciju koja radi query za ride za drivere
+    //Napises funkciju koja radi query za ride za passengera
+    //oba rade po idu
+    //Kada dobavis HashSetove (ovo vracaju ove dve funkcije)
+    //Onda radis if(hashset.isEmpty)
+    //Foreach prebacujes u DTORIDES
+    //HASHSET<DTORIDES> new HashSet
+    //u foreach petljama dodajes dto elemente u tu hashset listu
+    //na kraju vratis hashset listu i to je kraj
 
     public UserController(UserService userService) {
         this.userService = userService;
     }
 
-    @GetMapping("/all")
-    public ResponseEntity<List<User>> getAllUsers () {
+//    @GetMapping("/{id}/ride")
+//    public ResponseEntity<HashSet<Ride>> getRidesForUser(@PathVariable("id") Integer id) {
+//        HashSet<Ride> rides = documentService.findByDriverId(id);
+//        if(documents.isEmpty()) {
+//            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+//
+//        }else{
+//            for(Document document:documents){
+//                DocumentDTO documentDTO = new DocumentDTO(document);
+//                documentDTOS.add(documentDTO);
+//            }
+//            return new ResponseEntity<>(documentDTOS, HttpStatus.OK);
+//        }
+//    }
+
+    @GetMapping("")
+    public ResponseEntity<List<User>> getUserDetails(){
         List<User> users = userService.findAllUsers();
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
