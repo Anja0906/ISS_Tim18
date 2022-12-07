@@ -25,9 +25,10 @@ public class User implements Serializable{
     private boolean active;
 
     public User(String name, String surname, String profilePicture, String telephoneNumber, String email, String address, String password, boolean blocked, boolean active) {
-        this.name       = name;
-        this.surname        = surname;
-        this.profilePicture = profilePicture;
+
+        this.name            = name;
+        this.surname         = surname;
+        this.profilePicture  = profilePicture;
         this.telephoneNumber = telephoneNumber;
         this.email           = email;
         this.address         = address;
@@ -64,8 +65,9 @@ public class User implements Serializable{
     public String getProfilePicture() {
         return profilePicture;
     }
-    public void setProfilePicture(String imageLink) {
-        this.profilePicture = imageLink;
+
+    public void setProfilePicture(String profilePicture) {
+        this.profilePicture = profilePicture;
     }
 
 
@@ -123,6 +125,7 @@ public class User implements Serializable{
                 ", name='" + name + '\'' +
                 ", surname='" + surname + '\'' +
                 ", imageLink='" + profilePicture + '\'' +
+                ", profilePicture='" + profilePicture + '\'' +
                 ", telephoneNumber='" + telephoneNumber + '\'' +
                 ", email='" + email + '\'' +
                 ", address='" + address + '\'' +

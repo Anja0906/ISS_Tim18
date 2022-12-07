@@ -1,10 +1,10 @@
 #users
-INSERT INTO users (active, address, blocked, email, name, image_link, surname, password, telephone_number)
-VALUES (false, 'Strumicka 6', true, 'email', 'name', 'image_link', 'surname', 'password', 'telephone_number');
-INSERT INTO users (active, address, blocked, email, name, image_link, surname, password, telephone_number)
-VALUES (false, 'Strumicka 5', true, 'email1', 'name1', 'image_link1', 'surname1', 'password1', 'telephone_number1');
-INSERT INTO users (active, address, blocked, email, name, image_link, surname, password, telephone_number)
-VALUES (false, 'Narodnog fronta 5', true, 'email2', 'name3', 'image_link5', 'surname4', 'password2', 'telephone_number2');
+INSERT INTO users (active, address, blocked, email, name, profile_picture, surname, password, telephone_number)
+VALUES (false, 'Strumicka 6', true, 'email', 'name', 'profile_picture', 'surname', 'password', 'telephone_number');
+INSERT INTO users (active, address, blocked, email, name, profile_picture, surname, password, telephone_number)
+VALUES (false, 'Strumicka 5', true, 'email1', 'name1', 'profile_picture1', 'surname1', 'password1', 'telephone_number1');
+INSERT INTO users (active, address, blocked, email, name, profile_picture, surname, password, telephone_number)
+VALUES (false, 'Narodnog fronta 5', true, 'email2', 'name3', 'profile_picture5', 'surname4', 'password2', 'telephone_number2');
 
 
 
@@ -42,12 +42,13 @@ INSERT INTO rides (baby_transport, end_time, estimated_time_in_minutes, pet_tran
 VALUES (true, '2022-12-7 07:55:00', 15, false, '2022-12-7 07:40:00', 0, 500, 0, '3', '3', '3');
 
 # --vehicle--
-INSERT INTO vehicle (id, license_plate_number, vehicle_model, vehicle_type, driver_id)
+INSERT INTO vehicle (id, license_number, model, vehicle_type, driver_id)
 VALUES ('1', 'NS12312', 'Skoda fabia', 1, '1');
-INSERT INTO vehicle (id, license_plate_number, vehicle_model, vehicle_type, driver_id)
+INSERT INTO vehicle (id, license_number, model, vehicle_type, driver_id)
 VALUES ('2', 'NS45678', 'Skoda fabia', 0, '2');
-INSERT INTO vehicle (id, license_plate_number, vehicle_model, vehicle_type, driver_id)
+INSERT INTO vehicle (id, license_number, model, vehicle_type, driver_id)
 VALUES ('3', 'NS 567 ad', 'Skoda fabia', 2, '3');
+
 
 # --panics--
 INSERT INTO panics (date, reason, user_id) VALUES ('2022-12-07', 'jahdjhhefej', '1');
@@ -100,9 +101,9 @@ INSERT INTO reviews (comment, rating, ride_id) VALUES ('jashjfhasfhjsa', 5, '2')
 INSERT INTO reviews (comment, rating, ride_id) VALUES ('jashjfhasfhjsa', 3, '3');
 
 # --administrators--
-INSERT INTO administrators (name, image_link, surname, password, username)
+INSERT INTO administrators (name, profile_picture, surname, password, username)
 VALUES ('anja', 'asbfhasfj', 'petkovic', 'ajsbsj', 'ajshjfhsafh');
-INSERT INTO administrators (name, image_link, surname, password, username)
+INSERT INTO administrators (name, profile_picture, surname, password, username)
 VALUES ('shdfjhsdjf', 'asbfhasfj', 'petkovic', 'iahscbsjhc', 'ajshcuhawuch');
-INSERT INTO administrators (name, image_link, surname, password, username)
+INSERT INTO administrators (name, profile_picture, surname, password, username)
 VALUES ('VDsgfsjhfka', 'asbfhasfj', 'petkovic', 'scbshhfcjsh', 'jsdchhshc');

@@ -25,10 +25,10 @@ public class Review {
     public Review() {}
 
     public Review(Integer id, Integer rating, String comment, HashSet<Passenger> passengers) {
-        this.rating = rating;
-        this.comment = comment;
+        this.rating     = rating;
+        this.comment    = comment;
         this.passengers = passengers;
-        this.id = id;
+        this.id         = id;
     }
 
     public void setId(Integer id) {

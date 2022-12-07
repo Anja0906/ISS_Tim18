@@ -1,15 +1,16 @@
 package org.tim_18.UberApp.service;
 
 
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.tim_18.UberApp.exception.UserNotFoundException;
-import org.tim_18.UberApp.model.UserActivation;
 import org.tim_18.UberApp.model.WorkTime;
-import org.tim_18.UberApp.repository.UserActivationRepository;
 import org.tim_18.UberApp.repository.WorkTimeRepository;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 @Service("workTimeService")
@@ -41,6 +42,7 @@ public class WorkTimeService {
         return workTimeRepository.findWorkTimeById(id)
                 .orElseThrow(() -> new UserNotFoundException("User activation by id " + id + " was not found"));
     }
+    public ArrayList<WorkTime> findWorkTimesFromToDate(Integer id, LocalDateTime startDate, LocalDateTime endDate) { return workTimeRepository.findWorkTimesByDate(id,startDate,endDate);}
 
     public void deleteWorkTime(Integer id) {
         workTimeRepository.deleteWorkTimeById(id);

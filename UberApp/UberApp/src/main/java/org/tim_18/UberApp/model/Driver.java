@@ -29,8 +29,16 @@ public class Driver extends User{
     public Driver() {
     }
 
-    public Driver(String name, String surname, String imageLink, String telephoneNumber, String email, String address, String password, boolean blocked, boolean active, Integer id) {
-        super(name, surname, imageLink, telephoneNumber, email, address, password, blocked, active);
+    public Driver(String name, String surname, String profilePicture, String telephoneNumber, String email, String address, String password, boolean blocked, boolean active, Integer id, Set<Document> documents, Set<Ride> rides, Vehicle vehicle) {
+        super(name, surname, profilePicture, telephoneNumber, email, address, password, blocked, active);
+        this.id         = id;
+        this.documents  = documents;
+        this.rides      = rides;
+        this.vehicle    = vehicle;
+    }
+
+    public Driver(String name, String surname, String profilePicture, String telephoneNumber, String email, String address, String password, boolean blocked, boolean active, Integer id, Vehicle vehicle) {
+        super(name, surname, profilePicture, telephoneNumber, email, address, password, blocked, active);
         this.id = id;
 //        this.documents = new HashSet<Document>();
 //        this.rides = new HashSet<Ride>();

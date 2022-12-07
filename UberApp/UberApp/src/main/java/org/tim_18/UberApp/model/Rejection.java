@@ -36,9 +36,9 @@ public class Rejection {
     }
 
     public Rejection(Integer id, String reason, Date time, Ride ride) {
-        this.reason = reason;
-        this.time = time;
-        this.id = id;
+        this.reason     = reason;
+        this.time       = time;
+        this.id         = id;
 //        this.ride = ride;
     }
 

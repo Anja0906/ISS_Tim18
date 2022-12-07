@@ -1,44 +1,31 @@
 package org.tim_18.UberApp.dto;
 
-import jakarta.persistence.*;
-import org.tim_18.UberApp.model.Driver;
+import org.tim_18.UberApp.model.Passenger;
 
-import java.util.HashSet;
-
-public class DriverDTO{
-
-    private Integer id;
+public class PassengerDTO {
     private String name;
     private String surname;
     private String profilePicture;
     private String telephoneNumber;
     private String email;
     private String address;
+    private String password;
 
-    public DriverDTO() {}
-
-    public DriverDTO(Driver driver) {
-        this(driver.getId(), driver.getName(), driver.getSurname(), driver.getProfilePicture(),
-                driver.getTelephoneNumber(),driver.getEmail(), driver.getAddress());
+    public PassengerDTO() {
     }
 
-
-    public DriverDTO(Integer id, String name, String surname, String profilePicture, String telephoneNumber, String email, String address) {
-        this.id              = id;
-        this.name            = name;
-        this.surname         = surname;
-        this.profilePicture  = profilePicture;
-        this.telephoneNumber = telephoneNumber;
-        this.email           = email;
-        this.address         = address;
+    public PassengerDTO(Passenger passenger){
+        this(passenger.getName(), passenger.getName(), passenger.getProfilePicture(), passenger.getTelephoneNumber(), passenger.getEmail(), passenger.getAddress(), passenger.getPassword());
     }
 
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
+    public PassengerDTO(String name, String surname, String profilePicture, String telephoneNumber, String email, String address, String password) {
+        this.name               = name;
+        this.surname            = surname;
+        this.profilePicture     = profilePicture;
+        this.telephoneNumber    = telephoneNumber;
+        this.email              = email;
+        this.address            = address;
+        this.password           = password;
     }
 
     public String getName() {
@@ -87,5 +74,13 @@ public class DriverDTO{
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }

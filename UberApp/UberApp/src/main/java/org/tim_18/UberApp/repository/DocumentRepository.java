@@ -13,5 +13,5 @@ public interface DocumentRepository extends JpaRepository<Document, Integer> {
     @Query(value = "SELECT * FROM documents WHERE driver_id = ?1", nativeQuery = true)
     HashSet<Document> findByDriverId(Integer id);
 
-    void deleteDocumentById(Integer id);
+
 }

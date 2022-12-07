@@ -5,17 +5,17 @@ public class AdministratorDTO {
     private String password;
     private String name;
     private String surname;
-    private String imageLink;
+    private String profilePicture;
 
     public AdministratorDTO() {
     }
 
-    public AdministratorDTO(String username, String password, String name, String surname, String imageLink) {
+    public AdministratorDTO(String username, String password, String name, String surname, String profilePicture) {
         this.username = username;
         this.password = password;
         this.name = name;
         this.surname = surname;
-        this.imageLink = imageLink;
+        this.profilePicture = profilePicture;
     }
 
     public String getUsername() {
@@ -50,11 +50,11 @@ public class AdministratorDTO {
         this.surname = surname;
     }
 
-    public String getImageLink() {
-        return imageLink;
+    public String getProfilePicture() {
+        return profilePicture;
     }
 
-    public void setImageLink(String imageLink) {
-        this.imageLink = imageLink;
+    public void setProfilePicture(String profilePicture) {
+        this.profilePicture = profilePicture;
     }
 }

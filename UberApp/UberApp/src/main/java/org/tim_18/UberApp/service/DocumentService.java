@@ -6,6 +6,8 @@ import org.springframework.stereotype.Service;
 import org.tim_18.UberApp.exception.UserNotFoundException;
 import org.tim_18.UberApp.model.Document;
 import org.tim_18.UberApp.repository.DocumentRepository;
+
+import java.util.HashSet;
 import java.util.List;
 
 @Service("documentService")
@@ -22,10 +24,15 @@ public class DocumentService {
         return documentRepository.save(document);
     }
 
+    public void remove(Integer id) {documentRepository.deleteById(id);}
+
     public List<Document> findAllDocuments() {
         return documentRepository.findAll();
     }
 
+    public HashSet<Document> findByDriverId(Integer id){
+        return documentRepository.findByDriverId(id);
+    }
     public Document updateDocument(Document document) {
         return documentRepository.save(document);
     }
@@ -35,7 +42,4 @@ public class DocumentService {
                 .orElseThrow(() -> new UserNotFoundException("Driver by id " + id + " was not found"));
     }
 
-    public void deleteDocument(Integer id) {
-        documentRepository.deleteDocumentById(id);
-    }
 }

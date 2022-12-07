@@ -28,10 +28,10 @@ public class LocationsForRide {
     }
 
     public LocationsForRide(Integer id, Location departure, Location destination, Double kilometers) {
-        this.id = id;
-        this.departure = departure;
+        this.id          = id;
+        this.departure   = departure;
         this.destination = destination;
-        this.kilometers = kilometers;
+        this.kilometers  = kilometers;
     }
 
     public Location getDeparture() {

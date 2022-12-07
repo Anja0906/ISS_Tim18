@@ -25,13 +25,13 @@ public class Message {
     public Message() {}
 
     public Message(Integer id, User sender, User receiver, String message, LocalDateTime time, String messageType, Ride ride) {
-        this.id = id;
-        this.sender = sender;
-        this.receiver = receiver;
-        this.message = message;
-        this.time = time;
+        this.id          = id;
+        this.sender      = sender;
+        this.receiver    = receiver;
+        this.message     = message;
+        this.time        = time;
         this.messageType = messageType;
-        this.ride = ride;
+        this.ride        = ride;
     }
 
     public Integer getId() {

@@ -13,7 +13,7 @@ public class Document {
     private String name;
     private String image;
     @JsonIgnore
-    @ManyToOne(cascade = {})
+    @ManyToOne(cascade = {CascadeType.ALL})
     @JoinColumn(name = "driver_id", nullable=false)
     private Driver driver;
 
@@ -21,9 +21,9 @@ public class Document {
     }
 
     public Document(Integer id, String name, String image, Driver driver) {
-        this.id = id;
-        this.name = name;
-        this.image = image;
+        this.id     = id;
+        this.name   = name;
+        this.image  = image;
         this.driver = driver;
     }
 

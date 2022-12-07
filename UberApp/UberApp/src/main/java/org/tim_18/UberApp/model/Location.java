@@ -23,10 +23,10 @@ public class Location {
     }
 
     public Location(Integer id, Double longitude, Double latitude, String address) {
-        this.id = id;
-        this.longitude = longitude;
-        this.latitude = latitude;
-        this.address = address;
+        this.id         = id;
+        this.longitude  = longitude;
+        this.latitude   = latitude;
+        this.address    = address;
     }
 
     public Double getLongitude() {
