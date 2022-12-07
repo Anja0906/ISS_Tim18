@@ -26,15 +26,15 @@ public class Passenger extends User {
 
     public Passenger(){}
 
-    public Passenger(String firstName, String lastName, String imageLink, String telephoneNumber, String email, String address, String password, boolean blocked, boolean active, Integer id, HashSet<Location> favouriteLocations, HashSet<Ride> rides) {
-        super(firstName, lastName, imageLink, telephoneNumber, email, address, password, blocked, active);
+    public Passenger(String name, String surname, String imageLink, String telephoneNumber, String email, String address, String password, boolean blocked, boolean active, Integer id, HashSet<Location> favouriteLocations, HashSet<Ride> rides) {
+        super(name, surname, imageLink, telephoneNumber, email, address, password, blocked, active);
         this.id = id;
         this.favouriteLocations = favouriteLocations;
         this.rides = rides;
     }
 
-    public Passenger(String firstName, String lastName, String imageLink, String telephoneNumber, String email, String address, String password, boolean blocked, boolean active) {
-        super(firstName, lastName, imageLink, telephoneNumber, email, address, password, blocked, active);
+    public Passenger(String name, String surname, String imageLink, String telephoneNumber, String email, String address, String password, boolean blocked, boolean active) {
+        super(name, surname, imageLink, telephoneNumber, email, address, password, blocked, active);
     }
 
 

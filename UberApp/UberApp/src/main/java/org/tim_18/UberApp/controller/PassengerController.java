@@ -43,8 +43,8 @@ public class PassengerController {
     @PostMapping()
     public ResponseEntity<PassengerDTO> addPassenger(@RequestBody PassengerDTO userActivationDTO) {
         Passenger passenger = new Passenger();
-        passenger.setFirstName(userActivationDTO.getFirstName());
-        passenger.setLastName(userActivationDTO.getLastName());
+        passenger.setName(userActivationDTO.getName());
+        passenger.setSurname(userActivationDTO.getSurname());
         passenger.setAddress(userActivationDTO.getAddress());
         passenger.setEmail(userActivationDTO.getEmail());
         passenger.setPassword(userActivationDTO.getPassword());

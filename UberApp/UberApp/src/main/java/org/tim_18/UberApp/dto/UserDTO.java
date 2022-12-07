@@ -5,8 +5,8 @@ import org.tim_18.UberApp.model.User;
 
 public class UserDTO {
     private Integer id;
-    private String firstName;
-    private String lastName;
+    private String name;
+    private String surname;
     private String imageLink;
     private String telephoneNumber;
     private String email;
@@ -19,13 +19,13 @@ public class UserDTO {
     }
 
     public UserDTO(User user) {
-        this(user.getId(), user.getFirstName(), user.getLastName(), user.getImageLink(), user.getTelephoneNumber(), user.getEmail(), user.getAddress(), user.getPassword(), user.isBlocked(), user.isActive());
+        this(user.getId(), user.getName(), user.getSurname(), user.getImageLink(), user.getTelephoneNumber(), user.getEmail(), user.getAddress(), user.getPassword(), user.isBlocked(), user.isActive());
     }
 
-    public UserDTO(Integer id, String firstName, String lastName, String imageLink, String telephoneNumber, String email, String address, String password, boolean blocked, boolean active) {
+    public UserDTO(Integer id, String name, String surname, String imageLink, String telephoneNumber, String email, String address, String password, boolean blocked, boolean active) {
         this.id              = id;
-        this.firstName       = firstName;
-        this.lastName        = lastName;
+        this.name            = name;
+        this.surname        = surname;
         this.imageLink       = imageLink;
         this.telephoneNumber = telephoneNumber;
         this.email           = email;
@@ -35,19 +35,26 @@ public class UserDTO {
         this.active          = active;
     }
 
-    public UserDTO(String firstName, String lastName, String imageLink, String telephoneNumber, String email, String address, String password, boolean blocked, boolean active) {
+    public UserDTO(String name, String surname, String imageLink, String telephoneNumber, String email, String address, String password, boolean blocked, boolean active) {
+    }
+
+    public UserDTO(Integer id, String name, String surname, String profilePicture, String telephoneNumber, String email, String address, String password) {
+
+    }
+
+    public UserDTO(Integer id, String name, String surname, String profilePicture, String telephoneNumber, String email, String address) {
     }
 
     public Integer getId() {
         return id;
     }
 
-    public String getFirstName() {
-        return firstName;
+    public String getName() {
+        return name;
     }
 
-    public String getLastName() {
-        return lastName;
+    public String getSurname() {
+        return surname;
     }
 
     public String getImageLink() {

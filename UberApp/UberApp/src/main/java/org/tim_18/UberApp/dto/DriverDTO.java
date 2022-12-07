@@ -1,27 +1,31 @@
 package org.tim_18.UberApp.dto;
 
 import jakarta.persistence.*;
-import org.tim_18.UberApp.model.Document;
-import org.tim_18.UberApp.model.Ride;
+import org.tim_18.UberApp.model.Driver;
 
 import java.util.HashSet;
 
 public class DriverDTO extends UserDTO{
 
-    private HashSet<Document> documents;
-    private HashSet<Ride> rides;
+    //{
+    //  "id": 123,
+    //  "name": "Pera",
+    //  "surname": "Perić",
+    //  "profilePicture": "U3dhZ2dlciByb2Nrcw==",
+    //  "telephoneNumber": "+381123123",
+    //  "email": "pera.peric@email.com",
+    //  "address": "Bulevar Oslobodjenja 74"
+    //}
 
     public DriverDTO() {}
 
-    public DriverDTO(Integer id,String firstName, String lastName, String imageLink, String telephoneNumber, String email, String address, String password, boolean blocked, boolean active, HashSet<Document> documents, HashSet<Ride> rides) {
-        super(id, firstName, lastName, imageLink, telephoneNumber, email, address, password, blocked, active);
-        this.documents  = documents;
-        this.rides      = rides;
+    public DriverDTO(Driver driver) {
+        super(driver);
     }
 
-    public HashSet<Ride> getRides() {return rides;}
-    public void setRides(HashSet<Ride> rides) {this.rides = rides;}
+    public DriverDTO(Integer id, String name, String surname, String profilePicture, String telephoneNumber, String email, String address) {
+        super(id, name, surname, profilePicture, telephoneNumber, email, address);
 
-    public HashSet<Document> getDocuments() {return documents;}
-    public void setDocuments(HashSet<Document> documents) {this.documents = documents;}
+
+    }
 }

@@ -3,18 +3,18 @@ package org.tim_18.UberApp.dto;
 public class AdministratorDTO {
     private String username;
     private String password;
-    private String firstName;
-    private String lastName;
+    private String name;
+    private String surname;
     private String imageLink;
 
     public AdministratorDTO() {
     }
 
-    public AdministratorDTO(String username, String password, String firstName, String lastName, String imageLink) {
+    public AdministratorDTO(String username, String password, String name, String surname, String imageLink) {
         this.username = username;
         this.password = password;
-        this.firstName = firstName;
-        this.lastName = lastName;
+        this.name = name;
+        this.surname = surname;
         this.imageLink = imageLink;
     }
 
@@ -34,20 +34,20 @@ public class AdministratorDTO {
         this.password = password;
     }
 
-    public String getFirstName() {
-        return firstName;
+    public String getname() {
+        return name;
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getLastName() {
-        return lastName;
+    public String getSurname() {
+        return surname;
     }
 
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
+    public void setSurname(String surname) {
+        this.surname = surname;
     }
 
     public String getImageLink() {
