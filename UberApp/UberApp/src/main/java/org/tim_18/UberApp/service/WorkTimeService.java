@@ -9,6 +9,7 @@ import org.tim_18.UberApp.model.WorkTime;
 import org.tim_18.UberApp.repository.UserActivationRepository;
 import org.tim_18.UberApp.repository.WorkTimeRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service("workTimeService")
@@ -27,6 +28,9 @@ public class WorkTimeService {
 
     public List<WorkTime> findAllWorkTime() {
         return workTimeRepository.findAll();
+    }
+    public ArrayList<WorkTime> findByDriversId(Integer id) {
+        return workTimeRepository.findByDriverId(id);
     }
 
     public WorkTime updateWorkTime(WorkTime workTime) {

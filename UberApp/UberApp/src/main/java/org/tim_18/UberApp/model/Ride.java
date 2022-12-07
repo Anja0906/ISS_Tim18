@@ -1,10 +1,12 @@
 package org.tim_18.UberApp.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import org.tim_18.UberApp.dto.PassengerDTO;
 
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Set;
 
 enum VehicleType{
         STANDARDNO,
@@ -32,30 +34,33 @@ public class Ride {
     private Date startTime;
     private Date endTime;
     private long totalCost;
-        @ManyToOne
+    @JsonIgnore
+    @ManyToOne
     @JoinColumn(name = "driver_id")
     private Driver driver;
     @ManyToMany
-    private HashSet<Passenger> passengers;
+    private Set<Passenger> passengers;
     private int estimatedTimeInMinutes;
     private VehicleType vehicleType;
     private boolean babyTransport;
     private boolean petTransport;
 //
+    @JsonIgnore
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "rejection_id", referencedColumnName = "id")
     private Rejection rejection;
 
+    @JsonIgnore
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "panic_id", referencedColumnName = "id")
     private Panic panic;
 
     @OneToMany(targetEntity = Location.class,cascade = {CascadeType.ALL}, fetch = FetchType.LAZY, mappedBy = "ride")
-    private HashSet<Location> locations;
+    private Set<Location> locations = new HashSet<Location>();
     private Status status;
 
     @OneToMany(targetEntity = Review.class,cascade = {CascadeType.ALL}, fetch = FetchType.LAZY, mappedBy = "ride")
-    private HashSet<Review> reviews;
+    private Set<Review> reviews = new HashSet<Review>();
 
     public Ride(Date startTime, Date endTime, long totalCost, Driver driver, HashSet<Passenger> passengers, int estimatedTimeInMinutes, VehicleType vehicleType, boolean babyTransport, boolean petTransport, Rejection rejection, HashSet<Location> locations, Status status, HashSet<Review> reviews, Panic panic) {
         this.startTime = startTime;
@@ -119,7 +124,7 @@ public class Ride {
         this.driver = driver;
     }
 //
-    public HashSet<Passenger> getPassengers() {
+    public Set<Passenger> getPassengers() {
         return passengers;
     }
 
@@ -167,7 +172,7 @@ public class Ride {
         this.rejection = rejection;
     }
 
-    public HashSet<Location> getLocations() {
+    public Set<Location> getLocations() {
         return locations;
     }
 
@@ -183,7 +188,7 @@ public class Ride {
         this.status = status;
     }
 
-    public HashSet<Review> getReviews() {
+    public Set<Review> getReviews() {
         return reviews;
     }
 

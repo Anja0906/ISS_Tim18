@@ -3,6 +3,7 @@ package org.tim_18.UberApp.model;
 import jakarta.persistence.*;
 
 import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "reviews")
@@ -15,7 +16,7 @@ public class Review {
     private String comment;
 
     @OneToMany
-    private HashSet<Passenger> passengers;
+    private Set<Passenger> passengers = new HashSet<Passenger>();
 
     @ManyToOne
     @JoinColumn(name = "ride_id")
@@ -53,7 +54,7 @@ public class Review {
         this.comment = comment;
     }
 
-    public HashSet<Passenger> getPassengers() {
+    public Set<Passenger> getPassengers() {
         return passengers;
     }
 

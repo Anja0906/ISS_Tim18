@@ -9,10 +9,11 @@ import org.tim_18.UberApp.model.WorkTime;
 import org.tim_18.UberApp.service.UserService;
 import org.tim_18.UberApp.service.WorkTimeService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("/worktime")
+@RequestMapping("/api/worktime")
 public class WorkTimeController {
     private final WorkTimeService workTimeService;
 
@@ -30,6 +31,12 @@ public class WorkTimeController {
     public ResponseEntity<WorkTime> getWorkTimeById (@PathVariable("id") Integer id) {
         WorkTime workTime = workTimeService.findWorkTimeById(id);
         return new ResponseEntity<>(workTime, HttpStatus.OK);
+    }
+
+    @GetMapping("/{id}/working-hours")
+    public ResponseEntity<ArrayList<WorkTime>> getWorkTimesByDriverId (@PathVariable("id") Integer id) {
+        ArrayList<WorkTime> driversWorkTimes = workTimeService.findByDriversId(id);
+        return new ResponseEntity<>(driversWorkTimes, HttpStatus.OK);
     }
 
     @PostMapping("/add")

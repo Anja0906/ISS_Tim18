@@ -1,5 +1,6 @@
 package org.tim_18.UberApp.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 @Entity
@@ -14,6 +15,7 @@ public class Location {
     private Double latitude;
     private String address;
 
+    @JsonIgnore
     @ManyToOne
     private Ride ride;
 

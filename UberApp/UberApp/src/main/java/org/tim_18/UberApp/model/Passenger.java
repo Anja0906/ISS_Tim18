@@ -1,9 +1,11 @@
 package org.tim_18.UberApp.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import javax.persistence.Table;
 import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @DiscriminatorValue("Passengers")
@@ -15,10 +17,11 @@ public class Passenger extends User {
     private Integer id;
 
     @ManyToMany(targetEntity = Location.class,cascade = {CascadeType.ALL}, fetch = FetchType.LAZY)
-    private HashSet<Location> favouriteLocations;
+    private Set<Location> favouriteLocations = new HashSet<Location>();
     @ManyToMany
-    private HashSet<Ride> rides;
+    private Set<Ride> rides = new HashSet<Ride>();
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "passenger_id")
     private Review review;
@@ -48,7 +51,7 @@ public class Passenger extends User {
         this.id = id;
     }
 
-    public HashSet<Location> getFavouriteLocations() {
+    public Set<Location> getFavouriteLocations() {
         return favouriteLocations;
     }
 
@@ -56,7 +59,7 @@ public class Passenger extends User {
         this.favouriteLocations = favouriteLocations;
     }
 
-    public HashSet<Ride> getRides() {
+    public Set<Ride> getRides() {
         return rides;
     }
 
