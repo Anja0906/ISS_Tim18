@@ -2,7 +2,6 @@ package org.tim_18.UberApp.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import org.tim_18.UberApp.dto.PassengerDTO;
 
 import java.util.Date;
 import java.util.HashSet;
@@ -123,7 +122,7 @@ public class Ride {
     public void setDriver(Driver driver) {
         this.driver = driver;
     }
-//
+
     public Set<Passenger> getPassengers() {
         return passengers;
     }

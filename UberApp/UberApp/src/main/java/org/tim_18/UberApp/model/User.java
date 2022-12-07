@@ -14,7 +14,7 @@ public class User implements Serializable{
     private Integer id;
     private String name;
     private String surname;
-    private String imageLink;
+    private String profilePicture;
     private String telephoneNumber;
     @Column(nullable = false)
     private String email;
@@ -24,10 +24,10 @@ public class User implements Serializable{
     private boolean blocked;
     private boolean active;
 
-    public User(String name, String surname, String imageLink, String telephoneNumber, String email, String address, String password, boolean blocked, boolean active) {
+    public User(String name, String surname, String profilePicture, String telephoneNumber, String email, String address, String password, boolean blocked, boolean active) {
         this.name       = name;
         this.surname        = surname;
-        this.imageLink       = imageLink;
+        this.profilePicture = profilePicture;
         this.telephoneNumber = telephoneNumber;
         this.email           = email;
         this.address         = address;
@@ -61,11 +61,11 @@ public class User implements Serializable{
     }
 
 
-    public String getImageLink() {
-        return imageLink;
+    public String getProfilePicture() {
+        return profilePicture;
     }
-    public void setImageLink(String imageLink) {
-        this.imageLink = imageLink;
+    public void setProfilePicture(String imageLink) {
+        this.profilePicture = imageLink;
     }
 
 
@@ -122,7 +122,7 @@ public class User implements Serializable{
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", surname='" + surname + '\'' +
-                ", imageLink='" + imageLink + '\'' +
+                ", imageLink='" + profilePicture + '\'' +
                 ", telephoneNumber='" + telephoneNumber + '\'' +
                 ", email='" + email + '\'' +
                 ", address='" + address + '\'' +

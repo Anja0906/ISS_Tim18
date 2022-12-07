@@ -19,7 +19,7 @@ public class UserDTO {
     }
 
     public UserDTO(User user) {
-        this(user.getId(), user.getName(), user.getSurname(), user.getImageLink(), user.getTelephoneNumber(), user.getEmail(), user.getAddress(), user.getPassword(), user.isBlocked(), user.isActive());
+        this(user.getId(), user.getName(), user.getSurname(), user.getProfilePicture(), user.getTelephoneNumber(), user.getEmail(), user.getAddress(), user.getPassword(), user.isBlocked(), user.isActive());
     }
 
     public UserDTO(Integer id, String name, String surname, String imageLink, String telephoneNumber, String email, String address, String password, boolean blocked, boolean active) {
