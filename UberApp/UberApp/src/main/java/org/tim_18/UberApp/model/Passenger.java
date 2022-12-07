@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 
 import javax.persistence.Table;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -65,5 +66,20 @@ public class Passenger extends User {
 
     public void setRides(HashSet<Ride> rides) {
         this.rides = rides;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        Passenger p = (Passenger) o;
+        return this.id.equals(p.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        int result = getId() != null ? getId().hashCode() : 0;
+        result = 31 * result + (getFavouriteLocations() != null ? getFavouriteLocations().hashCode() : 0);
+        result = 31 * result + (getRides() != null ? getRides().hashCode() : 0);
+        result = 31 * result + (review != null ? review.hashCode() : 0);
+        return result;
     }
 }
