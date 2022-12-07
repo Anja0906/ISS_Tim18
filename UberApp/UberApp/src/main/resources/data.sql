@@ -1,10 +1,10 @@
 #users
-INSERT INTO users (active, address, blocked, email, first_name, image_link, last_name, password, telephone_number)
-VALUES (false, 'Strumicka 6', true, 'email', 'first_name', 'image_link', 'last_name', 'password', 'telephone_number');
-INSERT INTO users (active, address, blocked, email, first_name, image_link, last_name, password, telephone_number)
-VALUES (false, 'Strumicka 5', true, 'email1', 'first_name1', 'image_link1', 'last_name1', 'password1', 'telephone_number1');
-INSERT INTO users (active, address, blocked, email, first_name, image_link, last_name, password, telephone_number)
-VALUES (false, 'Narodnog fronta 5', true, 'email2', 'first_name3', 'image_link5', 'last_name4', 'password2', 'telephone_number2');
+INSERT INTO users (active, address, blocked, email, name, image_link, surname, password, telephone_number)
+VALUES (false, 'Strumicka 6', true, 'email', 'name', 'image_link', 'surname', 'password', 'telephone_number');
+INSERT INTO users (active, address, blocked, email, name, image_link, surname, password, telephone_number)
+VALUES (false, 'Strumicka 5', true, 'email1', 'name1', 'image_link1', 'surname1', 'password1', 'telephone_number1');
+INSERT INTO users (active, address, blocked, email, name, image_link, surname, password, telephone_number)
+VALUES (false, 'Narodnog fronta 5', true, 'email2', 'name3', 'image_link5', 'surname4', 'password2', 'telephone_number2');
 
 
 
@@ -100,9 +100,9 @@ INSERT INTO reviews (comment, rating, ride_id) VALUES ('jashjfhasfhjsa', 5, '2')
 INSERT INTO reviews (comment, rating, ride_id) VALUES ('jashjfhasfhjsa', 3, '3');
 
 # --administrators--
-INSERT INTO administrators (first_name, image_link, last_name, password, username)
+INSERT INTO administrators (name, image_link, surname, password, username)
 VALUES ('anja', 'asbfhasfj', 'petkovic', 'ajsbsj', 'ajshjfhsafh');
-INSERT INTO administrators (first_name, image_link, last_name, password, username)
+INSERT INTO administrators (name, image_link, surname, password, username)
 VALUES ('shdfjhsdjf', 'asbfhasfj', 'petkovic', 'iahscbsjhc', 'ajshcuhawuch');
-INSERT INTO administrators (first_name, image_link, last_name, password, username)
+INSERT INTO administrators (name, image_link, surname, password, username)
 VALUES ('VDsgfsjhfka', 'asbfhasfj', 'petkovic', 'scbshhfcjsh', 'jsdchhshc');

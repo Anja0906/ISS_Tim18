@@ -3,8 +3,8 @@ package org.tim_18.UberApp.dto;
 import org.tim_18.UberApp.model.Passenger;
 
 public class PassengerDTO {
-    private String firstName;
-    private String lastName;
+    private String name;
+    private String surname;
     private String imageLink;
     private String telephoneNumber;
     private String email;
@@ -15,12 +15,12 @@ public class PassengerDTO {
     }
 
     public PassengerDTO(Passenger passenger){
-        this(passenger.getFirstName(), passenger.getFirstName(), passenger.getImageLink(), passenger.getTelephoneNumber(), passenger.getEmail(), passenger.getAddress(), passenger.getPassword());
+        this(passenger.getName(), passenger.getName(), passenger.getImageLink(), passenger.getTelephoneNumber(), passenger.getEmail(), passenger.getAddress(), passenger.getPassword());
     }
 
-    public PassengerDTO(String firstName, String lastName, String imageLink, String telephoneNumber, String email, String address, String password) {
-        this.firstName = firstName;
-        this.lastName = lastName;
+    public PassengerDTO(String name, String surname, String imageLink, String telephoneNumber, String email, String address, String password) {
+        this.name = name;
+        this.surname = surname;
         this.imageLink = imageLink;
         this.telephoneNumber = telephoneNumber;
         this.email = email;
@@ -28,20 +28,20 @@ public class PassengerDTO {
         this.password = password;
     }
 
-    public String getFirstName() {
-        return firstName;
+    public String getName() {
+        return name;
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getLastName() {
-        return lastName;
+    public String getSurname() {
+        return surname;
     }
 
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
+    public void setSurname(String surname) {
+        this.surname = surname;
     }
 
     public String getImageLink() {
