@@ -29,23 +29,15 @@ public class PassengerService {
     public Passenger addPassenger(Passenger passenger) {
         return passengerRepository.save(passenger);
     }
+    public Passenger update(Passenger passenger) {
+        return passengerRepository.save(passenger);
+    }
 
     public List<Passenger> findAll() {
         return passengerRepository.findAll();
     }
-    public List<Passenger> findAll(Pageable page) {
-        return (List<Passenger>) passengerRepository.findAll(page);
-    }
+    public Page<Passenger> findAll(Pageable page){return passengerRepository.findAll(page);}
 
-    public Page<Passenger> findPassengerById(String title, Pageable pageable) {
-        return passengerRepository.findPassengerById(title, pageable);
-    }
-
-//    public PassengerDTOwithPassword updatePassenger(PassengerDTOwithPassword passenger) {
-//        return passengerRepository.save(passenger);
-//    }
-
-    ;
 
     public Passenger findById(Integer id) {
         return passengerRepository.findPassengerById(id).orElseThrow(() -> new UserNotFoundException("Passenger by id " + id + " was not found"));
@@ -56,4 +48,5 @@ public class PassengerService {
         passenger = passengerRepository.save(passenger);
         return dtoMapper.fromPassengerToDTO(passenger);
     }
+
 }
