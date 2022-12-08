@@ -1,5 +1,7 @@
 package org.tim_18.UberApp.dto;
 
+import org.tim_18.UberApp.model.Message;
+
 public class MessageDTO {
     private Integer receiverId;
     private String message;
@@ -14,6 +16,13 @@ public class MessageDTO {
         this.message    = message;
         this.type       = type;
         this.rideId     = rideId;
+    }
+
+    public MessageDTO(Message message) {
+        this.receiverId = message.getId();
+        this.message    = message.getMessage();
+        this.type       = message.getMessageType();
+        this.rideId     = message.getRide().getId();
     }
 
     public Integer getReceiverId() {return receiverId;}

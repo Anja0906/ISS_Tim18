@@ -107,3 +107,8 @@ INSERT INTO administrators (name, profile_picture, surname, password, username)
 VALUES ('shdfjhsdjf', 'asbfhasfj', 'petkovic', 'iahscbsjhc', 'ajshcuhawuch');
 INSERT INTO administrators (name, profile_picture, surname, password, username)
 VALUES ('VDsgfsjhfka', 'asbfhasfj', 'petkovic', 'scbshhfcjsh', 'jsdchhshc');
+
+# SELECT * FROM passenger_rides pr NATURAL JOIN rides rid where rid.driver_id = 1 OR pr.passenger_id = 1;
+#  SELECT * FROM rides rid natural join passenger p where rid.driver_id = 1 OR p.id = 1;
+
+# SELECT * FROM messages m where m.sender_id = 1 OR m.receiver_id = 1;

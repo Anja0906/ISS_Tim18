@@ -7,6 +7,7 @@ import org.tim_18.UberApp.exception.UserNotFoundException;
 import org.tim_18.UberApp.model.Message;
 import org.tim_18.UberApp.repository.MessageRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service("messageService")
@@ -37,5 +38,8 @@ public class MessageService {
 
     public Message updateMessage(Message message) {
         return messageRepository.save(message);
+    }
+    public ArrayList<Message> findMessagesByUserId(Integer id) {
+        return messageRepository.findMessagesByUserId(id);
     }
 }

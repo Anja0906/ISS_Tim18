@@ -7,7 +7,6 @@ import org.tim_18.UberApp.model.Review;
 import java.util.HashSet;
 
 public interface ReviewRepository extends JpaRepository<Review, Integer> {
-//    @Query(value = "SELECT * FROM reviews rev INNER JOIN rides rid ON rev.ride_id = rid.id INNER JOIN drivers driv on rid.driver_id = driv.id where driv.vehicle_id = ?1", nativeQuery = true)
     @Query(value = "SELECT * FROM reviews rev NATURAL JOIN rides rid NATURAL JOIN drivers driv where driv.vehicle_id = ?1", nativeQuery = true)
     HashSet<Review> findByVehicleId(Integer id);
 
