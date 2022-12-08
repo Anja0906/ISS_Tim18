@@ -2,11 +2,12 @@ package org.tim_18.UberApp.model;
 
 import jakarta.persistence.*;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "messages")
-public class Message {
+public class Message implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
@@ -88,5 +89,18 @@ public class Message {
 
     public void setRide(Ride ride) {
         this.ride = ride;
+    }
+
+    @Override
+    public String toString() {
+        return "Message{" +
+                "id=" + id +
+                ", sender=" + sender +
+                ", receiver=" + receiver +
+                ", message='" + message + '\'' +
+                ", time=" + time +
+                ", messageType='" + messageType + '\'' +
+                ", ride=" + ride +
+                '}';
     }
 }

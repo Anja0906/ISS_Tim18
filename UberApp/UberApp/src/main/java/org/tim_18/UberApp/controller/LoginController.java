@@ -13,7 +13,7 @@ import org.tim_18.UberApp.model.User;
 import org.tim_18.UberApp.service.UserService;
 
 @RestController
-@RequestMapping("/api/login")
+@RequestMapping("/api/user/login")
 public class LoginController {
     @Autowired
     private final UserService userService;
