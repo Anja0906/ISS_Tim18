@@ -57,6 +57,7 @@ public class Ride {
     private Set<Location> locations = new HashSet<Location>();
     private Status status;
 
+    @JsonIgnore
     @OneToMany(targetEntity = Review.class,cascade = {CascadeType.ALL}, fetch = FetchType.LAZY, mappedBy = "ride")
     private Set<Review> reviews = new HashSet<Review>();
 
