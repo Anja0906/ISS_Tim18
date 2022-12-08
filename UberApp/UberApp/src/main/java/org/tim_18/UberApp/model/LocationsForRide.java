@@ -2,9 +2,11 @@ package org.tim_18.UberApp.model;
 
 import jakarta.persistence.*;
 
+import java.io.Serializable;
+
 @Entity
 @Table(name = "locations_for_rides")
-public class LocationsForRide {
+public class LocationsForRide implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)

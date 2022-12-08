@@ -13,12 +13,9 @@ import org.tim_18.UberApp.mapper.passengerDTOmappers.PassengerDTOwithPasswordMap
 import org.tim_18.UberApp.model.Passenger;
 import org.tim_18.UberApp.model.Ride;
 import org.tim_18.UberApp.service.PassengerService;
-
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/passenger")

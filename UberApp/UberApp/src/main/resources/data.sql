@@ -42,12 +42,12 @@ INSERT INTO rides (baby_transport, end_time, estimated_time_in_minutes, pet_tran
 VALUES (true, '2022-12-7 07:55:00', 15, false, '2022-12-7 07:40:00', 0, 500, 0, '3', '3', '3');
 
 # --vehicle--
-INSERT INTO vehicle (id, license_number, model, vehicle_type, driver_id)
-VALUES ('1', 'NS12312', 'Skoda fabia', 1, '1');
-INSERT INTO vehicle (id, license_number, model, vehicle_type, driver_id)
-VALUES ('2', 'NS45678', 'Skoda fabia', 0, '2');
-INSERT INTO vehicle (id, license_number, model, vehicle_type, driver_id)
-VALUES ('3', 'NS 567 ad', 'Skoda fabia', 2, '3');
+INSERT INTO vehicle (id, license_number, model, vehicle_type,current_location_id, driver_id)
+VALUES ('1', 'NS12312', 'Skoda fabia', 1, 2, 1);
+INSERT INTO vehicle (id, license_number, model, vehicle_type,current_location_id, driver_id)
+VALUES ('2', 'NS45678', 'Skoda fabia', 0, 3, 2);
+INSERT INTO vehicle (id, license_number, model, vehicle_type,current_location_id, driver_id)
+VALUES ('3', 'NS 567 ad', 'Skoda fabia', 2, 1, 3);
 
 
 # --panics--

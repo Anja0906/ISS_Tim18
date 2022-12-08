@@ -2,22 +2,24 @@ package org.tim_18.UberApp.model;
 
 import jakarta.persistence.*;
 
+import java.io.Serializable;
+
+
 @Entity
 @Table(name = "vehicle")
-public class Vehicle {
+public class Vehicle implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Integer id;
 
-    @OneToOne
+    @OneToOne(cascade = {CascadeType.ALL})
     private Driver driver;
-
     private String model;
     private VehicleType vehicleType;
     private String licenseNumber;
 
-    @ManyToOne
+    @ManyToOne(cascade={CascadeType.ALL})
     @JoinColumn(name = "current_location_id")
     private Location currentLocation;
 
@@ -41,6 +43,31 @@ public class Vehicle {
         this.petTransport       = petTransport;
     }
 
+
+    public Integer getPassengerSeats() {
+        return passengerSeats;
+    }
+
+    public void setPassengerSeats(Integer passengerSeats) {
+        this.passengerSeats = passengerSeats;
+    }
+
+    public Boolean getBabyTransport() {
+        return babyTransport;
+    }
+
+    public void setBabyTransport(Boolean babyTransport) {
+        this.babyTransport = babyTransport;
+    }
+
+    public Boolean getPetTransport() {
+        return petTransport;
+    }
+
+    public void setPetTransport(Boolean petTransport) {
+        this.petTransport = petTransport;
+    }
+
     public Location getCurrentLocation() {
         return currentLocation;
     }
@@ -56,10 +83,10 @@ public class Vehicle {
         this.driver = driver;
     }
 
-    public String getmodel() {
+    public String getModel() {
         return model;
     }
-    public void setmodel(String model) {
+    public void setModel(String model) {
         this.model = model;
     }
 
@@ -84,4 +111,18 @@ public class Vehicle {
         this.id = id;
     }
 
+    @Override
+    public String toString() {
+        return "Vehicle{" +
+                "id=" + id +
+                ", driver=" + driver +
+                ", model='" + model + '\'' +
+                ", vehicleType=" + vehicleType +
+                ", licenseNumber='" + licenseNumber + '\'' +
+                ", currentLocation=" + currentLocation +
+                ", passengerSeats=" + passengerSeats +
+                ", babyTransport=" + babyTransport +
+                ", petTransport=" + petTransport +
+                '}';
+    }
 }

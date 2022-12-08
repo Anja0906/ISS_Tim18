@@ -3,11 +3,12 @@ package org.tim_18.UberApp.model;
 import jakarta.persistence.*;
 import jakarta.websocket.OnError;
 
+import java.io.Serializable;
 import java.util.Date;
 
 @Entity
 @Table(name = "rejections")
-public class Rejection {
+public class Rejection implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

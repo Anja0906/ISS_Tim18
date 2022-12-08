@@ -21,14 +21,15 @@ public class Driver extends User{
     private Set<Document> documents = new HashSet<Document>();
     @OneToMany(targetEntity = Ride.class,cascade = {CascadeType.ALL}, fetch = FetchType.LAZY, mappedBy = "driver")
     private Set<Ride> rides = new HashSet<Ride>();
-
     @JsonIgnore
     @OneToOne
     private Vehicle vehicle;
 
     public Driver() {
+        this.documents = new HashSet<Document>();
+        this.rides = new HashSet<Ride>();
+        this.vehicle = null;
     }
-
     public Driver(String name, String surname, String profilePicture, String telephoneNumber, String email, String address, String password, boolean blocked, boolean active, Integer id, Set<Document> documents, Set<Ride> rides, Vehicle vehicle) {
         super(name, surname, profilePicture, telephoneNumber, email, address, password, blocked, active);
         this.id         = id;
@@ -40,8 +41,8 @@ public class Driver extends User{
     public Driver(String name, String surname, String profilePicture, String telephoneNumber, String email, String address, String password, boolean blocked, boolean active, Integer id, Vehicle vehicle) {
         super(name, surname, profilePicture, telephoneNumber, email, address, password, blocked, active);
         this.id = id;
-//        this.documents = new HashSet<Document>();
-//        this.rides = new HashSet<Ride>();
+        this.documents = new HashSet<Document>();
+        this.rides = new HashSet<Ride>();
         this.vehicle = vehicle;
     }
 

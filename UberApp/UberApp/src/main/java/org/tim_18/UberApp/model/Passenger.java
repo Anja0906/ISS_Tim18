@@ -21,7 +21,6 @@ public class Passenger extends User {
     private Set<Location> favouriteLocations = new HashSet<Location>();
     @ManyToMany
     private Set<Ride> rides = new HashSet<Ride>();
-
     @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "passenger_id")
@@ -40,12 +39,6 @@ public class Passenger extends User {
     public Passenger(String name, String surname, String profilePicture, String telephoneNumber, String email, String address, String password, boolean blocked, boolean active) {
         super(name, surname, profilePicture, telephoneNumber, email, address, password, blocked, active);
     }
-
-
-
-
-
-
     @Override
     public Integer getId() {
         return id;

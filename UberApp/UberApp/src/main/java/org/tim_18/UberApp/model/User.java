@@ -124,7 +124,6 @@ public class User implements Serializable{
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", surname='" + surname + '\'' +
-                ", imageLink='" + profilePicture + '\'' +
                 ", profilePicture='" + profilePicture + '\'' +
                 ", telephoneNumber='" + telephoneNumber + '\'' +
                 ", email='" + email + '\'' +
