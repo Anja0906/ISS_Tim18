@@ -61,4 +61,27 @@ public class Review {
     public void setPassengers(HashSet<Passenger> passengers) {
         this.passengers = passengers;
     }
+
+    public void setPassengers(Set<Passenger> passengers) {
+        this.passengers = passengers;
+    }
+
+    public Ride getRide() {
+        return ride;
+    }
+
+    public void setRide(Ride ride) {
+        this.ride = ride;
+    }
+
+    @Override
+    public String toString() {
+        return "Review{" +
+                "id=" + id +
+                ", rating=" + rating +
+                ", comment='" + comment + '\'' +
+                ", passengers=" + passengers +
+                ", ride=" + ride +
+                '}';
+    }
 }
