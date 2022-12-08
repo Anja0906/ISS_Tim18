@@ -27,47 +27,47 @@ public class Ride implements Serializable {
     @ManyToOne
     @JoinColumn(name = "driver_id")
     private Driver driver;
-//    @ManyToMany
-//    private Set<Passenger> passengers;
+    @ManyToMany
+    private Set<Passenger> passengers;
     private int estimatedTimeInMinutes;
     private VehicleType vehicleType;
     private boolean babyTransport;
     private boolean petTransport;
 
-//    @JsonIgnore
-//    @OneToOne(cascade = CascadeType.ALL)
-//    @JoinColumn(name = "rejection_id", referencedColumnName = "id")
-//    private Rejection rejection;
+    @JsonIgnore
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "rejection_id", referencedColumnName = "id")
+    private Rejection rejection;
 
-//    @JsonIgnore
-//    @OneToOne(cascade = CascadeType.ALL)
-//    @JoinColumn(name = "panic_id", referencedColumnName = "id")
-//    private Panic panic;
+    @JsonIgnore
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "panic_id", referencedColumnName = "id")
+    private Panic panic;
 
     @OneToMany(targetEntity = Location.class,cascade = {CascadeType.ALL}, fetch = FetchType.LAZY, mappedBy = "ride")
     private Set<Location> locations = new HashSet<Location>();
-   // private Status status;
+    private Status status;
 
-//    @JsonIgnore
-//    @OneToMany(targetEntity = Review.class,cascade = {CascadeType.ALL}, fetch = FetchType.LAZY, mappedBy = "ride")
-//    private Set<Review> reviews = new HashSet<Review>();
+    @JsonIgnore
+    @OneToMany(targetEntity = Review.class,cascade = {CascadeType.ALL}, fetch = FetchType.LAZY, mappedBy = "ride")
+    private Set<Review> reviews = new HashSet<Review>();
 
-//    public Ride(Date startTime, Date endTime, long totalCost, Driver driver, HashSet<Passenger> passengers, int estimatedTimeInMinutes, VehicleType vehicleType, boolean babyTransport, boolean petTransport, Rejection rejection, HashSet<Location> locations, Status status, HashSet<Review> reviews, Panic panic) {
-//        this.startTime              = startTime;
-//        this.endTime                = endTime;
-//        this.totalCost              = totalCost;
-//        this.driver                 = driver;
-//        this.passengers             = passengers;
-//        this.estimatedTimeInMinutes = estimatedTimeInMinutes;
-//        this.vehicleType            = vehicleType;
-//        this.babyTransport          = babyTransport;
-//        this.petTransport           = petTransport;
-//        this.rejection              = rejection;
-//        this.locations              = locations;
-//        this.status                 = status;
-//        this.reviews                = reviews;
-//        this.panic                  = panic;
-//    }
+    public Ride(Date startTime, Date endTime, long totalCost, Driver driver, HashSet<Passenger> passengers, int estimatedTimeInMinutes, VehicleType vehicleType, boolean babyTransport, boolean petTransport, Rejection rejection, HashSet<Location> locations, Status status, HashSet<Review> reviews, Panic panic) {
+        this.startTime              = startTime;
+        this.endTime                = endTime;
+        this.totalCost              = totalCost;
+        this.driver                 = driver;
+        this.passengers             = passengers;
+        this.estimatedTimeInMinutes = estimatedTimeInMinutes;
+        this.vehicleType            = vehicleType;
+        this.babyTransport          = babyTransport;
+        this.petTransport           = petTransport;
+        this.rejection              = rejection;
+        this.locations              = locations;
+        this.status                 = status;
+        this.reviews                = reviews;
+        this.panic                  = panic;
+    }
 
     public Ride() {}
 
@@ -107,12 +107,12 @@ public class Ride implements Serializable {
         this.driver = driver;
     }
 
-//    public Set<Passenger> getPassengers() {
-//        return passengers;
-//    }
-//    public void setPassengers(HashSet<Passenger> passengers) {
-//        this.passengers = passengers;
-//    }
+    public Set<Passenger> getPassengers() {
+        return passengers;
+    }
+    public void setPassengers(HashSet<Passenger> passengers) {
+        this.passengers = passengers;
+    }
 
     public int getEstimatedTimeInMinutes() {
         return estimatedTimeInMinutes;
@@ -140,12 +140,12 @@ public class Ride implements Serializable {
         this.petTransport = petTransport;
     }
 
-//    public Rejection getRejection() {
-//        return rejection;
-//    }
-//    public void setRejection(Rejection rejection) {
-//        this.rejection = rejection;
-//    }
+    public Rejection getRejection() {
+        return rejection;
+    }
+    public void setRejection(Rejection rejection) {
+        this.rejection = rejection;
+    }
 
     public Set<Location> getLocations() {
         return locations;
@@ -154,24 +154,24 @@ public class Ride implements Serializable {
         this.locations = locations;
     }
 
-//    public Status getStatus() {
-//        return status;
-//    }
-//    public void setStatus(Status status) {
-//        this.status = status;
-//    }
-//
-//    public Set<Review> getReviews() {
-//        return reviews;
-//    }
-//    public void setReviews(HashSet<Review> reviews) {
-//        this.reviews = reviews;
-//    }
-//
-//    public Panic getPanic() {
-//        return panic;
-//    }
-//    public void setPanic(Panic panic) {
-//        this.panic = panic;
-//    }
+    public Status getStatus() {
+        return status;
+    }
+    public void setStatus(Status status) {
+        this.status = status;
+    }
+
+    public Set<Review> getReviews() {
+        return reviews;
+    }
+    public void setReviews(HashSet<Review> reviews) {
+        this.reviews = reviews;
+    }
+
+    public Panic getPanic() {
+        return panic;
+    }
+    public void setPanic(Panic panic) {
+        this.panic = panic;
+    }
 }
