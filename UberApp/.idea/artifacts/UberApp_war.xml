@@ -1,0 +1,14 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="UberApp:war">
+    <output-path>$PROJECT_DIR$/UberApp/target</output-path>
+    <properties id="maven-jee-properties">
+      <options>
+        <module>UberApp</module>
+        <packaging>war</packaging>
+      </options>
+    </properties>
+    <root id="archive" name="UberApp-0.0.1-SNAPSHOT.war">
+      <element id="artifact" artifact-name="UberApp:war exploded" />
+    </root>
+  </artifact>
+</component>
