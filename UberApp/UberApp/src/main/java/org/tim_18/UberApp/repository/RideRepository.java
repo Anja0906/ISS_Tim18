@@ -10,6 +10,8 @@ import java.util.Optional;
 
 public interface RideRepository extends JpaRepository<Ride, Integer> {
     public Optional<Ride> findById(Integer id);
+
+    Ride findRideById(Integer id);
     @Query(value = "SELECT * FROM rides rid natural join passenger p where rid.driver_id = ?1 OR p.id = ?1", nativeQuery = true)
     ArrayList<Ride> findRidesForUser(int id);
 }

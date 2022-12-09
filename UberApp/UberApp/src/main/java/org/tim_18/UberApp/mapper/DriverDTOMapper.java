@@ -2,10 +2,8 @@ package org.tim_18.UberApp.mapper;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.tim_18.UberApp.dto.DriverDTO;
-import org.tim_18.UberApp.dto.UserActivationDTO;
+import org.tim_18.UberApp.dto.driverDTOs.DriverDTO;
 import org.tim_18.UberApp.model.Driver;
-import org.tim_18.UberApp.model.User;
 
 public class DriverDTOMapper {
     private static ModelMapper modelMapper;

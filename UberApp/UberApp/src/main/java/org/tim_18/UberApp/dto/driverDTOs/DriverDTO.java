@@ -1,9 +1,6 @@
-package org.tim_18.UberApp.dto;
+package org.tim_18.UberApp.dto.driverDTOs;
 
-import jakarta.persistence.*;
 import org.tim_18.UberApp.model.Driver;
-
-import java.util.HashSet;
 
 public class DriverDTO{
 

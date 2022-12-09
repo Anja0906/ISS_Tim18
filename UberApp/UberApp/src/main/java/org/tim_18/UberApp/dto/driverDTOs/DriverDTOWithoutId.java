@@ -1,4 +1,4 @@
-package org.tim_18.UberApp.dto;
+package org.tim_18.UberApp.dto.driverDTOs;
 
 import org.tim_18.UberApp.model.Driver;
 
