@@ -51,9 +51,9 @@ VALUES ('3', 'NS 567 ad', 'Skoda fabia', 2, 1, 3);
 
 
 # --panics--
-INSERT INTO panics (date, reason, user_id) VALUES ('2022-12-07', 'jahdjhhefej', '1');
-INSERT INTO panics (date, reason, user_id) VALUES ('2022-12-07', 'ajskdjsah', '2');
-INSERT INTO panics (date, reason, user_id) VALUES ('2022-12-07', 'ajshdjshaj', '3');
+INSERT INTO panics (time, reason, user_id) VALUES ('2022-12-07', 'jahdjhhefej', '1');
+INSERT INTO panics (time, reason, user_id) VALUES ('2022-12-07', 'ajskdjsah', '2');
+INSERT INTO panics (time, reason, user_id) VALUES ('2022-12-07', 'ajshdjshaj', '3');
 
 # --messages--
 INSERT INTO messages (id, message, message_type, time, receiver_id, ride_id, sender_id)
