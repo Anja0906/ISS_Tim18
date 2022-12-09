@@ -41,15 +41,15 @@ public class UserController {
         List<User> users = userService.findAllUsers();
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
-    @GetMapping("{id}/ride")
-    public ResponseEntity<ArrayList<Ride>> getRidesForUsers(@PathVariable("id") Integer id){
-        ArrayList<Ride> rides = userService.findRidesForUser(id);
-        if(rides.isEmpty()) {
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
-        }else {
-            return new ResponseEntity<>(rides, HttpStatus.OK);
-        }
-    }
+//    @GetMapping("{id}/ride")
+//    public ResponseEntity<ArrayList<Ride>> getRidesForUsers(@PathVariable("id") Integer id){
+//        ArrayList<Ride> rides = userService.findRidesForUser(id);
+//        if(rides.isEmpty()) {
+//            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+//        }else {
+//            return new ResponseEntity<>(rides, HttpStatus.OK);
+//        }
+//    }
     @GetMapping("{id}/message")
     public ResponseEntity<HashSet<MessageDTO>> getMessagesForUser(
             @PathVariable("id") Integer id){

@@ -1,10 +1,12 @@
 package org.tim_18.UberApp.model;
 
 import jakarta.persistence.*;
+import lombok.Data;
 
 import java.io.Serializable;
 import java.util.Date;
 
+@Data
 @Entity
 @Table(name = "panics")
 public class Panic implements Serializable {
@@ -16,6 +18,6 @@ public class Panic implements Serializable {
     private User user;
     @OneToOne(mappedBy = "panic")
     private Ride ride;
-    private Date date;
+    private Date time;
     private String reason;
 }
