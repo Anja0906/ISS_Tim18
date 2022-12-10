@@ -4,14 +4,15 @@ import org.modelmapper.ModelMapper;
 import org.modelmapper.config.Configuration;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.tim_18.UberApp.dto.PanicDTO;
-import org.tim_18.UberApp.model.Panic;
+import org.tim_18.UberApp.dto.UserSimpleDTO;
+import org.tim_18.UberApp.model.User;
 
-public class PanicDTOMapper {
+public class UserSimpleDTOMapper {
+
     private static ModelMapper modelMapper;
 
     @Autowired
-    public PanicDTOMapper(ModelMapper modelMapper) {
+    public UserSimpleDTOMapper(ModelMapper modelMapper) {
         this.modelMapper = modelMapper;
         this.modelMapper.getConfiguration()
                 .setFieldMatchingEnabled(true)
@@ -19,11 +20,11 @@ public class PanicDTOMapper {
                 .setMatchingStrategy(MatchingStrategies.STANDARD);
     }
 
-    public Panic fromDTOtoRejection(PanicDTO dto) {
-        return modelMapper.map(dto, Panic.class);
+    public static User fromDTOtoUser(UserSimpleDTO dto) {
+        return modelMapper.map(dto, User.class);
     }
 
-    public PanicDTO fromRejectionToDTO(Panic panic) {
-        return modelMapper.map(panic, PanicDTO.class);
+    public static UserSimpleDTO fromUserToDTO(User dto) {
+        return modelMapper.map(dto, UserSimpleDTO.class);
     }
 }

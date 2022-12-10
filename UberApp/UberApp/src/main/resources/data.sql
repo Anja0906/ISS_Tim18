@@ -40,6 +40,8 @@ INSERT INTO rides (baby_transport, end_time, estimated_time_in_minutes, pet_tran
 VALUES (true, '2022-12-7 07:55:00', 15, false, '2022-12-7 07:40:00', 0, 500, 0, '2', '2', '2');
 INSERT INTO rides (baby_transport, end_time, estimated_time_in_minutes, pet_transport, start_time, status, total_cost, vehicle_type, driver_id, panic_id, rejection_id)
 VALUES (true, '2022-12-7 07:55:00', 15, false, '2022-12-7 07:40:00', 0, 500, 0, '3', '3', '3');
+INSERT INTO rides (baby_transport, end_time, estimated_time_in_minutes, pet_transport, start_time, status, total_cost, vehicle_type, driver_id, panic_id, rejection_id)
+VALUES (true, '2022-12-11 23:59:59', 15, false, '2022-12-10 05:00:00', 0, 500, 0, '4', '1', '1');
 
 # --vehicle--
 INSERT INTO vehicle (id, license_number, model, vehicle_type,current_location_id, driver_id)
