@@ -114,3 +114,5 @@ VALUES ('VDsgfsjhfka', 'asbfhasfj', 'petkovic', 'scbshhfcjsh', 'jsdchhshc');
 #  SELECT * FROM rides rid natural join passenger p where rid.driver_id = 1 OR p.id = 1;
 
 # SELECT * FROM messages m where m.sender_id = 1 OR m.receiver_id = 1;
+
+# SELECT * FROM rides r NATURAL JOIN passenger p WHERE p.id = 1 or r.driver_id = 1;

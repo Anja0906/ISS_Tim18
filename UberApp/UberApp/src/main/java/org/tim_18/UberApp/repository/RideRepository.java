@@ -20,4 +20,6 @@ public interface RideRepository extends JpaRepository<Ride, Integer> {
     Ride findDriverActiveRide(Integer driver_id);
     @Query(value = "SELECT * FROM rides r INNER JOIN passenger_rides pr on r.id=pr.ride_id WHERE pr.passenger_id = ?1 and now() between r.start_time and r.end_time;", nativeQuery = true)
     Ride findPassengerActiveRide(Integer passenger_id);
+    @Query(value = "SELECT * FROM rides r NATURAL JOIN passenger p WHERE p.id = ?1 or r.driver_id = ?1", nativeQuery = true)
+    List<Ride> findRidesForUser(Integer id);
 }

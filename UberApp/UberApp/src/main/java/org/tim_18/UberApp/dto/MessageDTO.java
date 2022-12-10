@@ -3,6 +3,12 @@ package org.tim_18.UberApp.dto;
 import org.tim_18.UberApp.model.Message;
 
 public class MessageDTO {
+    //{
+    //  "receiverId": 123,
+    //  "message": "The driver is going on a longer route on purpose",
+    //  "type": "RIDE",
+    //  "rideId": 123
+    //}
     private Integer receiverId;
     private String message;
     private String type;
