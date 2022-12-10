@@ -7,6 +7,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.tim_18.UberApp.dto.*;
+import org.tim_18.UberApp.dto.driverDTOs.DriverDTO;
+import org.tim_18.UberApp.dto.driverDTOs.DriverDTOWithoutId;
 import org.tim_18.UberApp.model.Document;
 import org.tim_18.UberApp.model.Driver;
 import org.tim_18.UberApp.model.Vehicle;

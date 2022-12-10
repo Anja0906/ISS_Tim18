@@ -14,6 +14,7 @@ import org.tim_18.UberApp.mapper.passengerDTOmappers.PassengerDTOwithPasswordMap
 import org.tim_18.UberApp.model.Passenger;
 import org.tim_18.UberApp.model.Ride;
 import org.tim_18.UberApp.service.PassengerService;
+import org.tim_18.UberApp.service.RideService;
 
 import java.util.*;
 
@@ -21,11 +22,13 @@ import java.util.*;
 @RequestMapping("/api/passenger")
 public class PassengerController {
     private final PassengerService passengerService;
+    private final RideService rideService;
     @Autowired
     private PassengerDTOwithPasswordMapper dtoWithPasswordMapper;
 
-    public PassengerController(PassengerService passengerService) {
+    public PassengerController(PassengerService passengerService, RideService rideService) {
         this.passengerService = passengerService;
+        this.rideService = rideService;
     }
 
     @PostMapping()
@@ -77,9 +80,8 @@ public class PassengerController {
     @GetMapping("/{id}/ride")
     public ResponseEntity<FindAllDTO<Ride>> findPassengersRides(@PathVariable("id") Integer id, @RequestParam(defaultValue = "0") Integer page,
                                                                    @RequestParam(defaultValue = "4") Integer size) {
-        Passenger passenger = passengerService.findById(id);
-        Set<Ride> rideSet = passenger.getRides();
-        FindAllDTO<Ride> ridesDTO = new FindAllDTO<>(rideSet);
+        List<Ride> rides = rideService.findRidesByPassengersId(id);
+        FindAllDTO<Ride> ridesDTO = new FindAllDTO<>(rides);
         return new ResponseEntity<>(ridesDTO, HttpStatus.OK);
 
     }
