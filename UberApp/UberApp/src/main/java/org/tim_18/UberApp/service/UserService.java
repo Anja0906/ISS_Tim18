@@ -51,7 +51,7 @@ public class UserService {
     }
 
     public Page<Ride> findRidesForUser(Integer id, Pageable pageable) {
-        return rideRepository.findRidesForUser(id, pageable);
+        return rideRepository.findRidesForUserPage(id, pageable);
     }
 
     public Ride findRideById(Integer id){
