@@ -1,22 +1,22 @@
 package org.tim_18.UberApp.controller;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.tim_18.UberApp.dto.PanicDTO;
 import org.tim_18.UberApp.dto.locationDTOs.LocationDTO;
 import org.tim_18.UberApp.dto.locationDTOs.LocationSetDTO;
 import org.tim_18.UberApp.dto.passengerDTOs.PassengerEmailDTO;
-import org.tim_18.UberApp.dto.rideDTOs.RideDTOWithPanic;
 import org.tim_18.UberApp.dto.rideDTOs.RideRecDTO;
 import org.tim_18.UberApp.dto.rideDTOs.RideRetDTO;
 import org.tim_18.UberApp.mapper.LocationDTOMapper;
 import org.tim_18.UberApp.model.*;
 import org.tim_18.UberApp.service.*;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api/ride")
@@ -29,17 +29,21 @@ public class RideController {
     private final ReviewService reviewService;
     private final PanicService panicService;
     private final PassengerService passengerService;
+    private final UserService userService;
+
+
     private LocationDTOMapper locationDTOMapper = new LocationDTOMapper(new ModelMapper());
 //
 //    private RideRecDTOMapper dtoRecMapper;
 
-    public RideController(RideService rideService, DriverService driverService, RejectionService rejectionService, ReviewService reviewService, PanicService panicService, PassengerService passengerService) {
+    public RideController(RideService rideService, DriverService driverService, RejectionService rejectionService, ReviewService reviewService, PanicService panicService, PassengerService passengerService, UserService userService) {
         this.rideService = rideService;
         this.driverService = driverService;
         this.rejectionService = rejectionService;
         this.reviewService = reviewService;
         this.panicService = panicService;
         this.passengerService = passengerService;
+        this.userService = userService;
     }
 
     @PostMapping
@@ -78,8 +82,17 @@ public class RideController {
     }
 
     @PutMapping("/{id}/panic")
-    public RideDTOWithPanic activatePanic(@PathVariable("id") Integer id, @RequestBody String reason){
-        return null;
+    public PanicDTO activatePanic(@PathVariable("id") Integer id, @RequestBody String reason){
+        Ride ride = rideService.findRideById(id);
+        Panic panic = new Panic();
+        panic.setRide(ride);
+        List<User> users = userService.findAllUsers();
+        User user = users.get(0);
+        panic.setUser(user);
+        panic.setTime(new Date());
+        panic.setReason(reason);
+        panic = panicService.addPanic(panic);
+        return new PanicDTO(panic);
     }
 
     @PutMapping("/{id}/accept")
@@ -100,14 +113,22 @@ public class RideController {
 
     @PutMapping("/{id}/cancel")
     public RideRetDTO cancelRide(@PathVariable("id") Integer id,  @RequestBody String reason){
-        return null;
+        Ride ride = rideService.findRideById(id);
+        Rejection rejection = new Rejection();
+        rejection.setTime(new Date());
+        rejection.setReason(reason);
+        rejection = rejectionService.addRejection(rejection);
+        ride.setRejection(rejection);
+        ride = rideService.updateRide(ride);
+        return new RideRetDTO(ride);
     }
 
     private Ride fromDTOtoRide(RideRecDTO dto) {
         Date startTime = new Date();
         Date endTime = new Date();
         long totalCost = 5000;
-        Driver driver = driverService.findDriverById(4);
+        List<Driver> drivers = driverService.findAllDrivers();
+        Driver driver = drivers.get(0);
         Set<PassengerEmailDTO> passengersDTOs = dto.getPassengers();
         HashSet<Passenger> passengers = new HashSet<>();
         for (PassengerEmailDTO passDTO: passengersDTOs) {

@@ -1,29 +1,16 @@
 package org.tim_18.UberApp.service;
 
-import org.modelmapper.ModelMapper;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.tim_18.UberApp.dto.RejectionDTO;
-import org.tim_18.UberApp.dto.driverDTOs.DriverEmailDTO;
-import org.tim_18.UberApp.dto.rideDTOs.RideDTOWithPanic;
-import org.tim_18.UberApp.dto.rideDTOs.RideRecDTO;
-import org.tim_18.UberApp.dto.rideDTOs.RideRetDTO;
-import org.tim_18.UberApp.mapper.rideDTOmappers.RideRetDTOMapper;
-import org.tim_18.UberApp.model.Driver;
-import org.tim_18.UberApp.model.Rejection;
 import org.tim_18.UberApp.model.Ride;
-import org.tim_18.UberApp.model.Status;
 import org.tim_18.UberApp.repository.RideRepository;
 
-import java.util.Date;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-import org.tim_18.UberApp.model.Ride;
-import org.tim_18.UberApp.repository.RideRepository;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
 import java.util.List;
 
 @Service
