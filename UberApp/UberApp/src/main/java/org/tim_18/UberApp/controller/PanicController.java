@@ -44,7 +44,7 @@ public class PanicController {
                 panicDTOs.add(new PanicDTO(panic));
             }
             Map<String, Object> response = new HashMap<>();
-            response.put("totalcounts", pagedResult.getTotalElements());
+            response.put("totalCount", pagedResult.getTotalElements());
             response.put("results", panicDTOs);
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch(UserNotFoundException e){

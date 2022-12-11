@@ -116,7 +116,7 @@ public class PassengerController {
                 ridesDTO.add(new RideRetDTO(r));
             }
             Map<String, Object> response = new HashMap<>();
-            response.put("totalcounts", pagedResult.getTotalElements());
+            response.put("totalCount", pagedResult.getTotalElements());
             response.put("results", ridesDTO);
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch(UserNotFoundException e){

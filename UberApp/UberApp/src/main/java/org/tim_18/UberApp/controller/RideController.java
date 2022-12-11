@@ -105,11 +105,13 @@ public class RideController {
             Panic panic = new Panic();
             panic.setRide(ride);
             List<User> users = userService.findAllUsers();
+            if (users.size() == 0) throw new UserNotFoundException("No users");
             User user = users.get(0);
             panic.setUser(user);
             panic.setTime(new Date());
             panic.setReason(reason);
             panic = panicService.addPanic(panic);
+            ride.setPanic(panic);
             return new ResponseEntity<>(new PanicDTO(panic), HttpStatus.OK);
         } catch(UserNotFoundException e){
             return new ResponseEntity<>(null,HttpStatus.NOT_FOUND);
@@ -203,6 +205,6 @@ public class RideController {
         }
         RejectionDTO rejectionDTO = new RejectionDTO(newRejection);
         return new Ride(startTime, endTime, totalCost, driver, passengers, estimatedTimeInMinutes, dto.getVehicleType(),
-                dto.isBabyTransport(), dto.isPetTransport(), null, locations, status, reviews, panic);
+                dto.isBabyTransport(), dto.isPetTransport(), newRejection, locations, status, reviews, panic);
     }
 }
