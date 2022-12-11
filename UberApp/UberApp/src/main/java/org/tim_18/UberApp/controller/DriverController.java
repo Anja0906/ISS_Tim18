@@ -12,6 +12,7 @@ import org.tim_18.UberApp.dto.*;
 import org.tim_18.UberApp.dto.driverDTOs.DriverDTO;
 import org.tim_18.UberApp.dto.driverDTOs.DriverDTOWithoutId;
 import org.tim_18.UberApp.dto.locationDTOs.LocationDTO;
+import org.tim_18.UberApp.dto.rideDTOs.RideRetDTO;
 import org.tim_18.UberApp.model.Document;
 import org.tim_18.UberApp.model.Driver;
 import org.tim_18.UberApp.model.Vehicle;
@@ -80,7 +81,7 @@ public class DriverController {
                                    driverDTOWithoutId.getPassword(),false,false) ;
 
         driverService.addDriver(driver);
-        return new ResponseEntity<>(new DriverDTO(driver), HttpStatus.CREATED);
+        return new ResponseEntity<>(new DriverDTO(driver), HttpStatus.OK);
     }
 
     @PutMapping("/{id}")
@@ -127,18 +128,19 @@ public class DriverController {
         }
     }
 
-    @DeleteMapping("/{id}/documents")
+    @DeleteMapping("/document/{id}")
     public ResponseEntity deleteDocumentById (
             @PathVariable("id") int id) {
         try {
             Document document = documentService.findDocumentById(id);
-            documentService.remove(document.getId());
-            return new ResponseEntity<>(HttpStatus.OK);
+            System.out.println(document.getId());
+            documentService.deleteDocument(document);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (UserNotFoundException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
-//OVDE GA NE BRISE NE ZNAM ZASTO
+    //OVO NE RADI VRV ZBOG BAZE
 
     @GetMapping("/{id}/vehicle")
     public ResponseEntity<VehicleDTO> getVehicleById (
@@ -256,13 +258,18 @@ public class DriverController {
             @PathVariable("id") int id,
             @RequestParam(defaultValue = "0") Integer page,
             @RequestParam(defaultValue = "4") Integer size,
-            @RequestParam(defaultValue = "start_time") String sort,
             @RequestParam(defaultValue = "2022-12-07T07:00:50") String from,
             @RequestParam(defaultValue = "2022-12-08T10:40:00") String to) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by(sort));
+        Pageable pageable = PageRequest.of(page, size);
         Page<Ride> rides = rideService.findRidesForDriver(id,from,to,pageable);
+        System.out.println(rides.getSize());
+        System.out.println(rides.toString());
         Map<String, Object> map = new HashMap<>();
-        HashSet<RideDTO> ridesDTO = new RideDTO().makeRides(rides);
+        HashSet<RideRetDTO> ridesDTO = new HashSet<>();
+        for (Ride ride: rides){
+            ridesDTO.add(new RideRetDTO(ride));
+        }
+
         map.put("totalCount",ridesDTO.size());
         map.put("results",ridesDTO);
         return new ResponseEntity<>(map, HttpStatus.OK);

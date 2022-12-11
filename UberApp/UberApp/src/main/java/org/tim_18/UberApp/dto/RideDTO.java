@@ -26,9 +26,6 @@ public class RideDTO {
     private Panic panic;
 
     private Set<Location> locations = new HashSet<Location>();
-    private Status status;
-
-    private Set<Review> reviews = new HashSet<Review>();
 
     public RideDTO(Integer id,Date startTime, Date endTime, long totalCost, Driver driver, Set<Passenger> passengers, int estimatedTimeInMinutes, VehicleType vehicleType, boolean babyTransport, boolean petTransport, Rejection rejection, Set<Location> locations) {
         this.id                     = id;
@@ -143,19 +140,6 @@ public class RideDTO {
         this.locations = locations;
     }
 
-    public Status getStatus() {
-        return status;
-    }
-    public void setStatus(Status status) {
-        this.status = status;
-    }
-
-    public Set<Review> getReviews() {
-        return reviews;
-    }
-    public void setReviews(HashSet<Review> reviews) {
-        this.reviews = reviews;
-    }
 
     public Panic getPanic() {
         return panic;
@@ -163,46 +147,5 @@ public class RideDTO {
     public void setPanic(Panic panic) {
         this.panic = panic;
     }
-//    "id": 123,
-//            "startTime": "2017-07-21T17:32:28Z",
-//            "endTime": "2017-07-21T17:45:14Z",
-//            "totalCost": 1235,
-//            "driver": {
-//        "id": 123,
-//                "email": "user@example.com"
-//    },
-//            "passengers": [
-//    {
-//        "id": 123,
-//            "email": "user@example.com"
-//    }
-//      ],
-//              "estimatedTimeInMinutes": 5,
-//              "vehicleType": "STANDARDNO",
-//              "babyTransport": true,
-//              "petTransport": true,
-//              "rejection": {
-//        "reason": "Ride is canceled due to previous problems with the passenger",
-//                "timeOfRejection": "2022-11-25T17:32:28Z"
-//    },
-//            "locations": [
-//    {
-//        "departure": {
-//        "address": "Bulevar oslobodjenja 46",
-//                "latitude": 45.267136,
-//                "longitude": 19.833549
-//    },
-//        "destination": {
-//        "address": "Bulevar oslobodjenja 46",
-//                "latitude": 45.267136,
-//                "longitude": 19.833549
-//    }
-//    }
-//      ]
-//}
-//  ]
-//          }
-//          No links
-//          400
 
 }

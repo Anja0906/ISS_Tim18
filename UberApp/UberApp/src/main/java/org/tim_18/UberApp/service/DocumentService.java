@@ -23,8 +23,9 @@ public class DocumentService {
     public Document addDocument(Document document) {
         return documentRepository.save(document);
     }
+    public void deleteDocument(Document document){ documentRepository.delete(document);}
 
-    public void remove(Integer id) {documentRepository.deleteById(id);}
+    public void deleteDocumentById(Integer id) {documentRepository.deleteById(id);}
 
     public List<Document> findAllDocuments() {
         return documentRepository.findAll();
@@ -39,7 +40,7 @@ public class DocumentService {
 
     public Document findDocumentById(Integer id) {
         return documentRepository.findDocumentById(id)
-                .orElseThrow(() -> new UserNotFoundException("Driver by id " + id + " was not found"));
+                .orElseThrow(() -> new UserNotFoundException("Document by id " + id + " was not found"));
     }
 
 }

@@ -25,7 +25,7 @@ INSERT INTO drivers (id, vehicle_id) VALUES ('3', '3');
 
 # documents
 INSERT INTO documents (id, document_image, name, driver_id) VALUES ('1', 'hkdhfshdfj', 'hsgdgadg', '1');
-INSERT INTO documents (id, document_image, name, driver_id) VALUES ('2', 'asjhdjhasjcfh', 'ajshdjsahc', '2');
+INSERT INTO documents (id, document_image, name, driver_id) VALUES ('2', 'asjhdjhasjcfh', 'ajshdjsahc', '5');
 INSERT INTO documents (id, document_image, name, driver_id) VALUES ('3', 'ajshdjsh', 'jashjcshjc', '3');
 
 # --work_time--
@@ -77,9 +77,9 @@ INSERT INTO rejections (id, reason, time) VALUES ('2', 'sbcjs', '2022-07-12 00:1
 INSERT INTO rejections (id, reason, time) VALUES ('3', 'sjchjshc', '2022-07-12 00:15:45');
 
 # --passenger--
-INSERT INTO passenger (id, passenger_id) VALUES ('1', '1');
+INSERT INTO passenger (id, passenger_id) VALUES ('4', '1');
 INSERT INTO passenger (id, passenger_id) VALUES ('2', '2');
-INSERT INTO passenger (id, passenger_id) VALUES ('3', '3');
+INSERT INTO passenger (id, passenger_id) VALUES ('6', '3');
 
 # --locations--
 INSERT INTO locations (address, latitude, longitude, ride_id)
@@ -109,9 +109,9 @@ INSERT INTO administrators (name, profile_picture, surname, password, username)
 VALUES ('VDsgfsjhfka', 'asbfhasfj', 'petkovic', 'scbshhfcjsh', 'jsdchhshc');
 
 # -- passenger_rides --
-INSERT INTO passenger_rides (passenger_id, ride_id) VALUES (1, 1);
-INSERT INTO passenger_rides (passenger_id, ride_id) VALUES (1, 2);
-INSERT INTO passenger_rides (passenger_id, ride_id) VALUES (1, 3);
+INSERT INTO passenger_rides (passenger_id, ride_id) VALUES (4, 1);
+INSERT INTO passenger_rides (passenger_id, ride_id) VALUES (4, 2);
+INSERT INTO passenger_rides (passenger_id, ride_id) VALUES (4, 3);
 
 # SELECT * FROM passenger_rides pr NATURAL JOIN rides rid where rid.driver_id = 1 OR pr.passenger_id = 1;
 #  SELECT * FROM rides rid natural join passenger p where rid.driver_id = 1 OR p.id = 1;
