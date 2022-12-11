@@ -1,5 +1,8 @@
 package org.tim_18.UberApp.controller;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,10 +16,7 @@ import org.tim_18.UberApp.service.UserService;
 
 import javax.naming.ldap.HasControls;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api/user")
@@ -29,33 +29,51 @@ public class UserController {
         this.messageService = messageService;
     }
     @GetMapping("")
-    public ResponseEntity<List<User>> getUserDetails(){
-        List<User> users = userService.findAllUsers();
-        return new ResponseEntity<>(users, HttpStatus.OK);
+    public ResponseEntity<Map<String, Object>> getUserDetails (@RequestParam(defaultValue = "0") Integer page,
+                                                                  @RequestParam(defaultValue = "4") Integer size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<User> users = userService.findAll(pageable);
+        Map<String, Object> map = new HashMap<>();
+        HashSet<UserDTO> usersDTO = new HashSet<>();
+        for (User user:users) {
+            usersDTO.add(new UserDTO(user));
+        }
+
+        map.put("totalCount",usersDTO.size());
+        map.put("results",usersDTO);
+        return new ResponseEntity<>(map, HttpStatus.OK);
+
     }
     @GetMapping("{id}/ride")
-    public ResponseEntity<List<Ride>> getRidesForUsers(@PathVariable("id") Integer id){
-        List<Ride> rides = userService.findRidesForUser(id);
-        if(rides.isEmpty()) {
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
-        }else {
-            return new ResponseEntity<>(rides, HttpStatus.OK);
-        }
+    public ResponseEntity<Map<String, Object>> getRidesForUsers(@PathVariable("id") int id, @RequestParam(defaultValue = "0") Integer page,
+                                                       @RequestParam(defaultValue = "4") Integer size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Ride> rides = userService.findRidesForUser(id, pageable);
+        Map<String, Object> map = new HashMap<>();
+//        HashSet<RideDTO> ridesDTO = new HashSet<>();
+//        for (Ride ride:rides) {
+//            ridesDTO.add(new Ride(ride));
+//        }
+
+        map.put("totalCount",rides.getSize());
+        map.put("results",rides);
+        return new ResponseEntity<>(map, HttpStatus.OK);
     }
     @GetMapping("{id}/message")
-    public ResponseEntity<HashSet<MessageDTO>> getMessagesForUser(
-            @PathVariable("id") Integer id){
-        ArrayList<Message> messages = messageService.findMessagesByUserId(id);
-        HashSet<MessageDTO> messageDTOS = new HashSet<>();
-        if(messages.isEmpty()) {
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
-
-        }else{
-            for (Message message: messages) {
-                messageDTOS.add(new MessageDTO(message));
-            }
-            return new ResponseEntity<>(messageDTOS, HttpStatus.OK);
+    public ResponseEntity<Map<String, Object>> getMessagesForUser(
+            @PathVariable("id") int id, @RequestParam(defaultValue = "0") Integer page,
+            @RequestParam(defaultValue = "4") Integer size){
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Message> messages = messageService.findMessagesByUserId(id, pageable);
+        Map<String, Object> map = new HashMap<>();
+        HashSet<MessageResponseDTO> messageDTOS = new HashSet<>();
+        for (Message message:messages) {
+            messageDTOS.add(new MessageResponseDTO(message));
         }
+
+        map.put("totalCount",messageDTOS.size());
+        map.put("results",messageDTOS);
+        return new ResponseEntity<>(map, HttpStatus.OK);
     }
     @PostMapping("/{id}/message")
     public ResponseEntity<MessageResponseDTO> addReviewToVehicle(@PathVariable("id") int id,  @RequestBody MessageDTO messageDTO) {
@@ -108,19 +126,20 @@ public class UserController {
     }
 
     @GetMapping("{id}/note")
-    public ResponseEntity<HashSet<NoteResponseDTO>> getNotesForUser(
-            @PathVariable("id") Integer id){
-        List<Note> notes = userService.findNotesByUserId(id);
+    public ResponseEntity<Map<String, Object>> getNotesForUser(
+            @PathVariable("id") int id, @RequestParam(defaultValue = "0") Integer page,
+            @RequestParam(defaultValue = "4") Integer size){
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Note> notes = userService.findNotesByUserId(id, pageable);
+        Map<String, Object> map = new HashMap<>();
         HashSet<NoteResponseDTO> noteResponseDTOS = new HashSet<>();
-        if(notes.isEmpty()) {
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
-
-        }else{
-            for (Note note: notes) {
-                noteResponseDTOS.add(new NoteResponseDTO(note));
-            }
-            return new ResponseEntity<>(noteResponseDTOS, HttpStatus.OK);
+        for (Note note:notes) {
+            noteResponseDTOS.add(new NoteResponseDTO(note));
         }
+
+        map.put("totalCount",noteResponseDTOS.size());
+        map.put("results",noteResponseDTOS);
+        return new ResponseEntity<>(map, HttpStatus.OK);
     }
 
 

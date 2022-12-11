@@ -1,12 +1,11 @@
 package org.tim_18.UberApp.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.tim_18.UberApp.exception.UserNotFoundException;
-import org.tim_18.UberApp.model.Message;
-import org.tim_18.UberApp.model.Note;
-import org.tim_18.UberApp.model.Ride;
-import org.tim_18.UberApp.model.User;
+import org.tim_18.UberApp.model.*;
 import org.tim_18.UberApp.repository.MessageRepository;
 import org.tim_18.UberApp.repository.NoteRepository;
 import org.tim_18.UberApp.repository.RideRepository;
@@ -37,8 +36,8 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public List<User> findAllUsers() {
-        return userRepository.findAll();
+    public Page<User> findAll(Pageable pageable) {
+        return userRepository.findAll(pageable);
     }
 
     public User updateUser(User user) {
@@ -51,8 +50,8 @@ public class UserService {
                 .orElseThrow(() -> new UserNotFoundException("User by id " + id + " was not found"));
     }
 
-    public List<Ride> findRidesForUser(Integer id) {
-        return rideRepository.findRidesForUser(id);
+    public Page<Ride> findRidesForUser(Integer id, Pageable pageable) {
+        return rideRepository.findRidesForUser(id, pageable);
     }
 
     public Ride findRideById(Integer id){
@@ -70,7 +69,8 @@ public class UserService {
     }
 
 
-    public List<Note> findNotesByUserId(Integer id) {
-        return noteRepository.findByUserId(id);
+    public Page<Note> findNotesByUserId(Integer id, Pageable pageable) {
+        return noteRepository.findByUserId(id, pageable);
     }
+
 }
