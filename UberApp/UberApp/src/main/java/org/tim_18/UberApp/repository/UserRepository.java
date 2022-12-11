@@ -9,6 +9,7 @@ import org.tim_18.UberApp.model.User;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Integer> {
@@ -18,4 +19,5 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 
 
     Page<User> findAll(Pageable pageable);
+    List<User> findAll();
 }

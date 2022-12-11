@@ -1,7 +1,6 @@
 package org.tim_18.UberApp.model;
 
 import jakarta.persistence.*;
-import jakarta.websocket.OnError;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -17,12 +16,13 @@ public class Rejection implements Serializable {
     private String reason;
     private Date time;
 
+    @OneToOne(mappedBy = "rejection")
+    private Ride ride;
+
     public Rejection() {}
     public String getReason() {
         return reason;
     }
-    @OneToOne(mappedBy = "rejection")
-    private Ride ride;
 
     public void setReason(String reason) {
         this.reason = reason;
