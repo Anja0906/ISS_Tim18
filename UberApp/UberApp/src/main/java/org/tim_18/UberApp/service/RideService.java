@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -47,6 +48,8 @@ public class RideService {
     public Ride findRideById(Integer id) {
         return rideRepository.findRideById(id);
     }
+
+    public Page<Ride> findRidesForUserPage(Integer id, Pageable pageable) {return rideRepository.findRidesForUserPage(id,pageable);}
 
     //    Called by: acceptRide, cancelRide, endRide, activatePanic, withdrawRide
     public Ride updateRide(Ride ride) {

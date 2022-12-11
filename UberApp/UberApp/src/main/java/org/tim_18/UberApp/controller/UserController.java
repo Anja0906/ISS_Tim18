@@ -3,6 +3,7 @@ package org.tim_18.UberApp.controller;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -10,8 +11,10 @@ import org.tim_18.UberApp.dto.*;
 import org.tim_18.UberApp.dto.driverDTOs.DriverDTO;
 import org.tim_18.UberApp.dto.noteDTOs.NotePostDTO;
 import org.tim_18.UberApp.dto.noteDTOs.NoteResponseDTO;
+import org.tim_18.UberApp.dto.rideDTOs.RideRetDTO;
 import org.tim_18.UberApp.model.*;
 import org.tim_18.UberApp.service.MessageService;
+import org.tim_18.UberApp.service.RideService;
 import org.tim_18.UberApp.service.UserService;
 
 import javax.naming.ldap.HasControls;
@@ -23,14 +26,17 @@ import java.util.*;
 public class UserController {
     private final UserService userService;
     private final MessageService messageService;
+    private final RideService rideService;
 
-    public UserController(UserService userService,MessageService messageService) {
-        this.userService = userService;
+    public UserController(UserService userService,MessageService messageService,RideService rideService) {
+        this.userService    = userService;
         this.messageService = messageService;
+        this.rideService    = rideService;
     }
     @GetMapping("")
-    public ResponseEntity<Map<String, Object>> getUserDetails (@RequestParam(defaultValue = "0") Integer page,
-                                                                  @RequestParam(defaultValue = "4") Integer size) {
+    public ResponseEntity<Map<String, Object>> getUserDetails (
+            @RequestParam(defaultValue = "0") Integer page,
+            @RequestParam(defaultValue = "4") Integer size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<User> users = userService.findAll(pageable);
         Map<String, Object> map = new HashMap<>();
@@ -141,7 +147,6 @@ public class UserController {
         map.put("results",noteResponseDTOS);
         return new ResponseEntity<>(map, HttpStatus.OK);
     }
-
 
 
 }

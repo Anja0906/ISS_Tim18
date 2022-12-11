@@ -258,9 +258,10 @@ public class DriverController {
             @PathVariable("id") int id,
             @RequestParam(defaultValue = "0") Integer page,
             @RequestParam(defaultValue = "4") Integer size,
+            @RequestParam(defaultValue = "start_time") String sort,
             @RequestParam(defaultValue = "2022-12-07T07:00:50") String from,
             @RequestParam(defaultValue = "2022-12-08T10:40:00") String to) {
-        Pageable pageable = PageRequest.of(page, size);
+        Pageable pageable = PageRequest.of(page, size,Sort.by(sort));
         Page<Ride> rides = rideService.findRidesForDriver(id,from,to,pageable);
         System.out.println(rides.getSize());
         System.out.println(rides.toString());

@@ -20,6 +20,7 @@ public interface RideRepository extends JpaRepository<Ride, Integer> {
     Ride findRideById(Integer id);
     @Query(value = "SELECT * FROM rides r INNER JOIN passenger_rides pr on r.id=pr.ride_id WHERE pr.passenger_id = ?1 and date(r.start_time) > ?2 and date(r.start_time) < ?3 and date(r.end_time) >?2 and date(r.end_time) < ?3", nativeQuery = true)
     List<Ride> findRidesByPassengersId(Integer passenger_id, String from, String to);
+
     @Query(value = "SELECT * FROM rides r INNER JOIN passenger_rides pr on r.id=pr.ride_id WHERE pr.passenger_id = ?1 and date(r.start_time) > ?2 and date(r.start_time) < ?3 and date(r.end_time) >?2 and date(r.end_time) < ?3", nativeQuery = true)
     Page<Ride> findRidesByPassengersId(Integer passenger_id, String from, String to, Pageable pageable);
 
