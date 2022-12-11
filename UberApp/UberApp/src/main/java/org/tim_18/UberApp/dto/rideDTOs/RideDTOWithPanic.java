@@ -1,7 +1,6 @@
 package org.tim_18.UberApp.dto.rideDTOs;
 
 import lombok.Data;
-import org.tim_18.UberApp.dto.RejectionDTO;
 import org.tim_18.UberApp.dto.driverDTOs.DriverEmailDTO;
 import org.tim_18.UberApp.dto.passengerDTOs.PassengerEmailDTO;
 import org.tim_18.UberApp.model.*;
@@ -23,7 +22,7 @@ public class RideDTOWithPanic {
     private VehicleType vehicleType;
     private boolean babyTransport;
     private boolean petTransport;
-    private RejectionDTO rejection;
+//    private RejectionDTO rejection;
     private Set<Location> locations = new HashSet<Location>();
     private Status status;
 
@@ -44,7 +43,7 @@ public class RideDTOWithPanic {
         this.vehicleType = vehicleType;
         this.babyTransport = babyTransport;
         this.petTransport = petTransport;
-        this.rejection = new RejectionDTO(rejection);
+//        this.rejection = new RejectionDTO(rejection);
         this.locations = locations;
         this.status = status;
     }

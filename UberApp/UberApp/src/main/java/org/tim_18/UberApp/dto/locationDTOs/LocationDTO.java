@@ -1,4 +1,4 @@
-package org.tim_18.UberApp.dto;
+package org.tim_18.UberApp.dto.locationDTOs;
 
 import org.tim_18.UberApp.model.Location;
 

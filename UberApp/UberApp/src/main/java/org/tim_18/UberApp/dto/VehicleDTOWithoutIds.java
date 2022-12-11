@@ -1,5 +1,6 @@
 package org.tim_18.UberApp.dto;
 
+import org.tim_18.UberApp.dto.locationDTOs.LocationDTO;
 import org.tim_18.UberApp.model.Vehicle;
 import org.tim_18.UberApp.model.VehicleType;
 

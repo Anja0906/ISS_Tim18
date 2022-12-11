@@ -31,15 +31,18 @@ public class RideService {
 
     @Autowired
     private final RideRepository rideRepository;
-    @Autowired
-    ModelMapper modelMapper;
+
 
     public RideService(RideRepository rideRepository) {
         this.rideRepository = rideRepository;
     }
 
-    public List<Ride> findRidesByPassengersId(Integer id) {
-        return rideRepository.findRidesByPassengersId(id);
+    public List<Ride> findRidesByPassengersId(Integer id, String from, String to) {
+        return rideRepository.findRidesByPassengersId(id, from, to);
+    }
+
+    public Page<Ride> findRidesByPassengersId(Integer id, String from, String to, Pageable pageable) {
+        return rideRepository.findRidesByPassengersId(id, from, to, pageable);
     }
 
     public Ride createRide(Ride ride){

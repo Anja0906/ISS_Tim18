@@ -1,7 +1,7 @@
 package org.tim_18.UberApp.dto.rideDTOs;
 
 import lombok.Data;
-import org.tim_18.UberApp.dto.LocationsForRideDTO;
+import org.tim_18.UberApp.dto.locationDTOs.LocationSetDTO;
 import org.tim_18.UberApp.dto.passengerDTOs.PassengerEmailDTO;
 import org.tim_18.UberApp.model.Location;
 import org.tim_18.UberApp.model.Passenger;
@@ -16,7 +16,7 @@ import java.util.Set;
 @Data
 public class RideRecDTO {
     private Integer id;
-    private Set<LocationsForRideDTO> locations;
+    private Set<LocationSetDTO> locations;
     private Set<PassengerEmailDTO> passengers;
     private VehicleType vehicleType;
     private boolean babyTransport;
@@ -30,9 +30,11 @@ public class RideRecDTO {
         for (Location loc : _locations){
             locList.add(loc);
         }
-        Set<LocationsForRideDTO> locationsForRideDTOSet = new HashSet<>();
-        locationsForRideDTOSet.add(new LocationsForRideDTO(locList.get(0), locList.get(1)));
-        this.locations = locationsForRideDTOSet;
+        Set<LocationSetDTO> locationSetDTOSet = new HashSet<>();
+        for (int i = 1; i < locList.size(); i++) {
+            locationSetDTOSet.add(new LocationSetDTO(locList.get(i-1), locList.get(i)));
+        }
+        this.locations = locationSetDTOSet;
         Set<PassengerEmailDTO> passengerSet = new HashSet<>();
         for (Passenger p:passengers) {
             passengerSet.add(new PassengerEmailDTO(p));
