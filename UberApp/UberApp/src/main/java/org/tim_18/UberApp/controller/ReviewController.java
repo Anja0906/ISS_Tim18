@@ -88,19 +88,12 @@ public class ReviewController {
     }
 
     @GetMapping("/{rideId}")
-    public ResponseEntity<Map<String, Object>> getReviewsForRide (@PathVariable("rideId") int id, @RequestParam(defaultValue = "0") Integer page,
-                                                                 @RequestParam(defaultValue = "4") Integer size) {
-        Pageable pageable = PageRequest.of(page, size);
-        Page<Review> reviews = reviewService.findByRideId(id, pageable);
-        Map<String, Object> map = new HashMap<>();
-        HashSet<ReviewDTO> reviewDTOS = new HashSet<>();
-        for (Review review:reviews) {
-            reviewDTOS.add(new ReviewDTO(review));
-        }
-
-        map.put("totalCount",reviewDTOS.size());
-        map.put("results",reviewDTOS);
-        return new ResponseEntity<>(map, HttpStatus.OK);
+    public ResponseEntity<ReviewDTOResponse> getReviewsForRide (@PathVariable("rideId") int id) {
+        PassengerEmailDTO passengerDTO = new PassengerEmailDTO(123,"user@example.com");
+        VehicleReviewDTO vehicleReviewDTO = new VehicleReviewDTO(123,3,"The vehicle was bad and dirty",passengerDTO);
+        DriverReviewDTO driverReviewDTO = new DriverReviewDTO(123,3,"The driver was driving too fast",passengerDTO);
+        ReviewDTOResponse reviewDTOResponse = new ReviewDTOResponse(vehicleReviewDTO,driverReviewDTO);
+        return new ResponseEntity<>(reviewDTOResponse, HttpStatus.OK);
 
     }
 }
