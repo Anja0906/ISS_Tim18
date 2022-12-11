@@ -36,6 +36,10 @@ public class UserService {
         return userRepository.save(user);
     }
 
+    public List<User> findAllUsers() {
+        return userRepository.findAll();
+    }
+
     public Page<User> findAll(Pageable pageable) {
         return userRepository.findAll(pageable);
     }
@@ -55,7 +59,8 @@ public class UserService {
     }
 
     public Ride findRideById(Integer id){
-        return rideRepository.findRideById(id);
+        return rideRepository.findRideById(id)
+                .orElseThrow(() -> new UserNotFoundException("Ride was not found"));
     }
     public void saveMessage(Message message){
         messageRepository.save(message);

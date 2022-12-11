@@ -1,6 +1,7 @@
 package org.tim_18.UberApp.dto.rideDTOs;
 
 import lombok.Data;
+import org.tim_18.UberApp.dto.RejectionDTO;
 import org.tim_18.UberApp.dto.driverDTOs.DriverEmailDTO;
 import org.tim_18.UberApp.dto.locationDTOs.LocationSetDTO;
 import org.tim_18.UberApp.dto.passengerDTOs.PassengerEmailDTO;
@@ -23,7 +24,7 @@ public class RideRetDTO {
     private VehicleType vehicleType;
     private boolean babyTransport;
     private boolean petTransport;
-//    private RejectionDTO rejection;
+    private RejectionDTO rejection;
     private Set<LocationSetDTO> locations;
     private Status status;
 
@@ -44,7 +45,11 @@ public class RideRetDTO {
         this.vehicleType = vehicleType;
         this.babyTransport = babyTransport;
         this.petTransport = petTransport;
-//        this.rejection = new RejectionDTO(rejection);
+        if (rejection == null) {
+            this.rejection = null;
+        }else {
+            this.rejection = new RejectionDTO(rejection);
+        }
         List<Location> locList = new ArrayList<>();
         for (Location loc : _locations){
             locList.add(loc);

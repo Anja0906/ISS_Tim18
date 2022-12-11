@@ -6,6 +6,8 @@ import org.tim_18.UberApp.exception.UserNotFoundException;
 import org.tim_18.UberApp.model.Rejection;
 import org.tim_18.UberApp.repository.RejectionRepository;
 
+import java.util.List;
+
 @Service
 public class RejectionService {
 
@@ -24,4 +26,8 @@ public class RejectionService {
     public Rejection addRejection(Rejection rejection) {
         return rejectionRepository.save(rejection);
     }
+    public List<Rejection> findAll() {
+        return rejectionRepository.findAll();
+    }
+
 }

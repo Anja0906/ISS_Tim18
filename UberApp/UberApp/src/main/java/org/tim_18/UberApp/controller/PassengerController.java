@@ -12,11 +12,14 @@ import org.tim_18.UberApp.dto.FindAllDTO;
 import org.tim_18.UberApp.dto.passengerDTOs.PassengerDTOnoPassword;
 import org.tim_18.UberApp.dto.passengerDTOs.PassengerDTOwithPassword;
 import org.tim_18.UberApp.dto.rideDTOs.RideRetDTO;
+import org.tim_18.UberApp.exception.UserNotFoundException;
 import org.tim_18.UberApp.mapper.passengerDTOmappers.PassengerDTOwithPasswordMapper;
 import org.tim_18.UberApp.model.Passenger;
 import org.tim_18.UberApp.model.Ride;
+import org.tim_18.UberApp.model.UserActivation;
 import org.tim_18.UberApp.service.PassengerService;
 import org.tim_18.UberApp.service.RideService;
+import org.tim_18.UberApp.service.UserActivationService;
 
 import java.util.*;
 
@@ -25,12 +28,14 @@ import java.util.*;
 public class PassengerController {
     private final PassengerService passengerService;
     private final RideService rideService;
+    private final UserActivationService userActivationService;
     @Autowired
     private PassengerDTOwithPasswordMapper dtoWithPasswordMapper;
 
-    public PassengerController(PassengerService passengerService, RideService rideService) {
+    public PassengerController(PassengerService passengerService, RideService rideService, UserActivationService userActivationService) {
         this.passengerService = passengerService;
         this.rideService = rideService;
+        this.userActivationService = userActivationService;
     }
 
     @PostMapping()
@@ -59,24 +64,38 @@ public class PassengerController {
 
 
     @GetMapping("activate/{activationId}")
-    public HttpStatus activateUser(@PathVariable("activationId") Integer id){
-        return HttpStatus.OK;
+    public ResponseEntity<UserActivation> activateUser(@PathVariable("activationId") Integer id){
+        try {
+            UserActivation ua = userActivationService.findUserActivationById(id);
+            return new ResponseEntity<>(ua, HttpStatus.OK);
+        } catch(UserNotFoundException e){
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<PassengerDTOnoPassword> findById(@PathVariable("id") Integer id) {
-        Passenger passenger = passengerService.findById(id);
-        return new ResponseEntity<>(new PassengerDTOnoPassword(passenger), HttpStatus.OK);
+        try {
+            Passenger passenger = passengerService.findById(id);
+            return new ResponseEntity<>(new PassengerDTOnoPassword(passenger), HttpStatus.OK);
+        } catch(UserNotFoundException e){
+            return new ResponseEntity<>(null,HttpStatus.NOT_FOUND);
+        }
     }
 
 
     @PutMapping("/{id}")
     public ResponseEntity<PassengerDTOnoPassword> updatePassenger(@RequestBody PassengerDTOwithPassword dto, @PathVariable("id") Integer id) {
-        dto.setId(id);
-        Passenger updatedPassenger = dtoWithPasswordMapper.fromDTOtoPassenger(dto);
-        updatedPassenger = passengerService.update(updatedPassenger);
-        PassengerDTOnoPassword updatedPassengerDTO = new PassengerDTOnoPassword(updatedPassenger);
-        return new ResponseEntity<>(updatedPassengerDTO, HttpStatus.OK);
+        try {
+            Passenger old = passengerService.findById(id);
+            dto.setId(id);
+            Passenger updatedPassenger = dtoWithPasswordMapper.fromDTOtoPassenger(dto);
+            updatedPassenger = passengerService.update(updatedPassenger);
+            PassengerDTOnoPassword updatedPassengerDTO = new PassengerDTOnoPassword(updatedPassenger);
+            return new ResponseEntity<>(updatedPassengerDTO, HttpStatus.OK);
+        } catch(UserNotFoundException e){
+            return new ResponseEntity<>(null,HttpStatus.NOT_FOUND);
+        }
     }
 
     @GetMapping("/{id}/ride")
@@ -86,16 +105,21 @@ public class PassengerController {
                                                                    @RequestParam(defaultValue = "id") String sort,
                                                                    @RequestParam String from,
                                                                    @RequestParam String to) {
-        Pageable paging = PageRequest.of(page, size, Sort.by(sort));
-        Page<Ride> pagedResult = rideService.findRidesByPassengersId(id, from, to, paging);
-        List<Ride> rides = rideService.findRidesByPassengersId(id, from, to);
-        List<RideRetDTO> ridesDTO = new ArrayList<>() ;
-        for (Ride r : rides) {
-            ridesDTO.add(new RideRetDTO(r));
+        try {
+            Passenger passenger = passengerService.findById(id);
+            Pageable paging = PageRequest.of(page, size, Sort.by(sort));
+            Page<Ride> pagedResult = rideService.findRidesByPassengersId(id, from, to, paging);
+            List<Ride> rides = rideService.findRidesByPassengersId(id, from, to);
+            List<RideRetDTO> ridesDTO = new ArrayList<>();
+            for (Ride r : rides) {
+                ridesDTO.add(new RideRetDTO(r));
+            }
+            Map<String, Object> response = new HashMap<>();
+            response.put("totalcounts", pagedResult.getTotalElements());
+            response.put("results", ridesDTO);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch(UserNotFoundException e){
+            return new ResponseEntity<>(null,HttpStatus.NOT_FOUND);
         }
-        Map<String, Object> response = new HashMap<>();
-        response.put("totalcounts", pagedResult.getTotalElements());
-        response.put("results", ridesDTO);
-        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }
