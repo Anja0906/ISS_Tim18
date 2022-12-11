@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.tim_18.UberApp.dto.driverDTOs.DriverDTOWithoutId;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -45,5 +46,19 @@ public class Driver extends User{
         this.rides = new HashSet<Ride>();
         this.vehicle = vehicle;
     }
+    public Driver(String name, String surname, String profilePicture, String telephoneNumber, String email, String address, String password, boolean blocked, boolean active) {
+        super(name, surname, profilePicture, telephoneNumber, email, address, password, blocked, active);
+        this.documents = new HashSet<Document>();
+        this.rides = new HashSet<Ride>();
+        this.vehicle = null;
+    }
 
+    public void driverUpdate(DriverDTOWithoutId driverDTOWithoutId){
+        setName(driverDTOWithoutId.getName());
+        setSurname(driverDTOWithoutId.getSurname());
+        setProfilePicture(driverDTOWithoutId.getProfilePicture());
+        setTelephoneNumber(driverDTOWithoutId.getTelephoneNumber());
+        setAddress(driverDTOWithoutId.getAddress());
+        setPassword(driverDTOWithoutId.getAddress());
+    }
 }

@@ -1,16 +1,9 @@
 package org.tim_18.UberApp.dto;
 
-import jakarta.persistence.*;
-import org.tim_18.UberApp.model.Driver;
-import org.tim_18.UberApp.model.Location;
 import org.tim_18.UberApp.model.Vehicle;
 import org.tim_18.UberApp.model.VehicleType;
 
-public class VehicleDTO {
-
-    private Integer id;
-    private Integer driverId;
-
+public class VehicleDTOWithoutIds {
     private VehicleType vehicleType;
     private String model;
     private String licenseNumber;
@@ -22,11 +15,9 @@ public class VehicleDTO {
 
 
 
-    public VehicleDTO() {}
+    public VehicleDTOWithoutIds() {}
 
-    public VehicleDTO(Integer id, Integer driverId, VehicleType vehicleType, String model, String licenseNumber, LocationDTO currentLocation, Integer passengerSeats, Boolean babyTransport, Boolean petTransport) {
-        this.id                 = id;
-        this.driverId           = driverId;
+    public VehicleDTOWithoutIds(VehicleType vehicleType, String model, String licenseNumber, LocationDTO currentLocation, Integer passengerSeats, Boolean babyTransport, Boolean petTransport) {
         this.vehicleType        = vehicleType;
         this.model              = model;
         this.licenseNumber      = licenseNumber;
@@ -36,8 +27,8 @@ public class VehicleDTO {
         this.petTransport       = petTransport;
     }
 
-    public VehicleDTO(Vehicle vehicle,LocationDTO locationDTO){
-        this(vehicle.getId(), vehicle.getDriver().getId(), vehicle.getVehicleType(),
+    public VehicleDTOWithoutIds(Vehicle vehicle, LocationDTO locationDTO){
+        this(vehicle.getVehicleType(),
                 vehicle.getModel(),vehicle.getLicenseNumber(),
                 locationDTO,
                 vehicle.getPassengerSeats(),vehicle.getBabyTransport(),
@@ -50,13 +41,6 @@ public class VehicleDTO {
 
     public void setCurrentLocation(LocationDTO currentLocation) {
         this.currentLocation = currentLocation;
-    }
-
-    public Integer getDriverId() {
-        return driverId;
-    }
-    public void setDriverId(Integer integer) {
-        this.driverId = driverId;
     }
 
     public String getModel() {
@@ -80,12 +64,6 @@ public class VehicleDTO {
         this.licenseNumber = licenseNumber;
     }
 
-    public Integer getId() {
-        return id;
-    }
-    public void setId(Integer id) {
-        this.id = id;
-    }
 
     public Integer getPassengerSeats() {
         return passengerSeats;
@@ -109,20 +87,5 @@ public class VehicleDTO {
 
     public void setPetTransport(Boolean petTransport) {
         this.petTransport = petTransport;
-    }
-
-    @Override
-    public String toString() {
-        return "VehicleDTO{" +
-                "id=" + id +
-                ", driverId=" + driverId +
-                ", vehicleType=" + vehicleType +
-                ", model='" + model + '\'' +
-                ", licenseNumber='" + licenseNumber + '\'' +
-                ", currentLocation=" + currentLocation +
-                ", passengerSeats=" + passengerSeats +
-                ", babyTransport=" + babyTransport +
-                ", petTransport=" + petTransport +
-                '}';
     }
 }

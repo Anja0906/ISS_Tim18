@@ -16,6 +16,14 @@ import org.tim_18.UberApp.model.Status;
 import org.tim_18.UberApp.repository.RideRepository;
 
 import java.util.Date;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.tim_18.UberApp.model.Ride;
+import org.tim_18.UberApp.repository.RideRepository;
+
+import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
 
 @Service
@@ -54,4 +62,7 @@ public class RideService {
     public Ride updateRide(Ride ride) {
         return rideRepository.save(ride);
     }
+
+    public Page<Ride> findRidesForDriver(Integer id, LocalDateTime start, LocalDateTime end, Pageable pageable){return rideRepository.findRidesForDriver(id,start,end,pageable);}
+
 }

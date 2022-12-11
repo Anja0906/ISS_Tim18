@@ -41,7 +41,7 @@ public class WorkTimeController {
 
     @PostMapping("/add")
     public ResponseEntity<WorkTime> addWorkTIme(@RequestBody WorkTime workTime) {
-        WorkTime newWorkTime = workTimeService.addWordTime(workTime);
+        WorkTime newWorkTime = workTimeService.addWorkTime(workTime);
         return new ResponseEntity<>(newWorkTime, HttpStatus.CREATED);
     }
 
