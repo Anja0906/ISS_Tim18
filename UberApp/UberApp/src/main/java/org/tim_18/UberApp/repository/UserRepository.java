@@ -1,7 +1,10 @@
 package org.tim_18.UberApp.repository;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.tim_18.UberApp.model.Review;
 import org.tim_18.UberApp.model.User;
 
 import java.util.ArrayList;
@@ -14,5 +17,5 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     void deleteById(Integer id);
 
 
-
+    Page<User> findAll(Pageable pageable);
 }

@@ -2,6 +2,8 @@ package org.tim_18.UberApp.service;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.tim_18.UberApp.exception.UserNotFoundException;
 import org.tim_18.UberApp.model.Message;
@@ -39,7 +41,7 @@ public class MessageService {
     public Message updateMessage(Message message) {
         return messageRepository.save(message);
     }
-    public ArrayList<Message> findMessagesByUserId(Integer id) {
-        return messageRepository.findMessagesByUserId(id);
+    public Page<Message> findMessagesByUserId(Integer id, Pageable pageable) {
+        return messageRepository.findMessagesByUserId(id, pageable);
     }
 }

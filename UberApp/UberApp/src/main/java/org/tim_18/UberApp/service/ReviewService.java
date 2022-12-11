@@ -1,6 +1,8 @@
 package org.tim_18.UberApp.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.tim_18.UberApp.model.Review;
 import org.tim_18.UberApp.model.Ride;
@@ -39,16 +41,22 @@ public class ReviewService {
         return vehicleRepository.findById(id).get();
     }
 
-    public HashSet<Review> findByVehicleId(int id) {
-        return reviewRepository.findByVehicleId(id);
+
+
+    public Page<Review> findAll(Pageable page){
+        return reviewRepository.findAll(page);
     }
 
-    public HashSet<Review> findByRideId(int id) {
-        return reviewRepository.findByRideId(id);
+    public Page<Review> findByRideId(int id, Pageable pageable) {
+        return reviewRepository.findByRideId(id, pageable);
     }
 
-    public HashSet<Review> findByDriverId(int id) {
-        return reviewRepository.findByDriverId(id);
+    public Page<Review> findByDriverId(int id, Pageable pageable) {
+        return reviewRepository.findByDriverId(id, pageable);
+    }
+
+    public Page<Review> findByVehicleId(int id, Pageable pageable) {
+        return reviewRepository.findByVehicleId(id, pageable);
     }
     public Review addReview(Review review) {
         return reviewRepository.save(review);
