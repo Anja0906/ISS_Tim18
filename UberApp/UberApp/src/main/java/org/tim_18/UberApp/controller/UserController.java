@@ -50,19 +50,25 @@ public class UserController {
         return new ResponseEntity<>(map, HttpStatus.OK);
 
     }
-    @GetMapping("{id}/ride")
-    public ResponseEntity<Map<String, Object>> getRidesForUsers(@PathVariable("id") int id, @RequestParam(defaultValue = "0") Integer page,
-                                                       @RequestParam(defaultValue = "4") Integer size) {
-        Pageable pageable = PageRequest.of(page, size);
-        Page<Ride> rides = userService.findRidesForUser(id, pageable);
-        Map<String, Object> map = new HashMap<>();
-//        HashSet<RideDTO> ridesDTO = new HashSet<>();
-//        for (Ride ride:rides) {
-//            ridesDTO.add(new Ride(ride));
-//        }
+    @GetMapping("/{id}/ride")
+    public ResponseEntity<Map<String, Object>> getRides (
+            @PathVariable("id") int id,
+            @RequestParam(defaultValue = "0") Integer page,
+            @RequestParam(defaultValue = "4") Integer size,
+            @RequestParam(defaultValue = "start_time") String sort,
+            @RequestParam(defaultValue = "2022-12-07T07:00:50") String from,
+            @RequestParam(defaultValue = "2022-12-08T10:40:00") String to) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sort));
+        Page<Ride> rides = rideService.findRidesForUserPage(id,pageable);
 
-        map.put("totalCount",rides.getSize());
-        map.put("results",rides);
+        Map<String, Object> map = new HashMap<>();
+        HashSet<RideRetDTO> ridesDTO = new HashSet<>();
+        for (Ride ride: rides){
+            ridesDTO.add(new RideRetDTO(ride));
+        }
+
+        map.put("totalCount",ridesDTO.size());
+        map.put("results",ridesDTO);
         return new ResponseEntity<>(map, HttpStatus.OK);
     }
     @GetMapping("{id}/message")
