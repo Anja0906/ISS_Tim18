@@ -5,7 +5,14 @@ INSERT INTO users (active, address, blocked, email, name, profile_picture, surna
 VALUES (false, 'Strumicka 5', true, 'email1', 'name1', 'profile_picture1', 'surname1', 'password1', 'telephone_number1');
 INSERT INTO users (active, address, blocked, email, name, profile_picture, surname, password, telephone_number)
 VALUES (false, 'Narodnog fronta 5', true, 'email2', 'name3', 'profile_picture5', 'surname4', 'password2', 'telephone_number2');
-
+INSERT INTO users (active, address, blocked, email, name, profile_picture, surname, password, telephone_number)
+VALUES (false, 'Strumicka 6', true, 'email', 'name', 'profile_picture', 'surname', 'password', 'telephone_number3');
+INSERT INTO users (active, address, blocked, email, name, profile_picture, surname, password, telephone_number)
+VALUES (false, 'Strumicka 5', true, 'email1', 'name1', 'profile_picture1', 'surname1', 'password1', 'telephone_number4');
+INSERT INTO users (active, address, blocked, email, name, profile_picture, surname, password, telephone_number)
+VALUES (false, 'Narodnog fronta 5', true, 'email2', 'name3', 'profile_picture5', 'surname4', 'password2', 'telephone_number5');
+INSERT INTO users (active, address, blocked, email, name, profile_picture, surname, password, telephone_number)
+VALUES (false, 'Strumicka 6', true, 'email', 'name', 'profile_picture', 'surname', 'password', 'telephone_number6');
 
 
 # users_activations
@@ -35,15 +42,15 @@ INSERT INTO work_time (end, start, driver_id) VALUES ('2022-12-7 01:55:00', '202
 
 # --rides--
 INSERT INTO rides (baby_transport, end_time, estimated_time_in_minutes, pet_transport, start_time, status, total_cost, vehicle_type, driver_id, panic_id, rejection_id)
-VALUES (true, '2022-12-11 23:59:59', 1, false, '2022-12-10 05:00:00', 0, 500, 0, '1', '1', '1');
+VALUES (true, '2022-12-11 23:59:59', 1, false, '2022-12-10 05:00:00', 0, 500, 0, '2', '1', '1');
 INSERT INTO rides (baby_transport, end_time, estimated_time_in_minutes, pet_transport, start_time, status, total_cost, vehicle_type, driver_id, panic_id, rejection_id)
 VALUES (true, '2022-12-7 07:55:00', 5, false, '2022-12-7 07:40:00', 0, 500, 0, '1', '2', '2');
 INSERT INTO rides (baby_transport, end_time, estimated_time_in_minutes, pet_transport, start_time, status, total_cost, vehicle_type, driver_id, panic_id, rejection_id)
 VALUES (true, '2022-12-7 07:55:00', 15, false, '2022-12-7 07:40:00', 0, 500, 0, '1', '3', '3');
 INSERT INTO rides (baby_transport, end_time, estimated_time_in_minutes, pet_transport, start_time, status, total_cost, vehicle_type, driver_id, panic_id, rejection_id)
-VALUES (true, '2022-12-11 23:59:59', 1, false, '2022-12-10 05:00:00', 0, 500, 0, '1', '1', '1');
+VALUES (true, '2022-12-11 23:59:59', 1, false, '2022-12-10 05:00:00', 0, 500, 0, '3', '1', '1');
 INSERT INTO rides (baby_transport, end_time, estimated_time_in_minutes, pet_transport, start_time, status, total_cost, vehicle_type, driver_id, panic_id, rejection_id)
-VALUES (true, '2022-12-7 07:55:00', 5, false, '2022-12-7 07:40:00', 0, 500, 0, '1', '2', '2');
+VALUES (true, '2022-12-11 22:55:00', 5, false, '2022-12-11 20:40:00', 0, 500, 0, '1', '2', '2');
 INSERT INTO rides (baby_transport, end_time, estimated_time_in_minutes, pet_transport, start_time, status, total_cost, vehicle_type, driver_id, panic_id, rejection_id)
 VALUES (true, '2022-12-7 07:55:00', 15, false, '2022-12-7 07:40:00', 0, 500, 0, '1', '3', '3');
 
@@ -84,7 +91,7 @@ INSERT INTO rejections (id, reason, time) VALUES ('3', 'sjchjshc', '2022-07-12 0
 
 # --passenger--
 INSERT INTO passenger (id, passenger_id) VALUES ('4', '1');
-INSERT INTO passenger (id, passenger_id) VALUES ('2', '2');
+INSERT INTO passenger (id, passenger_id) VALUES ('5', '2');
 INSERT INTO passenger (id, passenger_id) VALUES ('6', '3');
 
 # --locations--
@@ -121,6 +128,7 @@ INSERT INTO passenger_rides (passenger_id, ride_id) VALUES (4, 3);
 INSERT INTO passenger_rides (passenger_id, ride_id) VALUES (1, 4);
 INSERT INTO passenger_rides (passenger_id, ride_id) VALUES (1, 5);
 INSERT INTO passenger_rides (passenger_id, ride_id) VALUES (1, 6);
+INSERT INTO passenger_rides (passenger_id, ride_id) VALUES (4, 5);
 
 # SELECT * FROM passenger_rides pr NATURAL JOIN rides rid where rid.driver_id = 1 OR pr.passenger_id = 1;
 #  SELECT * FROM rides rid natural join passenger p where rid.driver_id = 1 OR p.id = 1;

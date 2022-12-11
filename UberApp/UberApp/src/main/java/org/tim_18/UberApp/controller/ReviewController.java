@@ -34,11 +34,9 @@ public class ReviewController {
         review.setComment(reviewPostDTO.getComment());
         review.setRide(reviewService.getRideById(rideId));
         reviewService.save(review);
-        System.out.println(review.toString());
         PassengerEmailDTO passengerEmailDTO = new PassengerEmailDTO(1,"bane");
         ReviewDTO reviewDTO = new ReviewDTO(review,passengerEmailDTO);
-        System.out.println(reviewDTO.toString());
-        return new ResponseEntity<>(reviewDTO, HttpStatus.CREATED);
+        return new ResponseEntity<>(reviewDTO, HttpStatus.OK);
     }
 
     @GetMapping("/vehicle/{id}")
@@ -64,11 +62,9 @@ public class ReviewController {
         review.setComment(reviewPostDTO.getComment());
         review.setRide(reviewService.getRideById(rideId));
         reviewService.save(review);
-        System.out.println(review.toString());
         PassengerEmailDTO passengerEmailDTO = new PassengerEmailDTO(1,"bane");
         ReviewDTO reviewDTO = new ReviewDTO(review,passengerEmailDTO);
-        System.out.println(reviewDTO.toString());
-        return new ResponseEntity<>(reviewDTO, HttpStatus.CREATED);
+        return new ResponseEntity<>(reviewDTO, HttpStatus.OK);
     }
 
     @GetMapping("/driver/{id}")

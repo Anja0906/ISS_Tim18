@@ -34,7 +34,7 @@ public class VehicleController {
             vehicle.getCurrentLocation().setLatitude(locationDTO.getLongitude());
             vehicle.getCurrentLocation().setLongitude(locationDTO.getLongitude());
             Vehicle updateVehicle = vehicleService.updateVehicle(vehicle);
-            return new ResponseEntity<>(HttpStatus.OK);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (UserNotFoundException userNotFoundException) {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }

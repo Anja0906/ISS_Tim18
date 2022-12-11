@@ -43,7 +43,7 @@ public class PassengerController {
         Passenger passenger = dtoWithPasswordMapper.fromDTOtoPassenger(dto);
         passenger = passengerService.addPassenger(passenger);
         PassengerDTOnoPassword retDto = new PassengerDTOnoPassword(passenger);
-        return new ResponseEntity<>(retDto, HttpStatus.CREATED);
+        return new ResponseEntity<>(retDto, HttpStatus.OK);
     }
 
     @GetMapping()
@@ -57,19 +57,20 @@ public class PassengerController {
             passengersDTO.add(new PassengerDTOnoPassword(p));
         }
         Map<String, Object> response = new HashMap<>();
-        response.put("totalcounts", pagedResult.getTotalElements());
+        response.put("totalCount", pagedResult.getTotalElements());
         response.put("results", passengersDTO);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
 
     @GetMapping("activate/{activationId}")
-    public ResponseEntity<UserActivation> activateUser(@PathVariable("activationId") Integer id){
+    public ResponseEntity activateUser(@PathVariable("activationId") Integer id){
         try {
             UserActivation ua = userActivationService.findUserActivationById(id);
-            return new ResponseEntity<>(ua, HttpStatus.OK);
+            ua.getUser().setActive(true);
+            return new ResponseEntity<>(HttpStatus.OK);
         } catch(UserNotFoundException e){
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
@@ -103,8 +104,8 @@ public class PassengerController {
                                                                    @RequestParam(defaultValue = "0") Integer page,
                                                                    @RequestParam(defaultValue = "4") Integer size,
                                                                    @RequestParam(defaultValue = "id") String sort,
-                                                                   @RequestParam String from,
-                                                                   @RequestParam String to) {
+                                                                   @RequestParam (defaultValue = "2021-10-10T10:00")String from,
+                                                                   @RequestParam (defaultValue = "2023-10-10T10:00")String to) {
         try {
             Passenger passenger = passengerService.findById(id);
             Pageable paging = PageRequest.of(page, size, Sort.by(sort));

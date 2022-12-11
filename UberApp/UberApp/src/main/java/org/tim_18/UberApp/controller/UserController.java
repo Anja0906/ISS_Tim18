@@ -92,7 +92,7 @@ public class UserController {
         Message message = messageFromMessageDTO(id, messageDTO);
         userService.saveMessage(message);
         MessageResponseDTO messageResponseDTO = new MessageResponseDTO(message);
-        return new ResponseEntity<>(messageResponseDTO, HttpStatus.CREATED);
+        return new ResponseEntity<>(messageResponseDTO, HttpStatus.OK);
     }
 
     private Message messageFromMessageDTO(Integer id, MessageDTO messageDTO){
