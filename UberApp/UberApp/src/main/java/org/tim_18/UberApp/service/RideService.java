@@ -53,6 +53,6 @@ public class RideService {
         return rideRepository.save(ride);
     }
 
-    public Page<Ride> findRidesForDriver(Integer id, LocalDateTime start, LocalDateTime end, Pageable pageable){return rideRepository.findRidesForDriver(id,start,end,pageable);}
+    public Page<Ride> findRidesForDriver(Integer id, String start, String end, Pageable pageable){return rideRepository.findRidesForDriver(id,start,end,pageable);}
 
 }
