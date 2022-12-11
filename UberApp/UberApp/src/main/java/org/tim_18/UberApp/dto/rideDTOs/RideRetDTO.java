@@ -1,9 +1,8 @@
 package org.tim_18.UberApp.dto.rideDTOs;
 
 import lombok.Data;
-import org.tim_18.UberApp.dto.LocationsForRideDTO;
-import org.tim_18.UberApp.dto.RejectionDTO;
 import org.tim_18.UberApp.dto.driverDTOs.DriverEmailDTO;
+import org.tim_18.UberApp.dto.locationDTOs.LocationSetDTO;
 import org.tim_18.UberApp.dto.passengerDTOs.PassengerEmailDTO;
 import org.tim_18.UberApp.model.*;
 
@@ -24,13 +23,13 @@ public class RideRetDTO {
     private VehicleType vehicleType;
     private boolean babyTransport;
     private boolean petTransport;
-    private RejectionDTO rejection;
-    private Set<LocationsForRideDTO> locations;
+//    private RejectionDTO rejection;
+    private Set<LocationSetDTO> locations;
     private Status status;
 
     public RideRetDTO(){}
 
-    public RideRetDTO(Integer id, String startTime, String endTime, long totalCost, Driver driver, Set<Passenger> passengers, int estimatedTimeInMinutes, VehicleType vehicleType, boolean babyTransport, boolean petTransport, Rejection rejection, Set<Location> locations, Status status) {
+    public RideRetDTO(Integer id, String startTime, String endTime, long totalCost, Driver driver, Set<Passenger> passengers, int estimatedTimeInMinutes, VehicleType vehicleType, boolean babyTransport, boolean petTransport, Rejection rejection, Set<Location> _locations, Status status) {
         this.id = id;
         this.startTime = startTime;
         this.endTime = endTime;
@@ -45,13 +44,16 @@ public class RideRetDTO {
         this.vehicleType = vehicleType;
         this.babyTransport = babyTransport;
         this.petTransport = petTransport;
-        this.rejection = new RejectionDTO(rejection);
+//        this.rejection = new RejectionDTO(rejection);
         List<Location> locList = new ArrayList<>();
-        for (Location loc : locations){
+        for (Location loc : _locations){
             locList.add(loc);
         }
-        Set<LocationsForRideDTO> locationsForRideDTOSet = new HashSet<>();
-        locationsForRideDTOSet.add(new LocationsForRideDTO(locList.get(0), locList.get(1)));
+        Set<LocationSetDTO> locationSetDTOSet = new HashSet<>();
+        for (int i = 1; i < locList.size(); i++) {
+            locationSetDTOSet.add(new LocationSetDTO(locList.get(i-1), locList.get(i)));
+        }
+        this.locations = locationSetDTOSet;
         this.status = status;
     }
     public RideRetDTO(Ride ride){
@@ -60,5 +62,9 @@ public class RideRetDTO {
                 ride.getEstimatedTimeInMinutes(), ride.getVehicleType(), ride.isBabyTransport(),
                 ride.isPetTransport(), ride.getRejection(), ride.getLocations(), ride.getStatus());
 
+    }
+
+    public static Ride fromDTOtoRide(RideRecDTO dto) {
+        return null;
     }
 }

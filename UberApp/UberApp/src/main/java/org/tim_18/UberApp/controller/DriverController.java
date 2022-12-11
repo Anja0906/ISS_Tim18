@@ -1,6 +1,5 @@
 package org.tim_18.UberApp.controller;
 
-import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -11,20 +10,17 @@ import org.tim_18.UberApp.dto.*;
 
 import org.tim_18.UberApp.dto.driverDTOs.DriverDTO;
 import org.tim_18.UberApp.dto.driverDTOs.DriverDTOWithoutId;
+import org.tim_18.UberApp.dto.locationDTOs.LocationDTO;
 import org.tim_18.UberApp.model.Document;
 import org.tim_18.UberApp.model.Driver;
 import org.tim_18.UberApp.model.Vehicle;
 import org.tim_18.UberApp.service.DocumentService;
 import org.tim_18.UberApp.service.DriverService;
 import org.tim_18.UberApp.service.VehicleService;
-import org.tim_18.UberApp.dto.driverDTOs.DriverDTO;
-import org.tim_18.UberApp.dto.driverDTOs.DriverDTOWithoutId;
 import org.tim_18.UberApp.exception.UserNotFoundException;
-import org.tim_18.UberApp.mapper.DocumentDTOMapper;
 import org.tim_18.UberApp.model.*;
 import org.tim_18.UberApp.service.*;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;

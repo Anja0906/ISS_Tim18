@@ -50,4 +50,8 @@ public class ReviewService {
     public HashSet<Review> findByDriverId(int id) {
         return reviewRepository.findByDriverId(id);
     }
+    public Review addReview(Review review) {
+        return reviewRepository.save(review);
+    }
+
 }
