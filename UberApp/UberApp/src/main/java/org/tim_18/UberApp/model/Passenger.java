@@ -19,6 +19,7 @@ public class Passenger extends User {
 
     @ManyToMany(targetEntity = Location.class,cascade = {CascadeType.ALL}, fetch = FetchType.LAZY)
     private Set<Location> favouriteLocations = new HashSet<Location>();
+    @JsonIgnore
     @ManyToMany(fetch = FetchType.LAZY, cascade = {
             CascadeType.PERSIST,
             CascadeType.MERGE

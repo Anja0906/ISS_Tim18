@@ -4,12 +4,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.tim_18.UberApp.dto.FindAllDTO;
 import org.tim_18.UberApp.dto.passengerDTOs.PassengerDTOnoPassword;
 import org.tim_18.UberApp.dto.passengerDTOs.PassengerDTOwithPassword;
+import org.tim_18.UberApp.dto.rideDTOs.RideRetDTO;
 import org.tim_18.UberApp.mapper.passengerDTOmappers.PassengerDTOwithPasswordMapper;
 import org.tim_18.UberApp.model.Passenger;
 import org.tim_18.UberApp.model.Ride;
@@ -78,11 +80,22 @@ public class PassengerController {
     }
 
     @GetMapping("/{id}/ride")
-    public ResponseEntity<FindAllDTO<Ride>> findPassengersRides(@PathVariable("id") Integer id, @RequestParam(defaultValue = "0") Integer page,
-                                                                   @RequestParam(defaultValue = "4") Integer size) {
-        List<Ride> rides = rideService.findRidesByPassengersId(id);
-        FindAllDTO<Ride> ridesDTO = new FindAllDTO<>(rides);
-        return new ResponseEntity<>(ridesDTO, HttpStatus.OK);
-
+    public ResponseEntity<Map<String, Object>> findPassengersRides(@PathVariable("id") Integer id,
+                                                                   @RequestParam(defaultValue = "0") Integer page,
+                                                                   @RequestParam(defaultValue = "4") Integer size,
+                                                                   @RequestParam(defaultValue = "id") String sort,
+                                                                   @RequestParam String from,
+                                                                   @RequestParam String to) {
+        Pageable paging = PageRequest.of(page, size, Sort.by(sort));
+        Page<Ride> pagedResult = rideService.findRidesByPassengersId(id, from, to, paging);
+        List<Ride> rides = rideService.findRidesByPassengersId(id, from, to);
+        List<RideRetDTO> ridesDTO = new ArrayList<>() ;
+        for (Ride r : rides) {
+            ridesDTO.add(new RideRetDTO(r));
+        }
+        Map<String, Object> response = new HashMap<>();
+        response.put("totalcounts", pagedResult.getTotalElements());
+        response.put("results", ridesDTO);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

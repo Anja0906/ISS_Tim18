@@ -2,6 +2,7 @@ package org.tim_18.UberApp.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import org.tim_18.UberApp.dto.DocumentDTO;
 
 import java.io.Serializable;
 
@@ -13,7 +14,7 @@ public class Document implements Serializable {
     @Column(name = "id", nullable = false)
     private Integer id;
     private String name;
-    private String image;
+    private String documentImage;
     @JsonIgnore
     @ManyToOne(cascade = {CascadeType.ALL})
     @JoinColumn(name = "driver_id", nullable=false)
@@ -22,11 +23,18 @@ public class Document implements Serializable {
     public Document() {
     }
 
-    public Document(Integer id, String name, String image, Driver driver) {
+    public Document(Integer id, String name, String documentImage, Driver driver) {
         this.id     = id;
         this.name   = name;
-        this.image  = image;
+        this.documentImage  = documentImage;
         this.driver = driver;
+    }
+
+    public Document makeDocumentFromDTO(DocumentDTO documentDTO,Driver driver){
+        setName(documentDTO.getName());
+        setDocumentImage(documentDTO.getDocumentImage());
+        setDriver(driver);
+        return this;
     }
 
     public Integer getId() {
@@ -45,12 +53,12 @@ public class Document implements Serializable {
         this.name = name;
     }
 
-    public String getImage() {
-        return image;
+    public String getDocumentImage() {
+        return documentImage;
     }
 
-    public void setImage(String image) {
-        this.image = image;
+    public void setDocumentImage(String documentImage) {
+        this.documentImage = documentImage;
     }
 
     public Driver getDriver() {

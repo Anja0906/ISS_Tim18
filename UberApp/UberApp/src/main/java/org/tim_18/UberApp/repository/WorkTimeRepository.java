@@ -1,5 +1,7 @@
 package org.tim_18.UberApp.repository;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.tim_18.UberApp.model.WorkTime;
@@ -16,7 +18,7 @@ public interface WorkTimeRepository extends JpaRepository<WorkTime,Integer> {
     ArrayList<WorkTime> findByDriverId(Integer id);
 
     void deleteWorkTimeById(Integer id);
-    @Query(value = "SELECT * FROM work_time WHERE driver_id = ?1 and startdate<?1 and enddate>?1", nativeQuery = true)
-    ArrayList<WorkTime> findWorkTimesByDate(Integer id, LocalDateTime startDate,LocalDateTime endTime);
+    @Query(value = "SELECT * FROM work_time WHERE driver_id = ?1 and work_time.start>?2 and work_time.end<?3", nativeQuery = true)
+    Page<WorkTime> findWorkTimesByDate(Integer id, LocalDateTime start, LocalDateTime end, Pageable pageable);
 
 }

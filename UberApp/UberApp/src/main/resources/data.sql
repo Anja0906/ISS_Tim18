@@ -24,32 +24,30 @@ INSERT INTO drivers (id, vehicle_id) VALUES ('2', '2');
 INSERT INTO drivers (id, vehicle_id) VALUES ('3', '3');
 
 # documents
-INSERT INTO documents (id, image, name, driver_id) VALUES ('1', 'hkdhfshdfj', 'hsgdgadg', '1');
-INSERT INTO documents (id, image, name, driver_id) VALUES ('2', 'asjhdjhasjcfh', 'ajshdjsahc', '2');
-INSERT INTO documents (id, image, name, driver_id) VALUES ('3', 'ajshdjsh', 'jashjcshjc', '3');
+INSERT INTO documents (id, document_image, name, driver_id) VALUES ('1', 'hkdhfshdfj', 'hsgdgadg', '1');
+INSERT INTO documents (id, document_image, name, driver_id) VALUES ('2', 'asjhdjhasjcfh', 'ajshdjsahc', '2');
+INSERT INTO documents (id, document_image, name, driver_id) VALUES ('3', 'ajshdjsh', 'jashjcshjc', '3');
 
 # --work_time--
-INSERT INTO work_time (end_time, start_time, driver_id) VALUES ('2022-12-7 01:55:00', '2022-12-7 01:10:00', '1');
-INSERT INTO work_time (end_time, start_time, driver_id) VALUES ('2022-12-7 01:55:00', '2022-12-7 01:10:00', '2');
-INSERT INTO work_time (end_time, start_time, driver_id) VALUES ('2022-12-7 01:55:00', '2022-12-7 01:10:00', '3');
+INSERT INTO work_time (end, start, driver_id) VALUES ('2022-12-7 01:55:00', '2022-12-7 01:10:00', '1');
+INSERT INTO work_time (end, start, driver_id) VALUES ('2022-12-7 01:55:00', '2022-12-7 01:10:00', '2');
+INSERT INTO work_time (end, start, driver_id) VALUES ('2022-12-7 01:55:00', '2022-12-7 01:10:00', '3');
 
 # --rides--
 INSERT INTO rides (baby_transport, end_time, estimated_time_in_minutes, pet_transport, start_time, status, total_cost, vehicle_type, driver_id, panic_id, rejection_id)
-VALUES (true, '2022-12-7 07:55:00', 15, false, '2022-12-7 07:40:00', 0, 500, 0, '1', '1', '1');
+VALUES (true, '2022-12-11 23:59:59', 1, false, '2022-12-10 05:00:00', 0, 500, 0, '1', '1', '1');
 INSERT INTO rides (baby_transport, end_time, estimated_time_in_minutes, pet_transport, start_time, status, total_cost, vehicle_type, driver_id, panic_id, rejection_id)
-VALUES (true, '2022-12-7 07:55:00', 15, false, '2022-12-7 07:40:00', 0, 500, 0, '2', '2', '2');
+VALUES (true, '2022-12-7 07:55:00', 5, false, '2022-12-7 07:40:00', 0, 500, 0, '1', '2', '2');
 INSERT INTO rides (baby_transport, end_time, estimated_time_in_minutes, pet_transport, start_time, status, total_cost, vehicle_type, driver_id, panic_id, rejection_id)
-VALUES (true, '2022-12-7 07:55:00', 15, false, '2022-12-7 07:40:00', 0, 500, 0, '3', '3', '3');
-INSERT INTO rides (baby_transport, end_time, estimated_time_in_minutes, pet_transport, start_time, status, total_cost, vehicle_type, driver_id, panic_id, rejection_id)
-VALUES (true, '2022-12-11 23:59:59', 15, false, '2022-12-10 05:00:00', 0, 500, 0, '4', '1', '1');
+VALUES (true, '2022-12-7 07:55:00', 15, false, '2022-12-7 07:40:00', 0, 500, 0, '1', '3', '3');
 
 # --vehicle--
-INSERT INTO vehicle (id, license_number, model, vehicle_type,current_location_id, driver_id)
-VALUES ('1', 'NS12312', 'Skoda fabia', 1, 2, 1);
-INSERT INTO vehicle (id, license_number, model, vehicle_type,current_location_id, driver_id)
-VALUES ('2', 'NS45678', 'Skoda fabia', 0, 3, 2);
-INSERT INTO vehicle (id, license_number, model, vehicle_type,current_location_id, driver_id)
-VALUES ('3', 'NS 567 ad', 'Skoda fabia', 2, 1, 3);
+INSERT INTO vehicle (id, license_number, vehicle_type, model,  current_location_id, driver_id, passenger_seats, baby_transport, pet_transport)
+VALUES ('1', 'NS12312', 1, 'Skoda fabia',  2, 1, 3, true, true);
+INSERT INTO vehicle (id, license_number, vehicle_type, model,  current_location_id, driver_id, passenger_seats, baby_transport, pet_transport)
+VALUES ('2', 'NS45678',  0, 'Skoda fabia', 3, 2, 3, true, true);
+INSERT INTO vehicle (id, license_number, vehicle_type, model,  current_location_id, driver_id, passenger_seats, baby_transport, pet_transport)
+VALUES ('3', 'NS 567 ad', 2,'Skoda fabia', 1, 3, 3, true, true);
 
 
 # --panics--
@@ -93,7 +91,7 @@ VALUES ('jshdjsahdh', '54478412154', '875154444', '3');
 INSERT INTO locations (address, latitude, longitude, ride_id)
 VALUES ('asbdsabjc', '515555', '897456', '2');
 INSERT INTO locations (address, latitude, longitude, ride_id)
-VALUES ('jshdjsahdh', '54478412154', '875154444', '1');
+VALUES ('Bulevar oslobodjenja 46', '45.267136', '19.833549', '1');
 INSERT INTO locations (address, latitude, longitude, ride_id)
 VALUES ('asbdsabjc', '515555', '897456', '3');
 
@@ -109,6 +107,11 @@ INSERT INTO administrators (name, profile_picture, surname, password, username)
 VALUES ('shdfjhsdjf', 'asbfhasfj', 'petkovic', 'iahscbsjhc', 'ajshcuhawuch');
 INSERT INTO administrators (name, profile_picture, surname, password, username)
 VALUES ('VDsgfsjhfka', 'asbfhasfj', 'petkovic', 'scbshhfcjsh', 'jsdchhshc');
+
+# -- passenger_rides --
+INSERT INTO passenger_rides (passenger_id, ride_id) VALUES (1, 1);
+INSERT INTO passenger_rides (passenger_id, ride_id) VALUES (1, 2);
+INSERT INTO passenger_rides (passenger_id, ride_id) VALUES (1, 3);
 
 # SELECT * FROM passenger_rides pr NATURAL JOIN rides rid where rid.driver_id = 1 OR pr.passenger_id = 1;
 #  SELECT * FROM rides rid natural join passenger p where rid.driver_id = 1 OR p.id = 1;

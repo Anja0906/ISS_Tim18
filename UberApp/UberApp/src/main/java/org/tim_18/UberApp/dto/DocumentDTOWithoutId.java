@@ -11,7 +11,7 @@ public class DocumentDTOWithoutId {
     public DocumentDTOWithoutId() {}
 
     public DocumentDTOWithoutId(Document document){
-        this(document.getName(), document.getImage(), document.getDriver().getId());
+        this(document.getName(), document.getDocumentImage(), document.getDriver().getId());
     }
     public DocumentDTOWithoutId(String name, String image, Integer driverId) {
         this.name       = name;

@@ -1,6 +1,12 @@
 package org.tim_18.UberApp.dto.driverDTOs;
 
+
+import jakarta.persistence.*;
+import org.springframework.data.domain.Page;
+
 import org.tim_18.UberApp.model.Driver;
+
+import java.util.HashSet;
 
 public class DriverDTO{
 
@@ -28,6 +34,14 @@ public class DriverDTO{
         this.telephoneNumber = telephoneNumber;
         this.email           = email;
         this.address         = address;
+    }
+
+    public HashSet<DriverDTO> makeDriversDTO(Page<Driver> drivers){
+        HashSet<DriverDTO> driverDTOS = new HashSet<>();
+        for(Driver driver: drivers){
+            driverDTOS.add(new DriverDTO(driver));
+        }
+        return driverDTOS;
     }
 
     public Integer getId() {

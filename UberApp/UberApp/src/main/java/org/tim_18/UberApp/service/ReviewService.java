@@ -58,4 +58,8 @@ public class ReviewService {
     public Page<Review> findByVehicleId(int id, Pageable pageable) {
         return reviewRepository.findByVehicleId(id, pageable);
     }
+    public Review addReview(Review review) {
+        return reviewRepository.save(review);
+    }
+
 }
