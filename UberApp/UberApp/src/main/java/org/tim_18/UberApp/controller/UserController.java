@@ -73,8 +73,10 @@ public class UserController {
     }
     @GetMapping("{id}/message")
     public ResponseEntity<Map<String, Object>> getMessagesForUser(
-            @PathVariable("id") int id, @RequestParam(defaultValue = "0") Integer page,
+            @PathVariable("id") int id,
+            @RequestParam(defaultValue = "0") Integer page,
             @RequestParam(defaultValue = "4") Integer size){
+
         Pageable pageable = PageRequest.of(page, size);
         Page<Message> messages = messageService.findMessagesByUserId(id, pageable);
         Map<String, Object> map = new HashMap<>();
@@ -88,7 +90,10 @@ public class UserController {
         return new ResponseEntity<>(map, HttpStatus.OK);
     }
     @PostMapping("/{id}/message")
-    public ResponseEntity<MessageResponseDTO> addReviewToVehicle(@PathVariable("id") int id,  @RequestBody MessageDTO messageDTO) {
+    public ResponseEntity<MessageResponseDTO> addReviewToVehicle(
+            @PathVariable("id") int id,
+            @RequestBody MessageDTO messageDTO) {
+
         Message message = messageFromMessageDTO(id, messageDTO);
         userService.saveMessage(message);
         MessageResponseDTO messageResponseDTO = new MessageResponseDTO(message);
@@ -96,6 +101,7 @@ public class UserController {
     }
 
     private Message messageFromMessageDTO(Integer id, MessageDTO messageDTO){
+
         Message message = new Message();
         message.setReceiver(userService.findUserById(messageDTO.getReceiverId()));
         message.setMessage(messageDTO.getMessage());
@@ -108,8 +114,7 @@ public class UserController {
 
     @PutMapping("/{id}/block")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    public void blockUser(
-            @PathVariable("id") int id) {
+    public void blockUser(@PathVariable("id") int id) {
         User user = userService.findUserById(id);
         if(user!=null){
             user.setBlocked(true);
@@ -119,8 +124,7 @@ public class UserController {
 
     @PutMapping("/{id}/unblock")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    public void unblockUser(
-            @PathVariable("id") int id) {
+    public void unblockUser(@PathVariable("id") int id) {
         User user = userService.findUserById(id);
         if(user!=null){
             user.setBlocked(false);
@@ -128,7 +132,10 @@ public class UserController {
         }
     }
     @PostMapping("/{id}/note")
-    public ResponseEntity<NoteResponseDTO> addReviewToVehicle(@PathVariable("id") int id, @RequestBody NotePostDTO notePostDTO) {
+    public ResponseEntity<NoteResponseDTO> addReviewToVehicle(
+            @PathVariable("id") int id,
+            @RequestBody NotePostDTO notePostDTO) {
+
         Note note = new Note();
         note.setUser(userService.findUserById(id));
         note.setMessage(notePostDTO.getMessage());
@@ -139,8 +146,10 @@ public class UserController {
 
     @GetMapping("{id}/note")
     public ResponseEntity<Map<String, Object>> getNotesForUser(
-            @PathVariable("id") int id, @RequestParam(defaultValue = "0") Integer page,
+            @PathVariable("id") int id,
+            @RequestParam(defaultValue = "0") Integer page,
             @RequestParam(defaultValue = "4") Integer size){
+
         Pageable pageable = PageRequest.of(page, size);
         Page<Note> notes = userService.findNotesByUserId(id, pageable);
         Map<String, Object> map = new HashMap<>();

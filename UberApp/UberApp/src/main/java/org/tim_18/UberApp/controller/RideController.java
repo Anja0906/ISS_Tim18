@@ -34,17 +34,16 @@ public class RideController {
 
 
     private LocationDTOMapper locationDTOMapper = new LocationDTOMapper(new ModelMapper());
-//
-//    private RideRecDTOMapper dtoRecMapper;
+
 
     public RideController(RideService rideService, DriverService driverService, RejectionService rejectionService, ReviewService reviewService, PanicService panicService, PassengerService passengerService, UserService userService) {
-        this.rideService = rideService;
-        this.driverService = driverService;
-        this.rejectionService = rejectionService;
-        this.reviewService = reviewService;
-        this.panicService = panicService;
-        this.passengerService = passengerService;
-        this.userService = userService;
+        this.rideService        = rideService;
+        this.driverService      = driverService;
+        this.rejectionService   = rejectionService;
+        this.reviewService      = reviewService;
+        this.panicService       = panicService;
+        this.passengerService   = passengerService;
+        this.userService        = userService;
     }
 
     @PostMapping

@@ -1,6 +1,7 @@
 package org.tim_18.UberApp.dto;
 
 import jakarta.persistence.*;
+import lombok.Data;
 import org.hibernate.jdbc.Work;
 import org.springframework.data.domain.Page;
 import org.tim_18.UberApp.dto.driverDTOs.DriverDTO;
@@ -9,7 +10,7 @@ import org.tim_18.UberApp.model.WorkTime;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
-
+@Data
 public class WorkTimeDTO {
 
     private Integer id;
@@ -42,22 +43,5 @@ public class WorkTimeDTO {
             workTimeDTOS.add(new WorkTimeDTO(workTime));
         }
         return workTimeDTOS;
-    }
-
-
-    public LocalDateTime getStartTime() {return startTime;}
-    public void setStartTime(LocalDateTime startTime) {this.startTime = startTime;}
-
-    public LocalDateTime getEndTime() {return endTime;}
-    public void setEndTime(LocalDateTime endTime) {this.endTime = endTime;}
-
-    public Driver getDriver() {return driver;}
-    public void setDriver(Driver driver) {this.driver = driver;}
-
-    public Integer getId() {
-        return id;
-    }
-    public void setId(Integer id) {
-        this.id = id;
     }
 }

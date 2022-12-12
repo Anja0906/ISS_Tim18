@@ -11,19 +11,17 @@ public class NoteResponseDTO {
     private LocalDateTime date;
     private String message;
 
-    public NoteResponseDTO() {
-    }
-
+    public NoteResponseDTO() {}
     public NoteResponseDTO(Integer id, LocalDateTime date, String message) {
-        this.id = id;
-        this.date = date;
-        this.message = message;
+        this.id         = id;
+        this.date       = date;
+        this.message    = message;
     }
 
     public NoteResponseDTO(Note note) {
-        this.id = note.getId();
-        this.date = LocalDateTime.now();
-        this.message = note.getMessage();
+        this.id         = note.getId();
+        this.date       = LocalDateTime.now();
+        this.message    = note.getMessage();
     }
 
 }

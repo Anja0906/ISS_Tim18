@@ -12,17 +12,14 @@ public class Location implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Integer id;
-
     private Double longitude;
     private Double latitude;
     private String address;
-
     @JsonIgnore
     @ManyToOne
     private Ride ride;
 
-    public Location() {
-    }
+    public Location() {}
 
     public Location(Integer id, Double longitude, Double latitude, String address) {
         this.id         = id;

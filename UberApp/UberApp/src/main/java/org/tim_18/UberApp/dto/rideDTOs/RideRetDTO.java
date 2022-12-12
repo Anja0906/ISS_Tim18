@@ -31,24 +31,24 @@ public class RideRetDTO {
     public RideRetDTO(){}
 
     public RideRetDTO(Integer id, String startTime, String endTime, long totalCost, Driver driver, Set<Passenger> passengers, int estimatedTimeInMinutes, VehicleType vehicleType, boolean babyTransport, boolean petTransport, Rejection rejection, Set<Location> _locations, Status status) {
-        this.id = id;
-        this.startTime = startTime;
-        this.endTime = endTime;
-        this.totalCost = totalCost;
-        this.driver = new DriverEmailDTO(driver);
+        this.id                             = id;
+        this.startTime                      = startTime;
+        this.endTime                        = endTime;
+        this.totalCost                      = totalCost;
+        this.driver                         = new DriverEmailDTO(driver);
         Set<PassengerEmailDTO> passengerSet = new HashSet<>();
         for (Passenger p:passengers) {
             passengerSet.add(new PassengerEmailDTO(p));
         }
-        this.passengers = passengerSet;
-        this.estimatedTimeInMinutes = estimatedTimeInMinutes;
-        this.vehicleType = vehicleType;
-        this.babyTransport = babyTransport;
-        this.petTransport = petTransport;
+        this.passengers                     = passengerSet;
+        this.estimatedTimeInMinutes         = estimatedTimeInMinutes;
+        this.vehicleType                    = vehicleType;
+        this.babyTransport                  = babyTransport;
+        this.petTransport                   = petTransport;
         if (rejection == null) {
-            this.rejection = null;
+            this.rejection                  = null;
         }else {
-            this.rejection = new RejectionDTO(rejection);
+            this.rejection                  = new RejectionDTO(rejection);
         }
         List<Location> locList = new ArrayList<>();
         for (Location loc : _locations){
@@ -58,14 +58,16 @@ public class RideRetDTO {
         for (int i = 1; i < locList.size(); i++) {
             locationSetDTOSet.add(new LocationSetDTO(locList.get(i-1), locList.get(i)));
         }
-        this.locations = locationSetDTOSet;
-        this.status = status;
+        this.locations                      = locationSetDTOSet;
+        this.status                         = status;
     }
     public RideRetDTO(Ride ride){
         this(ride.getId(), ride.getStartTime().toString(), ride.getEndTime().toString(),
-                ride.getTotalCost(), ride.getDriver(), ride.getPassengers(),
-                ride.getEstimatedTimeInMinutes(), ride.getVehicleType(), ride.isBabyTransport(),
-                ride.isPetTransport(), ride.getRejection(), ride.getLocations(), ride.getStatus());
+             ride.getTotalCost(), ride.getDriver(),
+             ride.getPassengers(), ride.getEstimatedTimeInMinutes(),
+             ride.getVehicleType(), ride.isBabyTransport(),
+             ride.isPetTransport(), ride.getRejection(),
+             ride.getLocations(), ride.getStatus());
 
     }
 

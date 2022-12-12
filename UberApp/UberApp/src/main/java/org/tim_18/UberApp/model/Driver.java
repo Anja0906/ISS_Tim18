@@ -27,9 +27,9 @@ public class Driver extends User{
     private Vehicle vehicle;
 
     public Driver() {
-        this.documents = new HashSet<Document>();
-        this.rides = new HashSet<Ride>();
-        this.vehicle = null;
+        this.documents  = new HashSet<Document>();
+        this.rides      = new HashSet<Ride>();
+        this.vehicle    = null;
     }
     public Driver(String name, String surname, String profilePicture, String telephoneNumber, String email, String address, String password, boolean blocked, boolean active, Integer id, Set<Document> documents, Set<Ride> rides, Vehicle vehicle) {
         super(name, surname, profilePicture, telephoneNumber, email, address, password, blocked, active);

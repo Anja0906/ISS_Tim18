@@ -2,12 +2,13 @@ package org.tim_18.UberApp.dto.driverDTOs;
 
 
 import jakarta.persistence.*;
+import lombok.Data;
 import org.springframework.data.domain.Page;
 
 import org.tim_18.UberApp.model.Driver;
 
 import java.util.HashSet;
-
+@Data
 public class DriverDTO{
 
     private Integer id;
@@ -21,8 +22,10 @@ public class DriverDTO{
     public DriverDTO() {}
 
     public DriverDTO(Driver driver) {
-        this(driver.getId(), driver.getName(), driver.getSurname(), driver.getProfilePicture(),
-                driver.getTelephoneNumber(),driver.getEmail(), driver.getAddress());
+        this(driver.getId(), driver.getName(),
+             driver.getSurname(), driver.getProfilePicture(),
+             driver.getTelephoneNumber(),driver.getEmail(),
+             driver.getAddress());
     }
 
 
@@ -42,61 +45,5 @@ public class DriverDTO{
             driverDTOS.add(new DriverDTO(driver));
         }
         return driverDTOS;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getSurname() {
-        return surname;
-    }
-
-    public void setSurname(String surname) {
-        this.surname = surname;
-    }
-
-    public String getProfilePicture() {
-        return profilePicture;
-    }
-
-    public void setProfilePicture(String profilePicture) {
-        this.profilePicture = profilePicture;
-    }
-
-    public String getTelephoneNumber() {
-        return telephoneNumber;
-    }
-
-    public void setTelephoneNumber(String telephoneNumber) {
-        this.telephoneNumber = telephoneNumber;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
     }
 }

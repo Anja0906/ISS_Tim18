@@ -15,7 +15,7 @@ public class PassengerEmailDTO {
     }
 
     public PassengerEmailDTO(Integer id, String email) {
-        this.id = id;
-        this.email = email;
+        this.id     = id;
+        this.email  = email;
     }
 }

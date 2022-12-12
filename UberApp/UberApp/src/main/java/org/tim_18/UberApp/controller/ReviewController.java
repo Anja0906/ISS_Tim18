@@ -8,14 +8,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.tim_18.UberApp.dto.*;
-import org.tim_18.UberApp.dto.driverDTOs.DriverDTO;
 import org.tim_18.UberApp.model.*;
 import org.tim_18.UberApp.service.ReviewService;
 
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("api/review")
@@ -40,8 +38,11 @@ public class ReviewController {
     }
 
     @GetMapping("/vehicle/{id}")
-    public ResponseEntity<Map<String, Object>> getReviewsForVehicle (@PathVariable("id") int id, @RequestParam(defaultValue = "0") Integer page,
-                                                           @RequestParam(defaultValue = "4") Integer size) {
+    public ResponseEntity<Map<String, Object>> getReviewsForVehicle (
+            @PathVariable("id") int id,
+            @RequestParam(defaultValue = "0") Integer page,
+            @RequestParam(defaultValue = "4") Integer size) {
+
         Pageable pageable = PageRequest.of(page, size);
         Page<Review> reviews = reviewService.findByVehicleId(id, pageable);
         Map<String, Object> map = new HashMap<>();
@@ -68,8 +69,10 @@ public class ReviewController {
     }
 
     @GetMapping("/driver/{id}")
-    public ResponseEntity<Map<String, Object>> getReviewsForDriver (@PathVariable("id") int id, @RequestParam(defaultValue = "0") Integer page,
-                                                                     @RequestParam(defaultValue = "4") Integer size) {
+    public ResponseEntity<Map<String, Object>> getReviewsForDriver (
+            @PathVariable("id") int id,
+            @RequestParam(defaultValue = "0") Integer page,
+            @RequestParam(defaultValue = "4") Integer size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<Review> reviews = reviewService.findByDriverId(id, pageable);
         Map<String, Object> map = new HashMap<>();
@@ -88,6 +91,7 @@ public class ReviewController {
         PassengerEmailDTO passengerDTO = new PassengerEmailDTO(123,"user@example.com");
         VehicleReviewDTO vehicleReviewDTO = new VehicleReviewDTO(123,3,"The vehicle was bad and dirty",passengerDTO);
         DriverReviewDTO driverReviewDTO = new DriverReviewDTO(123,3,"The driver was driving too fast",passengerDTO);
+
         ReviewDTOResponse reviewDTOResponse = new ReviewDTOResponse(vehicleReviewDTO,driverReviewDTO);
         return new ResponseEntity<>(reviewDTOResponse, HttpStatus.OK);
 

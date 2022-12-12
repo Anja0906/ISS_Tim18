@@ -12,10 +12,11 @@ public class RejectionDTO {
 
     public RejectionDTO(Integer id, String reason, String time) {
         this.reason = reason;
-        this.time = time;
+        this.time   = time;
     }
 
     public RejectionDTO(Rejection rejection){
-        this(rejection.getId(), rejection.getReason(), rejection.getTime().toString());
+        this(rejection.getId(), rejection.getReason(),
+             rejection.getTime().toString());
     }
 }

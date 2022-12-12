@@ -18,13 +18,13 @@ public class UserDTO {
     }
 
     public UserDTO(Integer id, String name, String surname, String profilePicture, String telephoneNumber, String email, String address) {
-        this.id = id;
-        this.name = name;
-        this.surname = surname;
-        this.profilePicture = profilePicture;
-        this.telephoneNumber = telephoneNumber;
-        this.email = email;
-        this.address = address;
+        this.id                 = id;
+        this.name               = name;
+        this.surname            = surname;
+        this.profilePicture     = profilePicture;
+        this.telephoneNumber    = telephoneNumber;
+        this.email              = email;
+        this.address            = address;
     }
 
     public UserDTO(User user) {

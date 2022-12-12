@@ -18,14 +18,16 @@ public class PanicDTO {
     public PanicDTO(){}
 
     public PanicDTO(Integer id, User user, Ride ride, Date time, String reason) {
-        this.id = id;
-        this.user = new UserSimpleDTO(user);
-        this.ride = new RideRetDTO(ride);
-        this.time = time;
+        this.id     = id;
+        this.user   = new UserSimpleDTO(user);
+        this.ride   = new RideRetDTO(ride);
+        this.time   = time;
         this.reason = reason;
     }
 
     public PanicDTO(Panic panic) {
-        this(panic.getId(), panic.getUser(), panic.getRide(), panic.getTime(), panic.getReason());
+        this(panic.getId(), panic.getUser(),
+             panic.getRide(), panic.getTime(),
+             panic.getReason());
     }
 }

@@ -38,8 +38,6 @@ public class DriverController {
     private final WorkTimeService workTimeService;
     private final RideService rideService;
 
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-
     public DriverController(DriverService driverService,DocumentService documentService,VehicleService vehicleService,LocationService locationService, WorkTimeService workTimeService,RideService rideService) {
         this.driverService   = driverService;
         this.documentService = documentService;
@@ -133,14 +131,12 @@ public class DriverController {
             @PathVariable("id") int id) {
         try {
             Document document = documentService.findDocumentById(id);
-            System.out.println(document.getId());
             documentService.deleteDocument(document);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (UserNotFoundException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
-    //OVO NE RADI VRV ZBOG BAZE
 
     @GetMapping("/{id}/vehicle")
     public ResponseEntity<VehicleDTO> getVehicleById (
@@ -183,7 +179,6 @@ public class DriverController {
             Location location = locationService.findLocationByAdressLongitudeLatitude(vehicleDTOWithoutIds.getCurrentLocation().getLongitude(),
                     vehicleDTOWithoutIds.getCurrentLocation().getLatitude(),
                     vehicleDTOWithoutIds.getCurrentLocation().getAddress());
-            System.out.println(location.toString());
             Vehicle vehicle = vehicleService.findVehicleByDriverId(id);
             vehicle.updateVehicle(vehicleDTOWithoutIds,location);
             vehicle = vehicleService.addVehicle(vehicle);
@@ -263,8 +258,6 @@ public class DriverController {
             @RequestParam(defaultValue = "2022-12-08T10:40:00") String to) {
         Pageable pageable = PageRequest.of(page, size,Sort.by(sort));
         Page<Ride> rides = rideService.findRidesForDriver(id,from,to,pageable);
-        System.out.println(rides.getSize());
-        System.out.println(rides.toString());
         Map<String, Object> map = new HashMap<>();
         HashSet<RideRetDTO> ridesDTO = new HashSet<>();
         for (Ride ride: rides){

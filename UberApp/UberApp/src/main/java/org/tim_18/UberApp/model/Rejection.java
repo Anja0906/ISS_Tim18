@@ -20,10 +20,15 @@ public class Rejection implements Serializable {
     private Ride ride;
 
     public Rejection() {}
+    public Rejection(Integer id, String reason, Date time, Ride ride) {
+        this.reason     = reason;
+        this.time       = time;
+        this.id         = id;
+        this.ride       = ride;
+    }
     public String getReason() {
         return reason;
     }
-
     public void setReason(String reason) {
         this.reason = reason;
     }
@@ -31,26 +36,18 @@ public class Rejection implements Serializable {
     public Date getTime() {
         return time;
     }
-
     public void setTime(Date time) {
         this.time = time;
-    }
-
-    public Rejection(Integer id, String reason, Date time, Ride ride) {
-        this.reason     = reason;
-        this.time       = time;
-        this.id         = id;
-//        this.ride = ride;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
     }
 
     @Id
     public Integer getId() {
         return id;
     }
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
 
 
 
