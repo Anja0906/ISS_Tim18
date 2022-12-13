@@ -37,14 +37,11 @@ public class PanicController {
                                                              @RequestParam(defaultValue = "4") Integer size) {
         try {
             Pageable paging = PageRequest.of(page, size);
-            Page<Panic> pagedResult = panicService.findAll(paging);
-            List<Panic> panics = panicService.findAllPanics();
-            List<PanicDTO> panicDTOs = new ArrayList<>();
-            for (Panic panic : panics) {
-                panicDTOs.add(new PanicDTO(panic));
-            }
+            Page<Panic> panics = panicService.findAll(paging);
+            List<PanicDTO> panicDTOs = PanicDTO.getPanicsDTO(panics);
+
             Map<String, Object> response = new HashMap<>();
-            response.put("totalCount", pagedResult.getTotalElements());
+            response.put("totalCount", panics.getTotalElements());
             response.put("results", panicDTOs);
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch(UserNotFoundException e){

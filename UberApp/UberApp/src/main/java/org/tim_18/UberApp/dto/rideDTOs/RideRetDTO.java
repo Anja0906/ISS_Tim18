@@ -1,6 +1,7 @@
 package org.tim_18.UberApp.dto.rideDTOs;
 
 import lombok.Data;
+import org.springframework.data.domain.Page;
 import org.tim_18.UberApp.dto.RejectionDTO;
 import org.tim_18.UberApp.dto.driverDTOs.DriverEmailDTO;
 import org.tim_18.UberApp.dto.locationDTOs.LocationSetDTO;
@@ -71,7 +72,11 @@ public class RideRetDTO {
 
     }
 
-    public static Ride fromDTOtoRide(RideRecDTO dto) {
-        return null;
+    public static List<RideRetDTO> getRidesDTO(Page<Ride> rides) {
+        List<RideRetDTO> ridesDTO = new ArrayList<>();
+        for (Ride r : rides) {
+            ridesDTO.add(new RideRetDTO(r));
+        }
+        return ridesDTO;
     }
 }

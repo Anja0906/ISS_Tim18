@@ -1,7 +1,11 @@
 package org.tim_18.UberApp.dto.passengerDTOs;
 
 import lombok.Data;
+import org.springframework.data.domain.Page;
 import org.tim_18.UberApp.model.Passenger;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 public class PassengerDTOnoPassword {
@@ -30,5 +34,13 @@ public class PassengerDTOnoPassword {
              passenger.getSurname(), passenger.getProfilePicture(),
              passenger.getTelephoneNumber(), passenger.getEmail(),
              passenger.getAddress());
+    }
+
+    public static List<PassengerDTOnoPassword> getPassengersDTO(Page<Passenger> passengers) {
+        List<PassengerDTOnoPassword> passengersDTO = new ArrayList<>() ;
+        for (Passenger p : passengers) {
+            passengersDTO.add(new PassengerDTOnoPassword(p));
+        }
+        return passengersDTO;
     }
 }

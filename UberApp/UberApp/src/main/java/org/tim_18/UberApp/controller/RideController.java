@@ -50,8 +50,7 @@ public class RideController {
     public ResponseEntity<RideRetDTO> createARide(@RequestBody RideRecDTO oldDTO){
         Ride ride = fromDTOtoRide(oldDTO);
         ride = rideService.createRide(ride);
-        RideRetDTO newDto = new RideRetDTO(ride);
-        return new ResponseEntity<>(newDto, HttpStatus.CREATED);
+        return new ResponseEntity<>(new RideRetDTO(ride), HttpStatus.CREATED);
     }
 
     @GetMapping("/driver/{driverId}/active")
@@ -101,14 +100,10 @@ public class RideController {
     public ResponseEntity<PanicDTO> activatePanic(@PathVariable("id") Integer id, @RequestBody String reason){
         try {
             Ride ride = rideService.findRideById(id);
-            Panic panic = new Panic();
-            panic.setRide(ride);
             List<User> users = userService.findAllUsers();
             if (users.size() == 0) throw new UserNotFoundException("No users");
             User user = users.get(0);
-            panic.setUser(user);
-            panic.setTime(new Date());
-            panic.setReason(reason);
+            Panic panic = new Panic(ride, user, new Date(), reason);
             panic = panicService.addPanic(panic);
             ride.setPanic(panic);
             return new ResponseEntity<>(new PanicDTO(panic), HttpStatus.OK);
@@ -131,27 +126,22 @@ public class RideController {
 
     @PutMapping("/{id}/end")
     public ResponseEntity<RideRetDTO> endRide(@PathVariable("id")Integer id) {
-        Ride ride = null;
         try {
-            ride = rideService.findRideById(id);
+            Ride ride = rideService.findRideById(id);
+            ride.setStatus(Status.FINISHED);
+            ride = rideService.updateRide(ride);
+            return new ResponseEntity<>(new RideRetDTO(ride), HttpStatus.OK);
         } catch(UserNotFoundException e){
             return new ResponseEntity<>(null,HttpStatus.NOT_FOUND);
         }
-        ride.setStatus(Status.FINISHED);
-        ride = rideService.updateRide(ride);
-        return new ResponseEntity<>(new RideRetDTO(ride), HttpStatus.OK);
     }
 
     @PutMapping("/{id}/cancel")
     public ResponseEntity<RideRetDTO> cancelRide(@PathVariable("id") Integer id,  @RequestBody String reason){
         try {
             Ride ride = rideService.findRideById(id);
-            Rejection rejection = new Rejection();
-            rejection.setTime(new Date());
-            rejection.setReason(reason);
-//            rejection = rejectionService.addRejection(rejection);
+            Rejection rejection = new Rejection(reason, new Date(), ride);
             ride.setRejection(rejection);
-//            ride = rideService.updateRide(ride);
             return new ResponseEntity<>(new RideRetDTO(ride), HttpStatus.OK);
         } catch(UserNotFoundException e){
             return new ResponseEntity<>(null,HttpStatus.NOT_FOUND);
