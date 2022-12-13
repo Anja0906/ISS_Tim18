@@ -48,11 +48,11 @@ VALUES (true, '2022-12-7 07:55:00', 5, false, '2022-12-7 07:40:00', 0, 500, 0, '
 INSERT INTO rides (baby_transport, end_time, estimated_time_in_minutes, pet_transport, start_time, status, total_cost, vehicle_type, driver_id, panic_id, rejection_id)
 VALUES (true, '2022-12-7 07:55:00', 15, false, '2022-12-7 07:40:00', 0, 500, 0, '1', '3', '3');
 INSERT INTO rides (baby_transport, end_time, estimated_time_in_minutes, pet_transport, start_time, status, total_cost, vehicle_type, driver_id, panic_id, rejection_id)
-VALUES (true, '2022-12-11 23:59:59', 1, false, '2022-12-10 05:00:00', 0, 500, 0, '3', '1', '1');
+VALUES (true, '2022-12-11 23:59:59', 1, false, '2022-12-10 05:00:00', 0, 500, 0, '3', '4', '4');
 INSERT INTO rides (baby_transport, end_time, estimated_time_in_minutes, pet_transport, start_time, status, total_cost, vehicle_type, driver_id, panic_id, rejection_id)
-VALUES (true, '2022-12-11 22:55:00', 5, false, '2022-12-11 20:40:00', 0, 500, 0, '1', '2', '2');
+VALUES (true, '2022-12-11 22:55:00', 5, false, '2022-12-11 20:40:00', 0, 500, 0, '1', '5', '5');
 INSERT INTO rides (baby_transport, end_time, estimated_time_in_minutes, pet_transport, start_time, status, total_cost, vehicle_type, driver_id, panic_id, rejection_id)
-VALUES (true, '2022-12-7 07:55:00', 15, false, '2022-12-7 07:40:00', 0, 500, 0, '1', '3', '3');
+VALUES (true, '2022-12-7 07:55:00', 15, false, '2022-12-7 07:40:00', 0, 500, 0, '1', '6', '6');
 
 # --vehicle--
 INSERT INTO vehicle (id, license_number, vehicle_type, model,  current_location_id, driver_id, passenger_seats, baby_transport, pet_transport)
@@ -64,6 +64,9 @@ VALUES ('3', 'NS 567 ad', 2,'Skoda fabia', 1, 3, 3, true, true);
 
 
 # --panics--
+INSERT INTO panics (time, reason, user_id) VALUES ('2022-12-07', 'jahdjhhefej', '1');
+INSERT INTO panics (time, reason, user_id) VALUES ('2022-12-07', 'ajskdjsah', '2');
+INSERT INTO panics (time, reason, user_id) VALUES ('2022-12-07', 'ajshdjshaj', '3');
 INSERT INTO panics (time, reason, user_id) VALUES ('2022-12-07', 'jahdjhhefej', '1');
 INSERT INTO panics (time, reason, user_id) VALUES ('2022-12-07', 'ajskdjsah', '2');
 INSERT INTO panics (time, reason, user_id) VALUES ('2022-12-07', 'ajshdjshaj', '3');
@@ -88,6 +91,9 @@ VALUES ('3', 2, '3', '2');
 INSERT INTO rejections (id, reason, time) VALUES ('1', 'zhscgs', '2022-07-12 00:15:45');
 INSERT INTO rejections (id, reason, time) VALUES ('2', 'sbcjs', '2022-07-12 00:15:45');
 INSERT INTO rejections (id, reason, time) VALUES ('3', 'sjchjshc', '2022-07-12 00:15:45');
+INSERT INTO rejections (id, reason, time) VALUES ('4', 'zhscgs', '2022-07-12 00:15:45');
+INSERT INTO rejections (id, reason, time) VALUES ('5', 'sbcjs', '2022-07-12 00:15:45');
+INSERT INTO rejections (id, reason, time) VALUES ('6', 'sjchjshc', '2022-07-12 00:15:45');
 
 # --passenger--
 INSERT INTO passenger (id, passenger_id) VALUES ('4', '1');
@@ -129,10 +135,3 @@ INSERT INTO passenger_rides (passenger_id, ride_id) VALUES (1, 4);
 INSERT INTO passenger_rides (passenger_id, ride_id) VALUES (1, 5);
 INSERT INTO passenger_rides (passenger_id, ride_id) VALUES (1, 6);
 INSERT INTO passenger_rides (passenger_id, ride_id) VALUES (4, 5);
-
-# SELECT * FROM passenger_rides pr NATURAL JOIN rides rid where rid.driver_id = 1 OR pr.passenger_id = 1;
-#  SELECT * FROM rides rid natural join passenger p where rid.driver_id = 1 OR p.id = 1;
-
-# SELECT * FROM messages m where m.sender_id = 1 OR m.receiver_id = 1;
-
-# SELECT * FROM rides r NATURAL JOIN passenger p WHERE p.id = 1 or r.driver_id = 1;
