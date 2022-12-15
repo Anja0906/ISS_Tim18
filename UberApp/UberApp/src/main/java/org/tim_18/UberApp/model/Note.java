@@ -25,6 +25,11 @@ public class Note implements Serializable {
         this.user       = user;
     }
 
+    public Note(User user, String message) {
+        this.message    = message;
+        this.user       = user;
+    }
+
     public Integer getId() {
         return id;
     }

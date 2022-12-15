@@ -2,7 +2,10 @@ package org.tim_18.UberApp.dto;
 
 
 import lombok.Data;
+import org.springframework.data.domain.Page;
 import org.tim_18.UberApp.model.User;
+
+import java.util.HashSet;
 
 @Data
 public class UserDTO {
@@ -35,6 +38,14 @@ public class UserDTO {
         this.telephoneNumber = user.getTelephoneNumber();
         this.email           = user.getEmail();
         this.address         = user.getAddress();
+    }
+
+    public HashSet<UserDTO> makeUserDTOS(Page<User> users){
+        HashSet<UserDTO> usersDTO = new HashSet<>();
+        for (User user:users) {
+            usersDTO.add(new UserDTO(user));
+        }
+        return usersDTO;
     }
 
 

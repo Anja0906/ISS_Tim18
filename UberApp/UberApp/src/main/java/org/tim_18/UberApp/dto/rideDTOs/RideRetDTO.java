@@ -79,4 +79,12 @@ public class RideRetDTO {
         }
         return ridesDTO;
     }
+
+    public HashSet<RideRetDTO> makeRideRideDTOS(Page<Ride> rides) {
+        HashSet<RideRetDTO> ridesDTO = new HashSet<>();
+        for (Ride r : rides) {
+            ridesDTO.add(new RideRetDTO(r));
+        }
+        return ridesDTO;
+    }
 }

@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import org.tim_18.UberApp.dto.*;
 import org.tim_18.UberApp.model.*;
 import org.tim_18.UberApp.service.ReviewService;
+import org.tim_18.UberApp.service.RideService;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -26,14 +27,17 @@ public class ReviewController {
     }
 
     @PostMapping("/{rideId}/vehicle/{id}")
-    public ResponseEntity<ReviewDTO> addReviewToVehicle(@PathVariable("rideId") int rideId, @PathVariable("id") int id,  @RequestBody ReviewPostDTO reviewPostDTO) {
-        Review review = new Review();
-        review.setRating(reviewPostDTO.getRating());
-        review.setComment(reviewPostDTO.getComment());
+    public ResponseEntity<ReviewDTO> addReviewToVehicle(
+            @PathVariable("rideId") int rideId,
+            @PathVariable("id") int id,
+            @RequestBody ReviewPostDTO reviewPostDTO) {
+        Review review = new Review(reviewPostDTO.getRating(),reviewPostDTO.getComment());
         review.setRide(reviewService.getRideById(rideId));
         reviewService.save(review);
+
         PassengerEmailDTO passengerEmailDTO = new PassengerEmailDTO(1,"bane");
         ReviewDTO reviewDTO = new ReviewDTO(review,passengerEmailDTO);
+
         return new ResponseEntity<>(reviewDTO, HttpStatus.OK);
     }
 
@@ -45,11 +49,9 @@ public class ReviewController {
 
         Pageable pageable = PageRequest.of(page, size);
         Page<Review> reviews = reviewService.findByVehicleId(id, pageable);
+
         Map<String, Object> map = new HashMap<>();
-        HashSet<ReviewDTO> reviewDTOS = new HashSet<>();
-        for (Review review:reviews) {
-            reviewDTOS.add(new ReviewDTO(review));
-        }
+        HashSet<ReviewDTO> reviewDTOS = new ReviewDTO().makeReviewDTOS(reviews);
 
         map.put("totalCount",reviewDTOS.size());
         map.put("results",reviewDTOS);
@@ -57,14 +59,17 @@ public class ReviewController {
     }
 
     @PostMapping("/{rideId}/driver/{id}")
-    public ResponseEntity<ReviewDTO> addReviewToDriver(@PathVariable("rideId") int rideId, @PathVariable("id") int id,  @RequestBody ReviewPostDTO reviewPostDTO) {
-        Review review = new Review();
-        review.setRating(reviewPostDTO.getRating());
-        review.setComment(reviewPostDTO.getComment());
-        review.setRide(reviewService.getRideById(rideId));
+    public ResponseEntity<ReviewDTO> addReviewToDriver(
+            @PathVariable("rideId") int rideId,
+            @PathVariable("id") int id,
+            @RequestBody ReviewPostDTO reviewPostDTO) {
+        Ride ride = reviewService.getRideById(rideId);
+        Review review = new Review(reviewPostDTO.getRating(),reviewPostDTO.getComment(),ride);
         reviewService.save(review);
+
         PassengerEmailDTO passengerEmailDTO = new PassengerEmailDTO(1,"bane");
         ReviewDTO reviewDTO = new ReviewDTO(review,passengerEmailDTO);
+
         return new ResponseEntity<>(reviewDTO, HttpStatus.OK);
     }
 
@@ -75,11 +80,9 @@ public class ReviewController {
             @RequestParam(defaultValue = "4") Integer size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<Review> reviews = reviewService.findByDriverId(id, pageable);
+
         Map<String, Object> map = new HashMap<>();
-        HashSet<ReviewDTO> reviewDTOS = new HashSet<>();
-        for (Review review:reviews) {
-            reviewDTOS.add(new ReviewDTO(review));
-        }
+        HashSet<ReviewDTO> reviewDTOS = new ReviewDTO().makeReviewDTOS(reviews);
 
         map.put("totalCount",reviewDTOS.size());
         map.put("results",reviewDTOS);

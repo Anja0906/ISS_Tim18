@@ -12,6 +12,7 @@ import org.tim_18.UberApp.dto.driverDTOs.DriverDTO;
 import org.tim_18.UberApp.dto.noteDTOs.NotePostDTO;
 import org.tim_18.UberApp.dto.noteDTOs.NoteResponseDTO;
 import org.tim_18.UberApp.dto.rideDTOs.RideRetDTO;
+import org.tim_18.UberApp.exception.UserNotFoundException;
 import org.tim_18.UberApp.model.*;
 import org.tim_18.UberApp.service.MessageService;
 import org.tim_18.UberApp.service.RideService;
@@ -39,11 +40,9 @@ public class UserController {
             @RequestParam(defaultValue = "4") Integer size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<User> users = userService.findAll(pageable);
+
         Map<String, Object> map = new HashMap<>();
-        HashSet<UserDTO> usersDTO = new HashSet<>();
-        for (User user:users) {
-            usersDTO.add(new UserDTO(user));
-        }
+        HashSet<UserDTO> usersDTO = new UserDTO().makeUserDTOS(users);
 
         map.put("totalCount",usersDTO.size());
         map.put("results",usersDTO);
@@ -62,10 +61,7 @@ public class UserController {
         Page<Ride> rides = rideService.findRidesForUserPage(id,pageable);
 
         Map<String, Object> map = new HashMap<>();
-        HashSet<RideRetDTO> ridesDTO = new HashSet<>();
-        for (Ride ride: rides){
-            ridesDTO.add(new RideRetDTO(ride));
-        }
+        HashSet<RideRetDTO> ridesDTO = new RideRetDTO().makeRideRideDTOS(rides);
 
         map.put("totalCount",ridesDTO.size());
         map.put("results",ridesDTO);
@@ -76,14 +72,11 @@ public class UserController {
             @PathVariable("id") int id,
             @RequestParam(defaultValue = "0") Integer page,
             @RequestParam(defaultValue = "4") Integer size){
-
         Pageable pageable = PageRequest.of(page, size);
         Page<Message> messages = messageService.findMessagesByUserId(id, pageable);
+
         Map<String, Object> map = new HashMap<>();
-        HashSet<MessageResponseDTO> messageDTOS = new HashSet<>();
-        for (Message message:messages) {
-            messageDTOS.add(new MessageResponseDTO(message));
-        }
+        HashSet<MessageResponseDTO> messageDTOS = new MessageResponseDTO().makeMessageResponseDTOS(messages);
 
         map.put("totalCount",messageDTOS.size());
         map.put("results",messageDTOS);
@@ -93,32 +86,30 @@ public class UserController {
     public ResponseEntity<MessageResponseDTO> addReviewToVehicle(
             @PathVariable("id") int id,
             @RequestBody MessageDTO messageDTO) {
-
         Message message = messageFromMessageDTO(id, messageDTO);
         userService.saveMessage(message);
+
         MessageResponseDTO messageResponseDTO = new MessageResponseDTO(message);
         return new ResponseEntity<>(messageResponseDTO, HttpStatus.OK);
     }
 
     private Message messageFromMessageDTO(Integer id, MessageDTO messageDTO){
-
-        Message message = new Message();
-        message.setReceiver(userService.findUserById(messageDTO.getReceiverId()));
-        message.setMessage(messageDTO.getMessage());
-        message.setMessageType(messageDTO.getType());
-        message.setRide(userService.findRideById(messageDTO.getRideId()));
-        message.setSender(userService.findUserById(id));
-        message.setTime(LocalDateTime.now());
+        Message message = new Message(id,userService.findUserById(id),
+                                      userService.findUserById(messageDTO.getReceiverId()),
+                                      messageDTO.getMessage(),LocalDateTime.now(),
+                                      messageDTO.getType(),userService.findRideById(messageDTO.getRideId()));
         return message;
     }
 
     @PutMapping("/{id}/block")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public void blockUser(@PathVariable("id") int id) {
-        User user = userService.findUserById(id);
-        if(user!=null){
+        try{
+            User user = userService.findUserById(id);
             user.setBlocked(true);
             userService.updateUser(user);
+        }catch (UserNotFoundException e){
+            System.out.println("User not found");
         }
     }
 
@@ -135,13 +126,16 @@ public class UserController {
     public ResponseEntity<NoteResponseDTO> addReviewToVehicle(
             @PathVariable("id") int id,
             @RequestBody NotePostDTO notePostDTO) {
+        try{
+            User user =userService.findUserById(id);
+            Note note = new Note(user,notePostDTO.getMessage());
+            userService.saveNote(note);
+            NoteResponseDTO noteResponseDTO = new NoteResponseDTO(note);
 
-        Note note = new Note();
-        note.setUser(userService.findUserById(id));
-        note.setMessage(notePostDTO.getMessage());
-        userService.saveNote(note);
-        NoteResponseDTO noteResponseDTO = new NoteResponseDTO(note);
-        return new ResponseEntity<>(noteResponseDTO, HttpStatus.OK);
+            return new ResponseEntity<>(noteResponseDTO, HttpStatus.OK);
+        }catch (UserNotFoundException e){
+            return new ResponseEntity<>(null,HttpStatus.NOT_FOUND);
+        }
     }
 
     @GetMapping("{id}/note")
@@ -152,11 +146,9 @@ public class UserController {
 
         Pageable pageable = PageRequest.of(page, size);
         Page<Note> notes = userService.findNotesByUserId(id, pageable);
+
         Map<String, Object> map = new HashMap<>();
-        HashSet<NoteResponseDTO> noteResponseDTOS = new HashSet<>();
-        for (Note note:notes) {
-            noteResponseDTOS.add(new NoteResponseDTO(note));
-        }
+        HashSet<NoteResponseDTO> noteResponseDTOS = new NoteResponseDTO().makeNoteResponseDTOS(notes);
 
         map.put("totalCount",noteResponseDTOS.size());
         map.put("results",noteResponseDTOS);
