@@ -1,8 +1,10 @@
 package org.tim_18.UberApp.dto;
 
 
+import lombok.Data;
 import org.tim_18.UberApp.model.User;
 
+@Data
 public class UserDTO {
     private Integer id;
     private String name;
@@ -43,45 +45,15 @@ public class UserDTO {
     }
 
     public UserDTO(Integer id, String name, String surname, String profilePicture, String telephoneNumber, String email, String address) {
+
+        this.id                 = id;
+        this.name               = name;
+        this.surname            = surname;
+        this.profilePicture     = profilePicture;
+        this.telephoneNumber    = telephoneNumber;
+        this.email              = email;
+        this.address            = address;
+
     }
 
-    public Integer getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getSurname() {
-        return surname;
-    }
-
-    public String getProfilePicture() {
-        return profilePicture;
-    }
-
-    public String getTelephoneNumber() {
-        return telephoneNumber;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public boolean isBlocked() {
-        return blocked;
-    }
-
-    public boolean isActive() {
-        return active;
-    }
 }
