@@ -1,18 +1,32 @@
 #users
 INSERT INTO users (active, address, blocked, email, name, profile_picture, surname, password, telephone_number)
-VALUES (false, 'Strumicka 6', true, 'email', 'name', 'profile_picture', 'surname', 'password', 'telephone_number');
+VALUES (false, 'Strumicka 6', false, 'anja@gmail.com', 'Anja', 'profile_picture', 'Petkovic', 'password', '0614843070');
 INSERT INTO users (active, address, blocked, email, name, profile_picture, surname, password, telephone_number)
-VALUES (false, 'Strumicka 5', true, 'email1', 'name1', 'profile_picture1', 'surname1', 'password1', 'telephone_number1');
+VALUES (false, 'Strumicka 5', false, 'branislac@gmail.com', 'Branislav', 'profile_picture1', 'Stojkovic', 'password1', '0654315454');
 INSERT INTO users (active, address, blocked, email, name, profile_picture, surname, password, telephone_number)
-VALUES (false, 'Narodnog fronta 5', true, 'email2', 'name3', 'profile_picture5', 'surname4', 'password2', 'telephone_number2');
+VALUES (false, 'Narodnog fronta 5', false, 'kristina@gmail.com', 'Kristina', 'profile_picture5', 'Andrijin', 'password2', '6521545154');
 INSERT INTO users (active, address, blocked, email, name, profile_picture, surname, password, telephone_number)
-VALUES (false, 'Strumicka 6', true, 'email', 'name', 'profile_picture', 'surname', 'password', 'telephone_number3');
+VALUES (false, 'Strumicka 6', true, 'pera@gmail.com', 'Pera', 'profile_picture', 'Peric', 'password', '45421545151');
 INSERT INTO users (active, address, blocked, email, name, profile_picture, surname, password, telephone_number)
-VALUES (false, 'Strumicka 5', true, 'email1', 'name1', 'profile_picture1', 'surname1', 'password1', 'telephone_number4');
+VALUES (false, 'Strumicka 5', true, 'mika@gmail.com', 'Mika', 'profile_picture1', 'Mikic', 'password1', '852741963');
 INSERT INTO users (active, address, blocked, email, name, profile_picture, surname, password, telephone_number)
-VALUES (false, 'Narodnog fronta 5', true, 'email2', 'name3', 'profile_picture5', 'surname4', 'password2', 'telephone_number5');
+VALUES (false, 'Narodnog fronta 5', false, 'zika@gmail.com', 'Zika', 'profile_picture5', 'Zikic', 'password2', '987456321');
 INSERT INTO users (active, address, blocked, email, name, profile_picture, surname, password, telephone_number)
-VALUES (false, 'Strumicka 6', true, 'email', 'name', 'profile_picture', 'surname', 'password', 'telephone_number6');
+VALUES (false, 'Strumicka 6', false, 'jovan@gmail.com', 'Jovan', 'profile_picture', 'Jovic', 'password', '3265987414');
+INSERT INTO users (active, address, blocked, email, name, profile_picture, surname, password, telephone_number)
+VALUES (false, 'Strumicka 6', true, 'marko@gmail', 'Marko', 'profile_picture', 'Markovic', 'password', '369258147');
+INSERT INTO users (active, address, blocked, email, name, profile_picture, surname, password, telephone_number)
+VALUES (false, 'Strumicka 5', true, 'janko@gmail.com', 'Janko', 'profile_picture1', 'Jankovic', 'password1', '12345678');
+INSERT INTO users (active, address, blocked, email, name, profile_picture, surname, password, telephone_number)
+VALUES (false, 'Narodnog fronta 5', false, 'ema@gmail.com', 'Emilija', 'profile_picture5', 'Markovic', 'password2', '321654987');
+INSERT INTO users (active, address, blocked, email, name, profile_picture, surname, password, telephone_number)
+VALUES (false, 'Strumicka 6', true, 'anita@gmail.com', 'Anita', 'profile_picture', 'Pajic', 'password', '852741963');
+INSERT INTO users (active, address, blocked, email, name, profile_picture, surname, password, telephone_number)
+VALUES (false, 'Strumicka 5', false, 'petar@gmail.com', 'Petar', 'profile_picture1', 'Petrovic', 'password1', '545841454');
+INSERT INTO users (active, address, blocked, email, name, profile_picture, surname, password, telephone_number)
+VALUES (false, 'Narodnog fronta 5', true, 'steva@gmail.com', 'Stevan', 'profile_picture5', 'Stevanovic', 'password2', '534646874515');
+INSERT INTO users (active, address, blocked, email, name, profile_picture, surname, password, telephone_number)
+VALUES (false, 'Strumicka 6', false, 'nenad@gmail.com', 'Nenad', 'profile_picture', 'Nenadovic', 'password', '96325414');
 
 
 # users_activations
@@ -29,6 +43,9 @@ INSERT INTO notes (id, message, user_id) VALUES ('3', 'kjszdhfhsdjf', '3');
 INSERT INTO drivers (id, vehicle_id) VALUES ('1', '1');
 INSERT INTO drivers (id, vehicle_id) VALUES ('2', '2');
 INSERT INTO drivers (id, vehicle_id) VALUES ('3', '3');
+INSERT INTO drivers (id, vehicle_id) VALUES ('7', '4');
+INSERT INTO drivers (id, vehicle_id) VALUES ('8', '5');
+INSERT INTO drivers (id, vehicle_id) VALUES ('9', '6');
 
 # documents
 INSERT INTO documents (id, document_image, name, driver_id) VALUES ('1', 'hkdhfshdfj', 'hsgdgadg', '1');
@@ -58,10 +75,15 @@ VALUES (true, '2022-12-7 07:55:00', 15, false, '2022-12-7 07:40:00', 0, 500, 0, 
 INSERT INTO vehicle (id, license_number, vehicle_type, model,  current_location_id, driver_id, passenger_seats, baby_transport, pet_transport)
 VALUES ('1', 'NS12312', 1, 'Skoda fabia',  2, 1, 3, true, true);
 INSERT INTO vehicle (id, license_number, vehicle_type, model,  current_location_id, driver_id, passenger_seats, baby_transport, pet_transport)
-VALUES ('2', 'NS45678',  0, 'Skoda fabia', 3, 2, 3, true, true);
+VALUES ('2', 'NS45678',  0, 'sjfcdsjfjewfja', 3, 2, 3, true, true);
 INSERT INTO vehicle (id, license_number, vehicle_type, model,  current_location_id, driver_id, passenger_seats, baby_transport, pet_transport)
-VALUES ('3', 'NS 567 ad', 2,'Skoda fabia', 1, 3, 3, true, true);
-
+VALUES ('3', 'NS 567 ad', 2,'asnfklsdfvksdj', 1, 3, 4, true, true);
+INSERT INTO vehicle (id, license_number, vehicle_type, model,  current_location_id, driver_id, passenger_seats, baby_transport, pet_transport)
+VALUES ('4', 'NS11111', 1, 'sjbcjbejehcvewj',  2, 7, 4, true, true);
+INSERT INTO vehicle (id, license_number, vehicle_type, model,  current_location_id, driver_id, passenger_seats, baby_transport, pet_transport)
+VALUES ('5', 'NS45678',  0, 'Reno megan', 3, 8, 4, true, true);
+INSERT INTO vehicle (id, license_number, vehicle_type, model,  current_location_id, driver_id, passenger_seats, baby_transport, pet_transport)
+VALUES ('6', 'NS 567 ad', 2,'ksncejfewfls', 1, 9, 2, true, true);
 
 # --panics--
 INSERT INTO panics (time, reason, user_id) VALUES ('2022-12-07', 'jahdjhhefej', '1');

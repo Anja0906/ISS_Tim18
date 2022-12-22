@@ -16,6 +16,7 @@ public class UserDTO {
     private String telephoneNumber;
     private String email;
     private String address;
+    private boolean blocked;
 
     public UserDTO() {
     }
@@ -38,6 +39,7 @@ public class UserDTO {
         this.telephoneNumber = user.getTelephoneNumber();
         this.email           = user.getEmail();
         this.address         = user.getAddress();
+        this.blocked         = user.isBlocked();
     }
 
     public HashSet<UserDTO> makeUserDTOS(Page<User> users){
