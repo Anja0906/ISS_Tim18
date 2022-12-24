@@ -3,6 +3,7 @@ package org.tim_18.UberApp.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.tim_18.UberApp.exception.DocumentNotFoundException;
 import org.tim_18.UberApp.exception.UserNotFoundException;
 import org.tim_18.UberApp.model.Document;
 import org.tim_18.UberApp.repository.DocumentRepository;
@@ -40,7 +41,7 @@ public class DocumentService {
 
     public Document findDocumentById(Integer id) {
         return documentRepository.findDocumentById(id)
-                .orElseThrow(() -> new UserNotFoundException("Document by id " + id + " was not found"));
+                .orElseThrow(() -> new DocumentNotFoundException("Document by id " + id + " was not found"));
     }
 
 }

@@ -10,21 +10,17 @@ public class MessageDTO {
     private String type;
     private Integer rideId;
 
-    public MessageDTO() {
-    }
-
+    public MessageDTO() {}
     public MessageDTO(Integer receiverId, String message, String type, Integer rideId) {
         this.receiverId = receiverId;
         this.message    = message;
         this.type       = type;
         this.rideId     = rideId;
     }
-
     public MessageDTO(Message message) {
         this.receiverId = message.getId();
         this.message    = message.getMessage();
         this.type       = message.getMessageType();
         this.rideId     = message.getRide().getId();
     }
-
 }

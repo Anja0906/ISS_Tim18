@@ -13,13 +13,13 @@ import org.tim_18.UberApp.dto.driverDTOs.DriverDTO;
 import org.tim_18.UberApp.dto.driverDTOs.DriverDTOWithoutId;
 import org.tim_18.UberApp.dto.locationDTOs.LocationDTO;
 import org.tim_18.UberApp.dto.rideDTOs.RideRetDTO;
+import org.tim_18.UberApp.exception.*;
 import org.tim_18.UberApp.model.Document;
 import org.tim_18.UberApp.model.Driver;
 import org.tim_18.UberApp.model.Vehicle;
 import org.tim_18.UberApp.service.DocumentService;
 import org.tim_18.UberApp.service.DriverService;
 import org.tim_18.UberApp.service.VehicleService;
-import org.tim_18.UberApp.exception.UserNotFoundException;
 import org.tim_18.UberApp.model.*;
 import org.tim_18.UberApp.service.*;
 
@@ -48,8 +48,9 @@ public class DriverController {
     }
 
     @GetMapping
-    public ResponseEntity<Map<String, Object>> getDrivers (@RequestParam(defaultValue = "0") Integer page,
-                                                           @RequestParam(defaultValue = "4") Integer size) {
+    public ResponseEntity<Map<String, Object>> getDrivers (
+            @RequestParam(defaultValue = "0") Integer page,
+            @RequestParam(defaultValue = "4") Integer size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<Driver> drivers = driverService.findAll(pageable);
         Map<String, Object> map = new HashMap<>();
@@ -66,7 +67,7 @@ public class DriverController {
             Driver driver = driverService.findDriverById(id);
             DriverDTO driverDTO = new DriverDTO(driver);
             return new ResponseEntity<>(driverDTO, HttpStatus.OK);
-        }catch(UserNotFoundException userNotFoundException) {
+        }catch(DriverNotFoundException driverNotFoundException) {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }
     }
@@ -88,11 +89,10 @@ public class DriverController {
             @RequestBody DriverDTOWithoutId driverDTOWithoutId) {
         try {
             Driver driver = driverService.findDriverById(id);
-            driver.driverUpdate(driverDTOWithoutId);
             Driver updateDriver = driverService.updateDriver(driver);
             DriverDTO driverDTO = new DriverDTO(updateDriver);
             return new ResponseEntity<>(driverDTO, HttpStatus.OK);
-        } catch (UserNotFoundException userNotFoundException) {
+        } catch (DriverNotFoundException driverNotFoundException) {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }
     }
@@ -100,15 +100,11 @@ public class DriverController {
     @GetMapping("/{id}/documents")
     public ResponseEntity<HashSet<DocumentDTO>> getDocumentById (
             @PathVariable("id") int id) {
-        HashSet<DocumentDTO> documentDTOS = new HashSet<>();
         HashSet<Document> documents = documentService.findByDriverId(id);
         if(documents.isEmpty()) {
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
         }else{
-            for(Document document:documents){
-                DocumentDTO documentDTO = new DocumentDTO(document);
-                documentDTOS.add(documentDTO);
-            }
+            HashSet<DocumentDTO> documentDTOS = new DocumentDTO().makeDocumentsDTO(documents);
             return new ResponseEntity<>(documentDTOS, HttpStatus.OK);
         }
     }
@@ -121,7 +117,7 @@ public class DriverController {
         Document document = new Document().makeDocumentFromDTO(documentDTO,driver);
         document = documentService.addDocument(document);
             return new ResponseEntity<>(new DocumentDTO(document), HttpStatus.CREATED);
-        }catch (UserNotFoundException userNotFoundException){
+        }catch (DriverNotFoundException driverNotFoundException){
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }
     }
@@ -133,7 +129,7 @@ public class DriverController {
             Document document = documentService.findDocumentById(id);
             documentService.deleteDocument(document);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        } catch (UserNotFoundException e) {
+        } catch (DocumentNotFoundException documentNotFoundException) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
@@ -146,7 +142,9 @@ public class DriverController {
             Vehicle vehicle = vehicleService.findVehicleByDriverId(driver.getId());
             LocationDTO locationDTO = new LocationDTO(vehicle.getCurrentLocation());
             return new ResponseEntity<>(new VehicleDTO(vehicle,locationDTO), HttpStatus.OK);
-        }catch (UserNotFoundException e){
+        }catch (DriverNotFoundException driverNotFoundException){
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }catch (VehicleNotFoundException vehicleNotFoundException){
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }
     }
@@ -166,7 +164,7 @@ public class DriverController {
                                           vehicleDTOWithoutIds.getBabyTransport(),vehicleDTOWithoutIds.getPetTransport());
             vehicle = vehicleService.addVehicle(vehicle);
             return new ResponseEntity<>(new VehicleDTO(vehicle,vehicleDTOWithoutIds.getCurrentLocation()), HttpStatus.CREATED);
-        }catch (UserNotFoundException userNotFoundException){
+        }catch (DriverNotFoundException driverNotFoundException){
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }
     }
@@ -184,7 +182,9 @@ public class DriverController {
             vehicle = vehicleService.addVehicle(vehicle);
             vehicle = vehicleService.updateVehicle(vehicle);
             return new ResponseEntity<>(new VehicleDTO(vehicle,vehicleDTOWithoutIds.getCurrentLocation()), HttpStatus.CREATED);
-        }catch (UserNotFoundException userNotFoundException){
+        }catch (DriverNotFoundException driverNotFoundException){
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }catch (VehicleNotFoundException vehicleNotFoundException){
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }
     }
@@ -193,14 +193,14 @@ public class DriverController {
     public ResponseEntity<Map<String, Object>> getWorkingHours (
             @PathVariable("id") int id,
             @RequestParam(defaultValue = "0") Integer page,
-            @RequestParam(defaultValue = "4") Integer size) {
+            @RequestParam(defaultValue = "4") Integer size,
+            @RequestParam(defaultValue = "start_time") String sort,
+            @RequestParam(defaultValue = "2022-12-07T07:00:50") String from,
+            @RequestParam(defaultValue = "2022-12-08T10:40:00") String to) {
         Map<String, Object> map = new HashMap<>();
-        Pageable pageable = PageRequest.of(page, size);
+        Pageable pageable = PageRequest.of(page, size,Sort.by(sort));
 
-        LocalDateTime startTime = LocalDateTime.of(2022,12,7,1,0,0);
-        LocalDateTime endTime = LocalDateTime.of(2022,12,7,3,54,0);
-
-        Page<WorkTime> workTimes = workTimeService.findWorkTimesFromToDate(id,startTime,endTime,pageable);
+        Page<WorkTime> workTimes = workTimeService.findWorkTimesFromToDate(id,from,to,pageable);
         HashSet<WorkTimeDTOWithoutDriver> workTimeDTOS = new WorkTimeDTOWithoutDriver().makeWorkTimeDTOWithoutDriver(workTimes);
 
         map.put("totalCount",workTimeDTOS.size());
@@ -214,11 +214,10 @@ public class DriverController {
             @RequestBody WorkTimeDTOWithoutDriver workTimeDTOWithoutDriver) {
         try{
             Driver driver = driverService.findDriverById(id);
-            System.out.println(workTimeDTOWithoutDriver.getStart());
             WorkTime workTime = new WorkTime(workTimeDTOWithoutDriver.getStart(),workTimeDTOWithoutDriver.getEnd(), driver);
             workTime = workTimeService.addWorkTime(workTime);
             return new ResponseEntity<>(new WorkTimeDTOWithoutDriver(workTime), HttpStatus.CREATED);
-        }catch (UserNotFoundException userNotFoundException){
+        }catch (DriverNotFoundException driverNotFoundException){
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }
     }
@@ -229,7 +228,7 @@ public class DriverController {
         try {
             WorkTime workTime = workTimeService.findWorkTimeById(id);
             return new ResponseEntity<>(new WorkTimeDTOWithoutDriver(workTime),HttpStatus.OK);
-        }catch(UserNotFoundException e){
+        }catch(WorkTimeNotFoundException workTimeNotFoundException){
             return new ResponseEntity<>(null,HttpStatus.NOT_FOUND);
         }
     }
@@ -243,7 +242,7 @@ public class DriverController {
             workTime.updateWorkTime(workTimeDTOWithoutDriver);
             workTime = workTimeService.updateWorkTime(workTime);
             return new ResponseEntity<>(new WorkTimeDTOWithoutDriver(workTime),HttpStatus.OK);
-        }catch(UserNotFoundException e){
+        }catch(WorkTimeNotFoundException workTimeNotFoundException){
             return new ResponseEntity<>(null,HttpStatus.NOT_FOUND);
         }
     }
@@ -258,11 +257,9 @@ public class DriverController {
             @RequestParam(defaultValue = "2022-12-08T10:40:00") String to) {
         Pageable pageable = PageRequest.of(page, size,Sort.by(sort));
         Page<Ride> rides = rideService.findRidesForDriver(id,from,to,pageable);
+
         Map<String, Object> map = new HashMap<>();
-        HashSet<RideRetDTO> ridesDTO = new HashSet<>();
-        for (Ride ride: rides){
-            ridesDTO.add(new RideRetDTO(ride));
-        }
+        HashSet<RideRetDTO> ridesDTO = new RideRetDTO().makeRideRideDTOS(rides);
 
         map.put("totalCount",ridesDTO.size());
         map.put("results",ridesDTO);

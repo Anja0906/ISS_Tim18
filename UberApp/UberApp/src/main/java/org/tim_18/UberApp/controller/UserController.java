@@ -14,9 +14,7 @@ import org.tim_18.UberApp.dto.noteDTOs.NoteResponseDTO;
 import org.tim_18.UberApp.dto.rideDTOs.RideRetDTO;
 import org.tim_18.UberApp.exception.UserNotFoundException;
 import org.tim_18.UberApp.model.*;
-import org.tim_18.UberApp.service.MessageService;
-import org.tim_18.UberApp.service.RideService;
-import org.tim_18.UberApp.service.UserService;
+import org.tim_18.UberApp.service.*;
 
 import javax.naming.ldap.HasControls;
 import java.time.LocalDateTime;
@@ -29,11 +27,15 @@ public class UserController {
     private final UserService userService;
     private final MessageService messageService;
     private final RideService rideService;
+    private final NoteService noteService;
+    private final ReviewService reviewService;
 
-    public UserController(UserService userService,MessageService messageService,RideService rideService) {
+    public UserController(UserService userService,MessageService messageService,RideService rideService,NoteService noteService,ReviewService reviewService) {
         this.userService    = userService;
         this.messageService = messageService;
         this.rideService    = rideService;
+        this.noteService    = noteService;
+        this.reviewService  = reviewService;
     }
     @GetMapping("")
     public ResponseEntity<Map<String, Object>> getUserDetails (
@@ -88,7 +90,7 @@ public class UserController {
             @PathVariable("id") int id,
             @RequestBody MessageDTO messageDTO) {
         Message message = messageFromMessageDTO(id, messageDTO);
-        userService.saveMessage(message);
+        messageService.saveMessage(message);
 
         MessageResponseDTO messageResponseDTO = new MessageResponseDTO(message);
         return new ResponseEntity<>(messageResponseDTO, HttpStatus.OK);
@@ -98,29 +100,31 @@ public class UserController {
         Message message = new Message(id,userService.findUserById(id),
                                       userService.findUserById(messageDTO.getReceiverId()),
                                       messageDTO.getMessage(),LocalDateTime.now(),
-                                      messageDTO.getType(),userService.findRideById(messageDTO.getRideId()));
+                                      messageDTO.getType(),rideService.findRideById(messageDTO.getRideId()));
         return message;
     }
 
     @PutMapping("/{id}/block")
-    @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    public void blockUser(@PathVariable("id") int id) {
+    public ResponseEntity blockUser(@PathVariable("id") int id) {
         try{
             User user = userService.findUserById(id);
             user.setBlocked(true);
             userService.updateUser(user);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }catch (UserNotFoundException e){
-            System.out.println("User not found");
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
     @PutMapping("/{id}/unblock")
-    @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    public void unblockUser(@PathVariable("id") int id) {
-        User user = userService.findUserById(id);
-        if(user!=null){
+    public ResponseEntity unblockUser(@PathVariable("id") int id) {
+        try{
+            User user = userService.findUserById(id);
             user.setBlocked(false);
             userService.updateUser(user);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }catch (UserNotFoundException e){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
     @PostMapping("/{id}/note")
@@ -130,9 +134,8 @@ public class UserController {
         try{
             User user =userService.findUserById(id);
             Note note = new Note(user,notePostDTO.getMessage());
-            userService.saveNote(note);
+            noteService.saveNote(note);
             NoteResponseDTO noteResponseDTO = new NoteResponseDTO(note);
-
             return new ResponseEntity<>(noteResponseDTO, HttpStatus.OK);
         }catch (UserNotFoundException e){
             return new ResponseEntity<>(null,HttpStatus.NOT_FOUND);
@@ -146,7 +149,7 @@ public class UserController {
             @RequestParam(defaultValue = "4") Integer size){
 
         Pageable pageable = PageRequest.of(page, size);
-        Page<Note> notes = userService.findNotesByUserId(id, pageable);
+        Page<Note> notes = noteService.findNotesByUserId(id, pageable);
 
         Map<String, Object> map = new HashMap<>();
         HashSet<NoteResponseDTO> noteResponseDTOS = new NoteResponseDTO().makeNoteResponseDTOS(notes);
@@ -155,7 +158,6 @@ public class UserController {
         map.put("results",noteResponseDTOS);
         return new ResponseEntity<>(map, HttpStatus.OK);
     }
-
 
 }
 

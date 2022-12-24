@@ -141,6 +141,9 @@ INSERT INTO reviews (comment, rating, ride_id) VALUES ('jashjfhasfhjsa', 1, '1')
 INSERT INTO reviews (comment, rating, ride_id) VALUES ('jashjfhasfhjsa', 5, '2');
 INSERT INTO reviews (comment, rating, ride_id) VALUES ('jashjfhasfhjsa', 3, '3');
 
+# -- vehicle review --
+# -- driver review --
+
 # --administrators--
 INSERT INTO administrators (name, profile_picture, surname, password, username)
 VALUES ('anja', 'asbfhasfj', 'petkovic', 'ajsbsj', 'ajshjfhsafh');
@@ -157,3 +160,6 @@ INSERT INTO passenger_rides (passenger_id, ride_id) VALUES (1, 4);
 INSERT INTO passenger_rides (passenger_id, ride_id) VALUES (1, 5);
 INSERT INTO passenger_rides (passenger_id, ride_id) VALUES (1, 6);
 INSERT INTO passenger_rides (passenger_id, ride_id) VALUES (4, 5);
+
+# passenger_rides(treba da dobavim passengere)
+#

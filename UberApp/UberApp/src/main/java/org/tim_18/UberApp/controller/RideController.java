@@ -22,6 +22,7 @@ import java.util.*;
 
 @RestController
 @RequestMapping("/api/ride")
+@CrossOrigin(origins = "http://localhost:4200")
 public class RideController {
 
     private final RideService rideService;

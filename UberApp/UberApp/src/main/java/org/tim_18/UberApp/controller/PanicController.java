@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.tim_18.UberApp.dto.FindAllDTO;
 import org.tim_18.UberApp.dto.PanicDTO;
+import org.tim_18.UberApp.exception.PanicNotFoundException;
 import org.tim_18.UberApp.exception.UserNotFoundException;
 import org.tim_18.UberApp.model.Panic;
 import org.tim_18.UberApp.service.PanicService;
@@ -42,7 +43,7 @@ public class PanicController {
             response.put("totalCount", panics.getTotalElements());
             response.put("results", panicDTOs);
             return new ResponseEntity<>(response, HttpStatus.OK);
-        } catch(UserNotFoundException e){
+        } catch(PanicNotFoundException panicNotFoundException){
             return new ResponseEntity<>(null,HttpStatus.NOT_FOUND);
         }
     }

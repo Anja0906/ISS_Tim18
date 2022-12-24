@@ -23,10 +23,10 @@ public class Document implements Serializable {
     public Document() {}
 
     public Document(Integer id, String name, String documentImage, Driver driver) {
-        this.id     = id;
-        this.name   = name;
+        this.id             = id;
+        this.name           = name;
         this.documentImage  = documentImage;
-        this.driver = driver;
+        this.driver         = driver;
     }
     public Document makeDocumentFromDTO(DocumentDTO documentDTO,Driver driver){
         setName(documentDTO.getName());

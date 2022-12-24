@@ -5,7 +5,6 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.tim_18.UberApp.dto.driverDTOs.DriverDTOWithoutId;
-
 import java.util.HashSet;
 import java.util.Set;
 
