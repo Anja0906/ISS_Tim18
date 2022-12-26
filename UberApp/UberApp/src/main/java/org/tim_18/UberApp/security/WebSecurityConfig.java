@@ -19,6 +19,8 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 import org.tim_18.UberApp.repository.UserRepository;
 import org.tim_18.UberApp.service.CustomUserDetailsService;
 
+import javax.transaction.Transactional;
+
 @Configuration
 // Injektovanje bean-a za bezbednost 
 @EnableWebSecurity
@@ -42,7 +44,8 @@ public class WebSecurityConfig {
         return new BCryptPasswordEncoder();
     }
   	
-  
+
+	@Transactional
  	@Bean
  	public DaoAuthenticationProvider authenticationProvider() {
  	    DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();

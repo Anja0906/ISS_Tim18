@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.tim_18.UberApp.dto.*;
 import org.tim_18.UberApp.dto.driverDTOs.DriverDTO;
@@ -17,6 +18,7 @@ import org.tim_18.UberApp.model.*;
 import org.tim_18.UberApp.service.*;
 
 import javax.naming.ldap.HasControls;
+import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -157,6 +159,11 @@ public class UserController {
         map.put("totalCount",noteResponseDTOS.size());
         map.put("results",noteResponseDTOS);
         return new ResponseEntity<>(map, HttpStatus.OK);
+    }
+    @GetMapping("/whoami")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    public User user(Principal user) {
+        return this.userService.findByEmail(user.getName());
     }
 
 }

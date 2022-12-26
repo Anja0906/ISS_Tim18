@@ -8,13 +8,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.tim_18.UberApp.dto.UserDTOwithPassword;
 import org.tim_18.UberApp.exception.UserNotFoundException;
-import org.tim_18.UberApp.model.Message;
-import org.tim_18.UberApp.model.Note;
-import org.tim_18.UberApp.model.Ride;
+import org.tim_18.UberApp.model.Role;
 import org.tim_18.UberApp.model.User;
-import org.tim_18.UberApp.repository.MessageRepository;
-import org.tim_18.UberApp.repository.NoteRepository;
-import org.tim_18.UberApp.repository.RideRepository;
 import org.tim_18.UberApp.repository.UserRepository;
 
 import java.util.List;
@@ -24,24 +19,14 @@ public class UserService {
     @Autowired
     private final UserRepository userRepository;
     @Autowired
-    private final RideRepository rideRepository;
+    private final RoleService roleService;
     @Autowired
-    private final MessageRepository messageRepository;
-    @Autowired
-    private final NoteRepository noteRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    @Autowired
-    private RoleService roleService;
-
-    public UserService(UserRepository userRepository, RideRepository rideRepository, MessageRepository messageRepository,
-                       NoteRepository noteRepository) {
+    public UserService(UserRepository userRepository, RoleService roleService, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
-        this.rideRepository = rideRepository;
-        this.messageRepository = messageRepository;
-        this.noteRepository = noteRepository;
+        this.roleService = roleService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public User addUser(User user) {
@@ -66,29 +51,8 @@ public class UserService {
         return userRepository.findUserById(id)
                 .orElseThrow(() -> new UserNotFoundException("User by id " + id + " was not found"));
     }
-
-    public Page<Ride> findRidesForUser(Integer id, Pageable pageable) {
-        return rideRepository.findRidesForUserPage(id, pageable);
-    }
-
-    public Ride findRideById(Integer id){
-        return rideRepository.findRideById(id)
-                .orElseThrow(() -> new UserNotFoundException("Ride was not found"));
-    }
-    public void saveMessage(Message message){
-        messageRepository.save(message);
-    }
-
-    public void saveNote(Note note){
-        noteRepository.save(note);
-    }
     public void deleteUser(Integer id) {
         userRepository.deleteById(id);
-    }
-
-
-    public Page<Note> findNotesByUserId(Integer id, Pageable pageable) {
-        return noteRepository.findByUserId(id, pageable);
     }
 
     public User findByEmail(String email) throws UsernameNotFoundException {
@@ -109,8 +73,8 @@ public class UserService {
         u.setEmail(userRequest.getEmail());
 
         // u primeru se registruju samo obicni korisnici i u skladu sa tim im se i dodeljuje samo rola USER
-//        List<Role> roles = roleService.findByName("ROLE_USER");
-//        u.setRoles(roles);
+        List<Role> roles = roleService.findByName("ROLE_USER");
+        u.setRoles(roles);
 
         return this.userRepository.save(u);
     }
