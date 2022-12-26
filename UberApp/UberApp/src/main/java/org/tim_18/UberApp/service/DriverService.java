@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.tim_18.UberApp.exception.DriverNotFoundException;
 import org.tim_18.UberApp.exception.UserNotFoundException;
 import org.tim_18.UberApp.model.Driver;
 import org.tim_18.UberApp.model.UserActivation;
@@ -38,7 +39,7 @@ public class DriverService {
 
     public Driver findDriverById(Integer id) {
         return driverRepository.findDriverById(id)
-                .orElseThrow(() -> new UserNotFoundException("Driver by id " + id + " was not found"));
+                .orElseThrow(() -> new DriverNotFoundException("Driver by id " + id + " was not found"));
     }
 
     public void deleteDriver(Integer id) {

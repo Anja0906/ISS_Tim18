@@ -6,16 +6,17 @@ import org.tim_18.UberApp.model.Rejection;
 @Data
 public class RejectionDTO {
     private String reason;
-    private String time;
+    private String timeOfRejection;
 
     public RejectionDTO(){}
 
-    public RejectionDTO(Integer id, String reason, String time) {
+    public RejectionDTO(String reason, String timeOfRejection) {
         this.reason = reason;
-        this.time = time;
+        this.timeOfRejection = timeOfRejection;
     }
 
     public RejectionDTO(Rejection rejection){
-        this(rejection.getId(), rejection.getReason(), rejection.getTime().toString());
+        this(rejection.getReason(),
+             rejection.getTimeOfRejection().toString());
     }
 }

@@ -24,4 +24,7 @@ public class PanicService {
 
     public Page<Panic> findAll(Pageable page){return repo.findAll(page);}
 
+    public Panic addPanic(Panic panic) {
+        return repo.save(panic);
+    }
 }

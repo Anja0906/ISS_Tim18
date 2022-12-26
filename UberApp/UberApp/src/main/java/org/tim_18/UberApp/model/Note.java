@@ -20,15 +20,19 @@ public class Note implements Serializable {
     }
 
     public Note(Integer id, String message, User user) {
-        this.id = id;
-        this.message = message;
-        this.user = user;
+        this.id         = id;
+        this.message    = message;
+        this.user       = user;
+    }
+
+    public Note(User user, String message) {
+        this.message    = message;
+        this.user       = user;
     }
 
     public Integer getId() {
         return id;
     }
-
     public void setId(Integer id) {
         this.id = id;
     }
@@ -36,7 +40,6 @@ public class Note implements Serializable {
     public String getMessage() {
         return message;
     }
-
     public void setMessage(String message) {
         this.message = message;
     }
@@ -44,7 +47,6 @@ public class Note implements Serializable {
     public User getUser() {
         return user;
     }
-
     public void setUser(User user) {
         this.user = user;
     }

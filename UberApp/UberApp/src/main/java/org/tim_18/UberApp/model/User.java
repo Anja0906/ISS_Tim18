@@ -24,6 +24,9 @@ public class User implements Serializable{
     private boolean blocked;
     private boolean active;
 
+//    @Transient
+//    private String jwt;
+
     public User(String name, String surname, String profilePicture, String telephoneNumber, String email, String address, String password, boolean blocked, boolean active) {
 
         this.name            = name;
@@ -36,6 +39,19 @@ public class User implements Serializable{
         this.blocked         = blocked;
         this.active          = active;
     }
+//    public User(String name, String surname, String profilePicture, String telephoneNumber, String email, String address, String password, boolean blocked, boolean active, String jwt) {
+//
+//        this.name            = name;
+//        this.surname         = surname;
+//        this.profilePicture  = profilePicture;
+//        this.telephoneNumber = telephoneNumber;
+//        this.email           = email;
+//        this.address         = address;
+//        this.password        = password;
+//        this.blocked         = blocked;
+//        this.active          = active;
+//        this.jwt             = jwt;
+//    }
     public User() {}
 
     public Integer getId() {
@@ -118,6 +134,14 @@ public class User implements Serializable{
         this.active = active;
     }
 
+//    public String getJwt() {
+//        return jwt;
+//    }
+//
+//    public void setJwt(String jwt) {
+//        this.jwt = jwt;
+//    }
+
     @Override
     public String toString() {
         return "User{" +
@@ -133,4 +157,5 @@ public class User implements Serializable{
                 ", active=" + active +
                 '}';
     }
+
 }

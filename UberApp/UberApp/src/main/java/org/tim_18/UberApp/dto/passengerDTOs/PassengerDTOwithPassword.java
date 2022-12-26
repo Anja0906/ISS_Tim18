@@ -15,21 +15,22 @@ public class PassengerDTOwithPassword {
     private String address;
     private String password;
 
-    public PassengerDTOwithPassword() {
-    }
-
+    public PassengerDTOwithPassword() {}
     public PassengerDTOwithPassword(Passenger passenger){
-        this(passenger.getId(), passenger.getName(), passenger.getName(), passenger.getProfilePicture(), passenger.getTelephoneNumber(), passenger.getEmail(), passenger.getAddress(), passenger.getPassword());
+        this(passenger.getId(), passenger.getName(),
+             passenger.getName(), passenger.getProfilePicture(),
+             passenger.getTelephoneNumber(), passenger.getEmail(),
+             passenger.getAddress(), passenger.getPassword());
     }
 
     public PassengerDTOwithPassword(Integer id, String name, String surname, String profilePicture, String telephoneNumber, String email, String address, String password) {
-        this.name = name;
-        this.surname = surname;
-        this.profilePicture = profilePicture;
-        this.telephoneNumber = telephoneNumber;
-        this.email = email;
-        this.address = address;
-        this.password = password;
-        this.id = id;
+        this.name               = name;
+        this.surname            = surname;
+        this.profilePicture     = profilePicture;
+        this.telephoneNumber    = telephoneNumber;
+        this.email              = email;
+        this.address            = address;
+        this.password           = password;
+        this.id                 = id;
     }
 }

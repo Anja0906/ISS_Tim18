@@ -14,6 +14,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/unregisteredUser/")
+@CrossOrigin(origins = "http://localhost:4200")
 public class AssumptionController {
     @Autowired
     private final AssumptionService assumptionService;

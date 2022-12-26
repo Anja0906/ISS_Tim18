@@ -2,6 +2,7 @@ package org.tim_18.UberApp.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.tim_18.UberApp.exception.UserActivationNotFoundException;
 import org.tim_18.UberApp.exception.UserNotFoundException;
 import org.tim_18.UberApp.model.User;
 import org.tim_18.UberApp.model.UserActivation;
@@ -34,7 +35,7 @@ public class UserActivationService {
 
     public UserActivation findUserActivationById(Integer id) {
         return userActivationRepository.findUserActivationById(id)
-                .orElseThrow(() -> new UserNotFoundException("User activation by id " + id + " was not found"));
+                .orElseThrow(() -> new UserActivationNotFoundException("User activation by id " + id + " was not found"));
     }
 
     public void deleteUserActivation(Integer id) {
