@@ -176,8 +176,13 @@ INSERT INTO user_role (user_id, role_id) VALUES (4, 1);
 INSERT INTO user_role (user_id, role_id) VALUES (5, 1);
 INSERT INTO user_role (user_id, role_id) VALUES (6, 1);
 INSERT INTO user_role (user_id, role_id) VALUES (7, 1);
-INSERT INTO user_role (user_id, role_id) VALUES (4, 2); -- user 4 = passenger
-INSERT INTO user_role (user_id, role_id) VALUES (1, 3); -- user 1 = driver
+INSERT INTO user_role (user_id, role_id) VALUES (8, 1);
+INSERT INTO user_role (user_id, role_id) VALUES (9, 1);
+INSERT INTO user_role (user_id, role_id) VALUES (10, 1);
+INSERT INTO user_role (user_id, role_id) VALUES (11, 1);
+INSERT INTO user_role (user_id, role_id) VALUES (12, 1);
+INSERT INTO user_role (user_id, role_id) VALUES (13, 1);
+INSERT INTO user_role (user_id, role_id) VALUES (14, 1);
 
 # passenger_rides(treba da dobavim passengere)
 #
