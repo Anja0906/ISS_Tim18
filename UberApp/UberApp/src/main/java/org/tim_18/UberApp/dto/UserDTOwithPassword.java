@@ -2,9 +2,11 @@ package org.tim_18.UberApp.dto;
 
 import lombok.Data;
 import org.springframework.data.domain.Page;
+import org.tim_18.UberApp.model.Role;
 import org.tim_18.UberApp.model.User;
 
 import java.util.HashSet;
+import java.util.List;
 
 @Data
 public class UserDTOwithPassword {
@@ -18,6 +20,7 @@ public class UserDTOwithPassword {
     private String address;
 
     private String password;
+    private List<Role> roles;
 
     public UserDTOwithPassword() {
     }

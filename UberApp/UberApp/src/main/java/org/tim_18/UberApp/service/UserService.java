@@ -78,5 +78,8 @@ public class UserService {
 
         return this.userRepository.save(u);
     }
+    public User save(User u) {
+        return this.userRepository.save(u);
+    }
 
 }
