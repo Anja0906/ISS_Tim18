@@ -1,33 +1,5 @@
 #users
 INSERT INTO users (active, address, blocked, email, name, profile_picture, surname, password, telephone_number)
-VALUES (false, 'Strumicka 6', false, 'email', 'name', 'profile_picture', 'surname', 'password', 'telephone_number');
-INSERT INTO users (active, address, blocked, email, name, profile_picture, surname, password, telephone_number)
-VALUES (false, 'Strumicka 5', false, 'email1', 'name1', 'profile_picture1', 'surname1', 'password1', 'telephone_number1');
-INSERT INTO users (active, address, blocked, email, name, profile_picture, surname, password, telephone_number)
-VALUES (false, 'Narodnog fronta 5', false, 'email2', 'name3', 'profile_picture5', 'surname4', 'password2', 'telephone_number2');
-INSERT INTO users (active, address, blocked, email, name, profile_picture, surname, password, telephone_number)
-VALUES (false, 'Strumicka 6', false, 'email', 'name', 'profile_picture', 'surname', 'password', 'telephone_number3');
-INSERT INTO users (active, address, blocked, email, name, profile_picture, surname, password, telephone_number)
-VALUES (false, 'Strumicka 5', true, 'email1', 'name1', 'profile_picture1', 'surname1', 'password1', 'telephone_number4');
-INSERT INTO users (active, address, blocked, email, name, profile_picture, surname, password, telephone_number)
-VALUES (false, 'Narodnog fronta 5', true, 'email2', 'name3', 'profile_picture5', 'surname4', 'password2', 'telephone_number5');
-INSERT INTO users (active, address, blocked, email, name, profile_picture, surname, password, telephone_number)
-VALUES (false, 'Strumicka 6', true, 'email', 'name', 'profile_picture', 'surname', 'password', 'telephone_number6');
-INSERT INTO users (active, address, blocked, email, name, profile_picture, surname, password, telephone_number)
-VALUES (false, 'Strumicka 6', true, 'email', 'name', 'profile_picture', 'surname', 'password', 'telephone_number');
-INSERT INTO users (active, address, blocked, email, name, profile_picture, surname, password, telephone_number)
-VALUES (false, 'Strumicka 5', true, 'email1', 'name1', 'profile_picture1', 'surname1', 'password1', 'telephone_number1');
-INSERT INTO users (active, address, blocked, email, name, profile_picture, surname, password, telephone_number)
-VALUES (false, 'Narodnog fronta 5', true, 'email2', 'name3', 'profile_picture5', 'surname4', 'password2', 'telephone_number2');
-INSERT INTO users (active, address, blocked, email, name, profile_picture, surname, password, telephone_number)
-VALUES (false, 'Strumicka 6', true, 'email', 'name', 'profile_picture', 'surname', 'password', 'telephone_number3');
-INSERT INTO users (active, address, blocked, email, name, profile_picture, surname, password, telephone_number)
-VALUES (false, 'Strumicka 5', true, 'email1', 'name1', 'profile_picture1', 'surname1', 'password1', 'telephone_number4');
-INSERT INTO users (active, address, blocked, email, name, profile_picture, surname, password, telephone_number)
-VALUES (false, 'Narodnog fronta 5', false, 'email2', 'name3', 'profile_picture5', 'surname4', 'password2', 'telephone_number5');
-INSERT INTO users (active, address, blocked, email, name, profile_picture, surname, password, telephone_number)
-VALUES (false, 'Strumicka 6', false, 'email', 'name', 'profile_picture', 'surname', 'password', 'telephone_number6');
-INSERT INTO users (active, address, blocked, email, name, profile_picture, surname, password, telephone_number)
 VALUES (false, 'Strumicka 6', true, 'email', 'name', 'profile_picture', 'surname', 'password', 'telephone_number');
 INSERT INTO users (active, address, blocked, email, name, profile_picture, surname, password, telephone_number)
 VALUES (false, 'Strumicka 5', true, 'email1', 'name1', 'profile_picture1', 'surname1', 'password1', 'telephone_number1');
@@ -50,9 +22,6 @@ INSERT INTO notes (id, message, user_id) VALUES ('3', 'kjszdhfhsdjf', '3');
 INSERT INTO drivers (id, vehicle_id) VALUES ('1', '1');
 INSERT INTO drivers (id, vehicle_id) VALUES ('2', '2');
 INSERT INTO drivers (id, vehicle_id) VALUES ('3', '3');
-INSERT INTO drivers (id, vehicle_id) VALUES ('7', '1');
-INSERT INTO drivers (id, vehicle_id) VALUES ('8', '2');
-INSERT INTO drivers (id, vehicle_id) VALUES ('9', '3');
 
 # documents
 INSERT INTO documents (id, image, name, driver_id) VALUES ('1', 'hkdhfshdfj', 'hsgdgadg', '1');

@@ -6,7 +6,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.tim_18.UberApp.dto.FindAllDTO;
 import org.tim_18.UberApp.dto.PanicDTO;
 import org.tim_18.UberApp.model.Panic;
@@ -19,7 +22,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("api/panic")
-@CrossOrigin(origins = "http://localhost:4200")
 public class PanicController {
 
     @Autowired
