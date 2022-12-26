@@ -1,32 +1,32 @@
 #users
 INSERT INTO users (active, address, blocked, email, name, profile_picture, surname, password, telephone_number)
-VALUES (false, 'Strumicka 6', false, 'anja@gmail.com', 'Anja', 'profile_picture', 'Petkovic', 'password', '0614843070');
+VALUES (false, 'Strumicka 6', false, 'anja@gmail.com', 'Anja', 'profile_picture', 'Petkovic', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', '0614843070');
 INSERT INTO users (active, address, blocked, email, name, profile_picture, surname, password, telephone_number)
-VALUES (false, 'Strumicka 5', false, 'branislac@gmail.com', 'Branislav', 'profile_picture1', 'Stojkovic', 'password1', '0654315454');
+VALUES (false, 'Strumicka 5', false, 'branislac@gmail.com', 'Branislav', 'profile_picture1', 'Stojkovic', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', '0654315454');
 INSERT INTO users (active, address, blocked, email, name, profile_picture, surname, password, telephone_number)
-VALUES (false, 'Narodnog fronta 5', false, 'kristina@gmail.com', 'Kristina', 'profile_picture5', 'Andrijin', 'password2', '6521545154');
+VALUES (false, 'Narodnog fronta 5', false, 'kristina@gmail.com', 'Kristina', 'profile_picture5', 'Andrijin', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', '6521545154');
 INSERT INTO users (active, address, blocked, email, name, profile_picture, surname, password, telephone_number)
-VALUES (false, 'Strumicka 6', true, 'pera@gmail.com', 'Pera', 'profile_picture', 'Peric', 'password', '45421545151');
+VALUES (false, 'Strumicka 6', true, 'pera@gmail.com', 'Pera', 'profile_picture', 'Peric', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', '45421545151');
 INSERT INTO users (active, address, blocked, email, name, profile_picture, surname, password, telephone_number)
-VALUES (false, 'Strumicka 5', true, 'mika@gmail.com', 'Mika', 'profile_picture1', 'Mikic', 'password1', '852741963');
+VALUES (false, 'Strumicka 5', true, 'mika@gmail.com', 'Mika', 'profile_picture1', 'Mikic', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', '852741963');
 INSERT INTO users (active, address, blocked, email, name, profile_picture, surname, password, telephone_number)
-VALUES (false, 'Narodnog fronta 5', false, 'zika@gmail.com', 'Zika', 'profile_picture5', 'Zikic', 'password2', '987456321');
+VALUES (false, 'Narodnog fronta 5', false, 'zika@gmail.com', 'Zika', 'profile_picture5', 'Zikic', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', '987456321');
 INSERT INTO users (active, address, blocked, email, name, profile_picture, surname, password, telephone_number)
-VALUES (false, 'Strumicka 6', false, 'jovan@gmail.com', 'Jovan', 'profile_picture', 'Jovic', 'password', '3265987414');
+VALUES (false, 'Strumicka 6', false, 'jovan@gmail.com', 'Jovan', 'profile_picture', 'Jovic', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', '3265987414');
 INSERT INTO users (active, address, blocked, email, name, profile_picture, surname, password, telephone_number)
-VALUES (false, 'Strumicka 6', true, 'marko@gmail', 'Marko', 'profile_picture', 'Markovic', 'password', '369258147');
+VALUES (false, 'Strumicka 6', true, 'marko@gmail', 'Marko', 'profile_picture', 'Markovic', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', '369258147');
 INSERT INTO users (active, address, blocked, email, name, profile_picture, surname, password, telephone_number)
-VALUES (false, 'Strumicka 5', true, 'janko@gmail.com', 'Janko', 'profile_picture1', 'Jankovic', 'password1', '12345678');
+VALUES (false, 'Strumicka 5', true, 'janko@gmail.com', 'Janko', 'profile_picture1', 'Jankovic', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', '12345678');
 INSERT INTO users (active, address, blocked, email, name, profile_picture, surname, password, telephone_number)
-VALUES (false, 'Narodnog fronta 5', false, 'ema@gmail.com', 'Emilija', 'profile_picture5', 'Markovic', 'password2', '321654987');
+VALUES (false, 'Narodnog fronta 5', false, 'ema@gmail.com', 'Emilija', 'profile_picture5', 'Markovic', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', '321654987');
 INSERT INTO users (active, address, blocked, email, name, profile_picture, surname, password, telephone_number)
-VALUES (false, 'Strumicka 6', true, 'anita@gmail.com', 'Anita', 'profile_picture', 'Pajic', 'password', '852741963');
+VALUES (false, 'Strumicka 6', true, 'anita@gmail.com', 'Anita', 'profile_picture', 'Pajic', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', '852741963');
 INSERT INTO users (active, address, blocked, email, name, profile_picture, surname, password, telephone_number)
-VALUES (false, 'Strumicka 5', false, 'petar@gmail.com', 'Petar', 'profile_picture1', 'Petrovic', 'password1', '545841454');
+VALUES (false, 'Strumicka 5', false, 'petar@gmail.com', 'Petar', 'profile_picture1', 'Petrovic', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', '545841454');
 INSERT INTO users (active, address, blocked, email, name, profile_picture, surname, password, telephone_number)
-VALUES (false, 'Narodnog fronta 5', true, 'steva@gmail.com', 'Stevan', 'profile_picture5', 'Stevanovic', 'password2', '534646874515');
+VALUES (false, 'Narodnog fronta 5', true, 'steva@gmail.com', 'Stevan', 'profile_picture5', 'Stevanovic', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', '534646874515');
 INSERT INTO users (active, address, blocked, email, name, profile_picture, surname, password, telephone_number)
-VALUES (false, 'Strumicka 6', false, 'nenad@gmail.com', 'Nenad', 'profile_picture', 'Nenadovic', 'password', '96325414');
+VALUES (false, 'Strumicka 6', false, 'nenad@gmail.com', 'Nenad', 'profile_picture', 'Nenadovic', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', '96325414');
 
 
 # users_activations
@@ -160,6 +160,29 @@ INSERT INTO passenger_rides (passenger_id, ride_id) VALUES (1, 4);
 INSERT INTO passenger_rides (passenger_id, ride_id) VALUES (1, 5);
 INSERT INTO passenger_rides (passenger_id, ride_id) VALUES (1, 6);
 INSERT INTO passenger_rides (passenger_id, ride_id) VALUES (4, 5);
+
+#roles
+INSERT INTO role (name) VALUES ('ROLE_USER');
+INSERT INTO role (name) VALUES ('ROLE_PASSENGER');
+INSERT INTO role (name) VALUES ('ROLE_DRIVER');
+INSERT INTO role (name) VALUES ('ROLE_ADMIN');
+
+
+#user_role
+INSERT INTO user_role (user_id, role_id) VALUES (1, 1);
+INSERT INTO user_role (user_id, role_id) VALUES (2, 1);
+INSERT INTO user_role (user_id, role_id) VALUES (3, 1);
+INSERT INTO user_role (user_id, role_id) VALUES (4, 1);
+INSERT INTO user_role (user_id, role_id) VALUES (5, 1);
+INSERT INTO user_role (user_id, role_id) VALUES (6, 1);
+INSERT INTO user_role (user_id, role_id) VALUES (7, 1);
+INSERT INTO user_role (user_id, role_id) VALUES (8, 1);
+INSERT INTO user_role (user_id, role_id) VALUES (9, 1);
+INSERT INTO user_role (user_id, role_id) VALUES (10, 1);
+INSERT INTO user_role (user_id, role_id) VALUES (11, 1);
+INSERT INTO user_role (user_id, role_id) VALUES (12, 1);
+INSERT INTO user_role (user_id, role_id) VALUES (13, 1);
+INSERT INTO user_role (user_id, role_id) VALUES (14, 1);
 
 # passenger_rides(treba da dobavim passengere)
 #
