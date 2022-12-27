@@ -25,7 +25,7 @@ public class RideRecDTO {
     public RideRecDTO(){}
 
     public RideRecDTO(Integer id, Set<Location> _locations, Set<Passenger> passengers, VehicleType vehicleType, boolean babyTransport, boolean petTransport) {
-        this.id = id;
+        this.id             = id;
         List<Location> locList = new ArrayList<>();
         for (Location loc : _locations){
             locList.add(loc);
@@ -34,18 +34,20 @@ public class RideRecDTO {
         for (int i = 1; i < locList.size(); i++) {
             locationSetDTOSet.add(new LocationSetDTO(locList.get(i-1), locList.get(i)));
         }
-        this.locations = locationSetDTOSet;
+        this.locations      = locationSetDTOSet;
         Set<PassengerEmailDTO> passengerSet = new HashSet<>();
         for (Passenger p:passengers) {
             passengerSet.add(new PassengerEmailDTO(p));
         }
-        this.passengers = passengerSet;
-        this.vehicleType = vehicleType;
-        this.babyTransport = babyTransport;
-        this.petTransport = petTransport;
+        this.passengers     = passengerSet;
+        this.vehicleType    = vehicleType;
+        this.babyTransport  = babyTransport;
+        this.petTransport   = petTransport;
     }
 
     public RideRecDTO(Ride ride){
-        this(ride.getId(), ride.getLocations(), ride.getPassengers(), ride.getVehicleType(), ride.isBabyTransport(), ride.isPetTransport());
+        this(ride.getId(), ride.getLocations(),
+             ride.getPassengers(), ride.getVehicleType(),
+             ride.isBabyTransport(), ride.isPetTransport());
     }
 }

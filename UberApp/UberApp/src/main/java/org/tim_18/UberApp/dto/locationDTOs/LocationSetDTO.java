@@ -8,12 +8,11 @@ public class LocationSetDTO {
     private LocationDTO departure;
     private LocationDTO destination;
 
-    public LocationSetDTO() {
-    }
+    public LocationSetDTO() {}
 
     public LocationSetDTO(Location departure, Location destination) {
-        this.departure = new LocationDTO(departure);
-        this.destination = new LocationDTO(destination);
+        this.departure      = new LocationDTO(departure);
+        this.destination    = new LocationDTO(destination);
     }
 
 

@@ -1,11 +1,12 @@
 package org.tim_18.UberApp.dto;
 
+import lombok.Data;
 import org.springframework.data.domain.Page;
 import org.tim_18.UberApp.model.WorkTime;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
-
+@Data
 public class WorkTimeDTOWithoutDriver {
     private Integer id;
     private LocalDateTime start;
@@ -31,19 +32,6 @@ public class WorkTimeDTOWithoutDriver {
         return workTimeDTOS;
     }
 
-
-    public LocalDateTime getStart() {return start;}
-    public void setStart(LocalDateTime start) {this.start = start;}
-
-    public LocalDateTime getEnd() {return end;}
-
-
-    public Integer getId() {
-        return id;
-    }
-    public void setId(Integer id) {
-        this.id = id;
-    }
 
     @Override
     public String toString() {

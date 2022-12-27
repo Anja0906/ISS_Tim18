@@ -44,7 +44,7 @@ public class WorkTimeService {
         return workTimeRepository.findWorkTimeById(id)
                 .orElseThrow(() -> new UserNotFoundException("User activation by id " + id + " was not found"));
     }
-    public Page<WorkTime> findWorkTimesFromToDate(Integer id, LocalDateTime start, LocalDateTime end, Pageable pageable) { return workTimeRepository.findWorkTimesByDate(id,start,end,pageable);}
+    public Page<WorkTime> findWorkTimesFromToDate(Integer id, String start, String end, Pageable pageable) { return workTimeRepository.findWorkTimesByDate(id,start,end,pageable);}
 
     public void deleteWorkTime(Integer id) {
         workTimeRepository.deleteWorkTimeById(id);

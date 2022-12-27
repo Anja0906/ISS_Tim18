@@ -5,7 +5,6 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.tim_18.UberApp.dto.driverDTOs.DriverDTOWithoutId;
-
 import java.util.HashSet;
 import java.util.Set;
 
@@ -27,9 +26,9 @@ public class Driver extends User{
     private Vehicle vehicle;
 
     public Driver() {
-        this.documents = new HashSet<Document>();
-        this.rides = new HashSet<Ride>();
-        this.vehicle = null;
+        this.documents  = new HashSet<Document>();
+        this.rides      = new HashSet<Ride>();
+        this.vehicle    = null;
     }
     public Driver(String name, String surname, String profilePicture, String telephoneNumber, String email, String address, String password, boolean blocked, boolean active, Integer id, Set<Document> documents, Set<Ride> rides, Vehicle vehicle) {
         super(name, surname, profilePicture, telephoneNumber, email, address, password, blocked, active);

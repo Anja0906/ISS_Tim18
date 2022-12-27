@@ -16,7 +16,7 @@ public class DriverEmailDTO {
     }
 
     public DriverEmailDTO(Integer id, String email) {
-        this.id = id;
-        this.email = email;
+        this.id     = id;
+        this.email  = email;
     }
 }

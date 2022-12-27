@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.tim_18.UberApp.dto.passengerDTOs.PassengerDTOwithPassword;
+import org.tim_18.UberApp.exception.PassengerNotFoundException;
 import org.tim_18.UberApp.exception.UserNotFoundException;
 import org.tim_18.UberApp.mapper.passengerDTOmappers.PassengerDTOwithPasswordMapper;
 import org.tim_18.UberApp.model.Passenger;
@@ -40,7 +41,8 @@ public class PassengerService {
 
 
     public Passenger findById(Integer id) {
-        return passengerRepository.findPassengerById(id).orElseThrow(() -> new UserNotFoundException("Passenger by id " + id + " was not found"));
+        return passengerRepository.findPassengerById(id)
+                .orElseThrow(() -> new PassengerNotFoundException("Passenger by id " + id + " was not found"));
     }
 
     public PassengerDTOwithPassword save(PassengerDTOwithPassword dto) {

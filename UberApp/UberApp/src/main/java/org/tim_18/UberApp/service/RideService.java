@@ -3,6 +3,7 @@ package org.tim_18.UberApp.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.tim_18.UberApp.exception.RideNotFoundException;
 import org.tim_18.UberApp.exception.UserNotFoundException;
 import org.tim_18.UberApp.model.Ride;
 import org.tim_18.UberApp.repository.RideRepository;
@@ -52,7 +53,7 @@ public class RideService {
 
     public Ride findRideById(Integer id) {
         return rideRepository.findRideById(id)
-                .orElseThrow(() -> new UserNotFoundException("Ride was not found"));
+                .orElseThrow(() -> new RideNotFoundException("Ride was not found"));
     }
 
     public Page<Ride> findRidesForUserPage(Integer id, Pageable pageable) {return rideRepository.findRidesForUserPage(id,pageable);}
