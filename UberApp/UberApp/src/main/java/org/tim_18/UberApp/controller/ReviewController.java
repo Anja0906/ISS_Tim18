@@ -1,15 +1,21 @@
 package org.tim_18.UberApp.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.tim_18.UberApp.dto.*;
+import org.tim_18.UberApp.exception.RideNotFoundException;
 import org.tim_18.UberApp.model.*;
 import org.tim_18.UberApp.service.ReviewService;
+import org.tim_18.UberApp.service.RideService;
 
+import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Optional;
+import java.util.Map;
 
 @RestController
 @RequestMapping("api/review")
@@ -17,85 +23,96 @@ public class ReviewController {
     @Autowired
     private final ReviewService reviewService;
 
-    public ReviewController(ReviewService reviewService) {
-        this.reviewService = reviewService;
+    private final RideService rideService;
+
+
+    public ReviewController(ReviewService reviewService,RideService rideService) {
+
+        this.reviewService  = reviewService;
+        this.rideService    = rideService;
     }
 
     @PostMapping("/{rideId}/vehicle/{id}")
-    public ResponseEntity<ReviewDTO> addReviewToVehicle(@PathVariable("rideId") int rideId, @PathVariable("id") int id,  @RequestBody ReviewPostDTO reviewPostDTO) {
-        Review review = new Review();
-        review.setRating(reviewPostDTO.getRating());
-        review.setComment(reviewPostDTO.getComment());
-        review.setRide(reviewService.getRideById(rideId));
-        reviewService.save(review);
-        System.out.println(review.toString());
-        PassengerEmailDTO passengerEmailDTO = new PassengerEmailDTO(1,"bane");
-        ReviewDTO reviewDTO = new ReviewDTO(review,passengerEmailDTO);
-        System.out.println(reviewDTO.toString());
-        return new ResponseEntity<>(reviewDTO, HttpStatus.CREATED);
-    }
-    @GetMapping("/vehicle/{id}")
-    public ResponseEntity<HashSet<ReviewDTO>> getReviewsForVehicle (
-            @PathVariable("id") int id) {
-        HashSet<ReviewDTO> reviewDTOs = new HashSet<>();
-        HashSet<Review> reviews = reviewService.findByVehicleId(id);
-        if(reviews.isEmpty()) {
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+    public ResponseEntity<ReviewDTO> addReviewToVehicle(
+            @PathVariable("rideId") int rideId,
+            @PathVariable("id") int id,
+            @RequestBody ReviewPostDTO reviewPostDTO) {
+        try {
+            Ride ride = rideService.findRideById(rideId);
+            Review review = new Review(reviewPostDTO.getRating(), reviewPostDTO.getComment());
+            review.setRide(ride);
+            reviewService.save(review);
 
-        }else{
-            for(Review review : reviews){
-                ReviewDTO reviewDTO = new ReviewDTO(review);
-                reviewDTOs.add(reviewDTO);
-            }
-            return new ResponseEntity<>(reviewDTOs, HttpStatus.OK);
+            PassengerEmailDTO passengerEmailDTO = new PassengerEmailDTO(1, "bane");
+            ReviewDTO reviewDTO = new ReviewDTO(review, passengerEmailDTO);
+
+            return new ResponseEntity<>(reviewDTO, HttpStatus.OK);
+        }catch(RideNotFoundException e){
+            return new ResponseEntity<>(null,HttpStatus.NOT_FOUND);
         }
+    }
+
+    @GetMapping("/vehicle/{id}")
+    public ResponseEntity<Map<String, Object>> getReviewsForVehicle (
+            @PathVariable("id") int id,
+            @RequestParam(defaultValue = "0") Integer page,
+            @RequestParam(defaultValue = "4") Integer size) {
+
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Review> reviews = reviewService.findByVehicleId(id, pageable);
+
+        Map<String, Object> map = new HashMap<>();
+        HashSet<ReviewDTO> reviewDTOS = new ReviewDTO().makeReviewDTOS(reviews);
+
+        map.put("totalCount",reviewDTOS.size());
+        map.put("results",reviewDTOS);
+        return new ResponseEntity<>(map, HttpStatus.OK);
     }
 
     @PostMapping("/{rideId}/driver/{id}")
-    public ResponseEntity<ReviewDTO> addReviewToDriver(@PathVariable("rideId") int rideId, @PathVariable("id") int id,  @RequestBody ReviewPostDTO reviewPostDTO) {
-        Review review = new Review();
-        review.setRating(reviewPostDTO.getRating());
-        review.setComment(reviewPostDTO.getComment());
-        review.setRide(reviewService.getRideById(rideId));
-        reviewService.save(review);
-        System.out.println(review.toString());
-        PassengerEmailDTO passengerEmailDTO = new PassengerEmailDTO(1,"bane");
-        ReviewDTO reviewDTO = new ReviewDTO(review,passengerEmailDTO);
-        System.out.println(reviewDTO.toString());
-        return new ResponseEntity<>(reviewDTO, HttpStatus.CREATED);
+    public ResponseEntity<ReviewDTO> addReviewToDriver(
+            @PathVariable("rideId") int rideId,
+            @PathVariable("id") int id,
+            @RequestBody ReviewPostDTO reviewPostDTO) {
+        try {
+            Ride ride = rideService.findRideById(rideId);
+            Review review = new Review(reviewPostDTO.getRating(), reviewPostDTO.getComment(), ride);
+            reviewService.save(review);
+
+            PassengerEmailDTO passengerEmailDTO = new PassengerEmailDTO(1, "bane");
+            ReviewDTO reviewDTO = new ReviewDTO(review, passengerEmailDTO);
+
+            return new ResponseEntity<>(reviewDTO, HttpStatus.OK);
+        }catch (RideNotFoundException rideNotFoundException){
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
     }
 
     @GetMapping("/driver/{id}")
-    public ResponseEntity<HashSet<ReviewDTO>> getReviewsForDriver (
-            @PathVariable("id") int id) {
-        HashSet<ReviewDTO> reviewDTOs = new HashSet<>();
-        HashSet<Review> reviews = reviewService.findByDriverId(id);
-        if(reviews.isEmpty()) {
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+    public ResponseEntity<Map<String, Object>> getReviewsForDriver (
+            @PathVariable("id") int id,
+            @RequestParam(defaultValue = "0") Integer page,
+            @RequestParam(defaultValue = "4") Integer size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Review> reviews = reviewService.findByDriverId(id, pageable);
 
-        }else{
-            for(Review review : reviews){
-                ReviewDTO reviewDTO = new ReviewDTO(review);
-                reviewDTOs.add(reviewDTO);
-            }
-            return new ResponseEntity<>(reviewDTOs, HttpStatus.OK);
-        }
+        Map<String, Object> map = new HashMap<>();
+        HashSet<ReviewDTO> reviewDTOS = new ReviewDTO().makeReviewDTOS(reviews);
+
+        map.put("totalCount",reviewDTOS.size());
+        map.put("results",reviewDTOS);
+        return new ResponseEntity<>(map, HttpStatus.OK);
     }
 
     @GetMapping("/{rideId}")
-    public ResponseEntity<HashSet<ReviewDTO>> getReviewsForRide (
+    public ResponseEntity<ReviewDTOResponse> getReviewsForRide (
             @PathVariable("rideId") int id) {
-        HashSet<ReviewDTO> reviewDTOs = new HashSet<>();
-        HashSet<Review> reviews = reviewService.findByRideId(id);
-        if(reviews.isEmpty()) {
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        PassengerEmailDTO passengerDTO = new PassengerEmailDTO(123,"user@example.com");
+        VehicleReviewDTO vehicleReviewDTO = new VehicleReviewDTO(123,3,"The vehicle was bad and dirty",passengerDTO);
+        DriverReviewDTO driverReviewDTO = new DriverReviewDTO(123,3,"The driver was driving too fast",passengerDTO);
 
-        }else{
-            for(Review review : reviews){
-                ReviewDTO reviewDTO = new ReviewDTO(review);
-                reviewDTOs.add(reviewDTO);
-            }
-            return new ResponseEntity<>(reviewDTOs, HttpStatus.OK);
-        }
+        ReviewDTOResponse reviewDTOResponse = new ReviewDTOResponse(vehicleReviewDTO,driverReviewDTO);
+        return new ResponseEntity<>(reviewDTOResponse, HttpStatus.OK);
+
     }
 }

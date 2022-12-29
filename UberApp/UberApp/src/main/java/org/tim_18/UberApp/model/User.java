@@ -1,13 +1,17 @@
 package org.tim_18.UberApp.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
-import java.io.Serializable;
+import java.util.Collection;
+import java.util.List;
 
 @Inheritance(strategy = InheritanceType.JOINED)
 @Entity
 @Table(name = "users")
-public class User implements Serializable{
+public class User extends ImplementsSerializable implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
@@ -23,8 +27,13 @@ public class User implements Serializable{
     private String password;
     private boolean blocked;
     private boolean active;
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "user_role",
+            joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
+    private List<Role> roles;
 
-    public User(String name, String surname, String profilePicture, String telephoneNumber, String email, String address, String password, boolean blocked, boolean active) {
+    public User(String name, String surname, String profilePicture, String telephoneNumber, String email, String address, String password, boolean blocked, boolean active, List<Role> roles) {
 
         this.name            = name;
         this.surname         = surname;
@@ -35,8 +44,21 @@ public class User implements Serializable{
         this.password        = password;
         this.blocked         = blocked;
         this.active          = active;
+        this.roles = roles;
     }
     public User() {}
+
+    public User(String name, String surname, String profilePicture, String telephoneNumber, String email, String address, String password, boolean blocked, boolean active) {
+        this.name            = name;
+        this.surname         = surname;
+        this.profilePicture  = profilePicture;
+        this.telephoneNumber = telephoneNumber;
+        this.email           = email;
+        this.address         = address;
+        this.password        = password;
+        this.blocked         = blocked;
+        this.active          = active;
+    }
 
     public Integer getId() {
         return id;
@@ -98,6 +120,8 @@ public class User implements Serializable{
     public String getPassword() {
         return password;
     }
+
+
     public void setPassword(String password) {
         this.password = password;
     }
@@ -118,6 +142,14 @@ public class User implements Serializable{
         this.active = active;
     }
 
+    public void setRoles(List<Role> roles) {
+        this.roles = roles;
+    }
+
+    public List<Role> getRoles() {
+        return roles;
+    }
+
     @Override
     public String toString() {
         return "User{" +
@@ -131,6 +163,42 @@ public class User implements Serializable{
                 ", password='" + password + '\'' +
                 ", blocked=" + blocked +
                 ", active=" + active +
+                ", roles=" + roles.toString() +
                 '}';
     }
+
+    @JsonIgnore
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return this.roles;
+    }
+    @JsonIgnore
+    @Override
+    public String getUsername() {
+        return email;
+    }
+
+    @JsonIgnore
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @JsonIgnore
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
+
+    @JsonIgnore
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
 }

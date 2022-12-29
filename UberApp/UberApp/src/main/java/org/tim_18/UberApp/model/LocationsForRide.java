@@ -18,22 +18,20 @@ public class LocationsForRide implements Serializable {
     private Location destination;
     private Double kilometers;
 
+    public LocationsForRide() {}
+    public LocationsForRide(Integer id, Location departure, Location destination, Double kilometers) {
+        this.id          = id;
+        this.departure   = departure;
+        this.destination = destination;
+        this.kilometers  = kilometers;
+    }
+
     public Integer getId() {
         return id;
     }
 
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    public LocationsForRide() {
-    }
-
-    public LocationsForRide(Integer id, Location departure, Location destination, Double kilometers) {
-        this.id          = id;
-        this.departure   = departure;
-        this.destination = destination;
-        this.kilometers  = kilometers;
     }
 
     public Location getDeparture() {

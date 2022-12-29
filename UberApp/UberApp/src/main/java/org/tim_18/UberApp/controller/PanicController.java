@@ -23,6 +23,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("api/panic")
+@CrossOrigin(origins = "http://localhost:4200")
 public class PanicController {
 
     @Autowired
@@ -35,17 +36,18 @@ public class PanicController {
     @GetMapping
     public ResponseEntity<Map<String, Object>> findAllPanics(@RequestParam(defaultValue = "0") Integer page,
                                                              @RequestParam(defaultValue = "4") Integer size) {
-        Pageable paging = PageRequest.of(page, size);
-        Page<Panic> pagedResult = panicService.findAll(paging);
-        List<Panic> panics = panicService.findAllPanics();
-        List<PanicDTO> panicDTOs = new ArrayList<>();
-        for (Panic panic : panics) {
-            panicDTOs.add(new PanicDTO(panic));
+        try {
+            Pageable paging = PageRequest.of(page, size);
+            Page<Panic> panics = panicService.findAll(paging);
+            List<PanicDTO> panicDTOs = PanicDTO.getPanicsDTO(panics);
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("totalCount", panics.getTotalElements());
+            response.put("results", panicDTOs);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch(PanicNotFoundException panicNotFoundException){
+            return new ResponseEntity<>(null,HttpStatus.NOT_FOUND);
         }
-        Map<String, Object> response = new HashMap<>();
-        response.put("totalcounts", pagedResult.getTotalElements());
-        response.put("results", panicDTOs);
-        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")

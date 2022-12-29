@@ -22,4 +22,9 @@ public class PassengerDTOwithPasswordMapper {
     public PassengerDTOwithPassword fromPassengerToDTO(Passenger passenger) {
         return modelMapper.map(passenger, PassengerDTOwithPassword.class);
     }
+
+    public Passenger fromDTOtoPassenger(PassengerDTOwithPassword dto, Integer id) {
+        dto.setId(id);
+        return modelMapper.map(dto, Passenger.class);
+    }
 }

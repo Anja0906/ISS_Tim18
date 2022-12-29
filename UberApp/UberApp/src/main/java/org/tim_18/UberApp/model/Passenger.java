@@ -19,7 +19,14 @@ public class Passenger extends User {
 
     @ManyToMany(targetEntity = Location.class,cascade = {CascadeType.ALL}, fetch = FetchType.LAZY)
     private Set<Location> favouriteLocations = new HashSet<Location>();
-    @ManyToMany
+    @JsonIgnore
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {
+            CascadeType.PERSIST,
+            CascadeType.MERGE
+    })
+    @JoinTable(name = "passenger_rides",
+            joinColumns = @JoinColumn(name = "passenger_id"),
+            inverseJoinColumns = @JoinColumn(name = "ride_id"))
     private Set<Ride> rides = new HashSet<Ride>();
     @JsonIgnore
     @ManyToOne

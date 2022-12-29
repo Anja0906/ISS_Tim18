@@ -3,9 +3,11 @@ package org.tim_18.UberApp.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
+import org.tim_18.UberApp.exception.UserNotFoundException;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "panics")

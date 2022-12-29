@@ -13,11 +13,11 @@ public class FindAllDTO<T> {
 
     public FindAllDTO() {}
     public FindAllDTO(List<T> objs) {
-        this.objects = objs;
+        this.objects    = objs;
         this.totalCount = objs.size();
     }
     public FindAllDTO(Set<T> objs) {
-        this.objects = objs;
+        this.objects    = objs;
         this.totalCount = objs.size();
     }
 
