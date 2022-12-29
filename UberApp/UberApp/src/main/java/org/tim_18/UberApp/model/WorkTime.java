@@ -1,6 +1,8 @@
 package org.tim_18.UberApp.model;
 
 import jakarta.persistence.*;
+import org.tim_18.UberApp.dto.WorkTimeDTOWithoutDriver;
+
 import java.time.LocalDateTime;
 
 @Entity
@@ -10,26 +12,36 @@ public class WorkTime {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Integer id;
-    private LocalDateTime startTime;
-    private LocalDateTime endTime;
+    private LocalDateTime start;
+    private LocalDateTime end;
     @OneToOne (cascade = {CascadeType.ALL})
     private Driver driver;
 
 
     public WorkTime() {}
 
-    public WorkTime(Integer id, LocalDateTime startTime, LocalDateTime endTime, Driver driver) {
+    public WorkTime(Integer id, LocalDateTime start, LocalDateTime end, Driver driver) {
         this.id         = id;
-        this.startTime  = startTime;
-        this.endTime    = endTime;
+        this.start      = start;
+        this.end        = end;
         this.driver     = driver;
     }
 
-    public LocalDateTime getStartTime() {return startTime;}
-    public void setStartTime(LocalDateTime startTime) {this.startTime = startTime;}
+    public WorkTime(LocalDateTime start, LocalDateTime end, Driver driver) {
+        this.start      = start;
+        this.end        = end;
+        this.driver     = driver;
+    }
+    public void updateWorkTime(WorkTimeDTOWithoutDriver workTimeDTOWithoutDriver){
+        setStart(workTimeDTOWithoutDriver.getStart());
+        setEnd(workTimeDTOWithoutDriver.getEnd());
+    }
 
-    public LocalDateTime getEndTime() {return endTime;}
-    public void setEndTime(LocalDateTime endTime) {this.endTime = endTime;}
+    public LocalDateTime getStart() {return start;}
+    public void setStart(LocalDateTime start) {this.start = start;}
+
+    public LocalDateTime getEnd() {return end;}
+    public void setEnd(LocalDateTime end) {this.end = end;}
 
     public Driver getDriver() {return driver;}
     public void setDriver(Driver driver) {this.driver = driver;}
@@ -39,5 +51,15 @@ public class WorkTime {
     }
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    @Override
+    public String toString() {
+        return "WorkTime{" +
+                "id=" + id +
+                ", start=" + start +
+                ", end=" + end +
+                ", driver=" + driver +
+                '}';
     }
 }

@@ -2,6 +2,7 @@ package org.tim_18.UberApp.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.tim_18.UberApp.exception.LocationForRideNotFoundException;
 import org.tim_18.UberApp.exception.UserNotFoundException;
 import org.tim_18.UberApp.model.LocationsForRide;
 import org.tim_18.UberApp.repository.LocationsForRideRepository;
@@ -32,7 +33,7 @@ public class LocationsForRideService {
 
     public LocationsForRide findLocationsForRideById(Integer id) {
         return locationsForRideRepository.findLocationsForRideById(id)
-                .orElseThrow(() -> new UserNotFoundException("LocationsForRide by id " + id + " was not found"));
+                .orElseThrow(() -> new LocationForRideNotFoundException("LocationsForRide by id " + id + " was not found"));
     }
 
     public void deleteLocationsForRide(Integer id) {

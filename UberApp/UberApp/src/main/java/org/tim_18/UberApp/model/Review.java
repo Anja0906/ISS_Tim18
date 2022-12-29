@@ -32,6 +32,20 @@ public class Review implements Serializable {
         this.id         = id;
     }
 
+    public Review(Integer rating, String comment) {
+        this.rating     = rating;
+        this.comment    = comment;
+        this.passengers = new HashSet<>();
+        this.ride       = new Ride();
+    }
+
+    public Review(Integer rating, String comment, Ride ride) {
+        this.rating     = rating;
+        this.comment    = comment;
+        this.passengers = new HashSet<>();
+        this.ride       = ride;
+    }
+
     public void setId(Integer id) {
         this.id = id;
     }

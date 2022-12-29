@@ -1,6 +1,7 @@
 package org.tim_18.UberApp.model;
 
 import jakarta.persistence.*;
+import org.tim_18.UberApp.dto.VehicleDTOWithoutIds;
 
 import java.io.Serializable;
 
@@ -15,8 +16,9 @@ public class Vehicle implements Serializable {
 
     @OneToOne(cascade = {CascadeType.ALL})
     private Driver driver;
-    private String model;
     private VehicleType vehicleType;
+    private String model;
+
     private String licenseNumber;
 
     @ManyToOne(cascade={CascadeType.ALL})
@@ -31,16 +33,36 @@ public class Vehicle implements Serializable {
 
     public Vehicle() {}
 
-    public Vehicle(Integer id, Driver driver, String model, VehicleType vehicleType, String licenseNumber, Location currentLocation, Integer passengerSeats, Boolean babyTransport, Boolean petTransport) {
+    public Vehicle(Integer id, Driver driver, VehicleType vehicleType, String model, String licenseNumber, Location currentLocation, Integer passengerSeats, Boolean babyTransport, Boolean petTransport) {
         this.id                 = id;
         this.driver             = driver;
-        this.model              = model;
         this.vehicleType        = vehicleType;
+        this.model              = model;
         this.licenseNumber      = licenseNumber;
         this.currentLocation    = currentLocation;
         this.passengerSeats     = passengerSeats;
         this.babyTransport      = babyTransport;
         this.petTransport       = petTransport;
+    }
+    public Vehicle(Driver driver, VehicleType vehicleType, String model, String licenseNumber, Location currentLocation, Integer passengerSeats, Boolean babyTransport, Boolean petTransport) {
+        this.driver             = driver;
+        this.vehicleType        = vehicleType;
+        this.model              = model;
+        this.licenseNumber      = licenseNumber;
+        this.currentLocation    = currentLocation;
+        this.passengerSeats     = passengerSeats;
+        this.babyTransport      = babyTransport;
+        this.petTransport       = petTransport;
+    }
+
+    public void updateVehicle(VehicleDTOWithoutIds vehicleDTOWithoutIds,Location location){
+        setVehicleType(vehicleDTOWithoutIds.getVehicleType());
+        setModel(vehicleDTOWithoutIds.getModel());
+        setLicenseNumber(vehicleDTOWithoutIds.getLicenseNumber());
+        setCurrentLocation(location);
+        setPassengerSeats(vehicleDTOWithoutIds.getPassengerSeats());
+        setBabyTransport(vehicleDTOWithoutIds.getBabyTransport());
+        setPetTransport(vehicleDTOWithoutIds.getPetTransport());
     }
 
 

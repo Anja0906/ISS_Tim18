@@ -27,7 +27,8 @@ public class Ride implements Serializable {
     @ManyToOne
     @JoinColumn(name = "driver_id")
     private Driver driver;
-    @ManyToMany
+
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL}, mappedBy = "rides")
     private Set<Passenger> passengers;
     private int estimatedTimeInMinutes;
     private VehicleType vehicleType;
@@ -191,6 +192,7 @@ public class Ride implements Serializable {
                 ", rejection=" + rejection +
                 ", locations=" + locations +
                 ", status=" + status +
+
 
                 '}';
     }

@@ -11,6 +11,7 @@ import org.tim_18.UberApp.service.UserService;
 import java.util.List;
 @RestController
 @RequestMapping("/useractivation")
+@CrossOrigin(origins = "http://localhost:4200")
 public class UserActivationController {
 
     private final UserActivationService userActivationService;
