@@ -27,4 +27,9 @@ public class PanicService {
     public Panic addPanic(Panic panic) {
         return repo.save(panic);
     }
+
+    public Panic findById(int id) {
+        return repo.findPanicById(id).get();
+    }
+
 }

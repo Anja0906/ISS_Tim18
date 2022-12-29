@@ -9,6 +9,7 @@ import java.util.Optional;
 
 public interface PanicRepository extends JpaRepository<Panic, Integer> {
 
-    Optional<Panic> findRideById(Integer id);
+    Optional<Panic> findPanicById(Integer id);
+
     Page<Panic> findAll(Pageable pageable);
 }
