@@ -174,4 +174,24 @@ public class Ride implements Serializable {
     public void setPanic(Panic panic) {
         this.panic = panic;
     }
+
+    @Override
+    public String toString() {
+        return "Ride{" +
+                "id=" + id +
+                ", startTime=" + startTime +
+                ", endTime=" + endTime +
+                ", totalCost=" + totalCost +
+                ", driver=" + driver +
+                ", passengers=" + passengers +
+                ", estimatedTimeInMinutes=" + estimatedTimeInMinutes +
+                ", vehicleType=" + vehicleType +
+                ", babyTransport=" + babyTransport +
+                ", petTransport=" + petTransport +
+                ", rejection=" + rejection +
+                ", locations=" + locations +
+                ", status=" + status +
+
+                '}';
+    }
 }
