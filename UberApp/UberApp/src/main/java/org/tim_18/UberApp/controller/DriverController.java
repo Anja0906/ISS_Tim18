@@ -256,11 +256,18 @@ public class DriverController {
             @RequestParam(defaultValue = "0") Integer page,
             @RequestParam(defaultValue = "4") Integer size,
             @RequestParam(defaultValue = "2022-12-07T07:00:50") String from,
+<<<<<<< Updated upstream
             @RequestParam(defaultValue = "2022-12-08T10:40:00") String to) {
         Pageable pageable = PageRequest.of(page, size);
         LocalDateTime localDateTimeStart = LocalDateTime.parse(from);
         LocalDateTime localDateTimeEnd = LocalDateTime.parse(to);
         Page<Ride> rides = rideService.findRidesForDriver(id,localDateTimeStart,localDateTimeEnd,pageable);
+=======
+            @RequestParam(defaultValue = "2023-12-08T10:40:00") String to) {
+        Pageable pageable = PageRequest.of(page, size,Sort.by(sort));
+        Page<Ride> rides = rideService.findRidesForDriver(id,from,to,pageable);
+
+>>>>>>> Stashed changes
         Map<String, Object> map = new HashMap<>();
         HashSet<RideDTO> ridesDTO = new RideDTO().makeRides(rides);
         map.put("totalCount",ridesDTO.size());
