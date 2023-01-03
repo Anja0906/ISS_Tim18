@@ -124,18 +124,21 @@ INSERT INTO passenger (id, passenger_id) VALUES ('6', '3');
 
 # --locations--
 INSERT INTO locations (address, latitude, longitude, ride_id)
-VALUES ('jshdjsahdh', '54478412154', '875154444', '1');
+VALUES ('bane1', '54478412154', '875154444', '1');
 INSERT INTO locations (address, latitude, longitude, ride_id)
-VALUES ('asbdsabjc', '515555', '897456', '2');
+VALUES ('bane', '515555', '897456', '2');
 INSERT INTO locations (address, latitude, longitude, ride_id)
-VALUES ('jshdjsahdh', '54478412154', '875154444', '3');
+VALUES ('bane3', '54478412154', '875154444', '3');
 INSERT INTO locations (address, latitude, longitude, ride_id)
 VALUES ('asbdsabjc', '515555', '897456', '2');
 INSERT INTO locations (address, latitude, longitude, ride_id)
 VALUES ('Bulevar oslobodjenja 46', '45.267136', '19.833549', '1');
 INSERT INTO locations (address, latitude, longitude, ride_id)
 VALUES ('asbdsabjc', '515555', '897456', '3');
-
+INSERT INTO locations (address, latitude, longitude, ride_id)
+VALUES ('asbdsabjc', '515555', '897456', '4');
+INSERT INTO locations (address, latitude, longitude, ride_id)
+VALUES ('Bulevar oslobodjenja 46', '45.267136', '19.833549', '4');
 # --reviews--
 INSERT INTO reviews (comment, rating, ride_id) VALUES ('jashjfhasfhjsa', 1, '1');
 INSERT INTO reviews (comment, rating, ride_id) VALUES ('jashjfhasfhjsa', 5, '2');

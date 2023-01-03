@@ -15,11 +15,12 @@ public class JwtResponse {
     private List<String> roles;
 
     public JwtResponse(String token, int expiresIn, Integer id, String email, List<String> roles, String details) {
-        this.accessToken = token;
-        this.expiresIn = expiresIn;
-        this.id = id;
-        this.email = email;
-        this.roles = roles;
-        this.details = details;
+
+        this.accessToken    = token;
+        this.expiresIn      = expiresIn;
+        this.id             = id;
+        this.email          = email;
+        this.roles          = roles;
+        this.details        = details;
     }
 }

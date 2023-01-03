@@ -8,6 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.tim_18.UberApp.dto.PanicDTO;
 import org.tim_18.UberApp.dto.RejectionDTO;
+import org.tim_18.UberApp.dto.RejectionDTO;
+import org.tim_18.UberApp.dto.driverDTOs.DriverDTO;
 import org.tim_18.UberApp.dto.locationDTOs.LocationDTO;
 import org.tim_18.UberApp.dto.locationDTOs.LocationSetDTO;
 import org.tim_18.UberApp.dto.passengerDTOs.PassengerEmailDTO;
@@ -82,6 +84,23 @@ public class RideController {
         } catch(UserNotFoundException e){
             return new ResponseEntity<>(null,HttpStatus.NOT_FOUND);
         }
+
+    }
+
+    @GetMapping("/pending")
+    public ResponseEntity<Map<String, Object>> getPendingRides(
+            @RequestParam(defaultValue = "0") Integer page,
+            @RequestParam(defaultValue = "4") Integer size) {
+        Pageable pageable = PageRequest.of(page, size);
+
+        Page<Ride> rides = rideService.findPendingRidesByStatus("PENDING",pageable);
+        Map<String, Object> map = new HashMap<>();
+        HashSet<RideRetDTO> rideRetDTOS = new RideRetDTO().makeRideRideDTOS(rides);
+
+        map.put("totalCount",rideRetDTOS.size());
+        map.put("results",rideRetDTOS);
+        return new ResponseEntity<>(map, HttpStatus.OK);
+        //TREBA OVO IZMENITI DA DOBIJA PENDING RIDES ZA POSEBNOG DRIVERA SA ID JER JOS UVEK NEMAMO LOGIN
 
     }
 

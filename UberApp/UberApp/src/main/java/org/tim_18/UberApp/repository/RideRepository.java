@@ -34,4 +34,8 @@ public interface RideRepository extends JpaRepository<Ride, Integer> {
 
     @Query(value = "SELECT * FROM rides WHERE rides.driver_id = ?1 and DATE(rides.start_time)>?2 and DATE(rides.end_time)<?3", nativeQuery = true)
     Page<Ride> findRidesForDriver(Integer id, String start, String end, Pageable pageable);
+
+    @Query(value = "SELECT * FROM rides WHERE rides.status = ?1 ", nativeQuery = true)
+    Page<Ride> findPendingRidesByStatus(String status,Pageable pageable);
+
 }

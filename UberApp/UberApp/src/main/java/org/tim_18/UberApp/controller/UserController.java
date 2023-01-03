@@ -87,6 +87,24 @@ public class UserController {
         map.put("results",messageDTOS);
         return new ResponseEntity<>(map, HttpStatus.OK);
     }
+    @GetMapping("/{id}")
+    public ResponseEntity<UserDTO> getUser (
+            @PathVariable("id") int id) {
+        User user = userService.findUserById(id);
+        System.out.println(user);
+        UserDTO userDTO = new UserDTO(user);
+        return new ResponseEntity<>(userDTO, HttpStatus.OK);
+    }
+    @PutMapping("/{id}")
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
+    public void updateUser(@PathVariable("id") int id, @RequestBody UserDTO userDTO) {
+        try{
+            userService.updateUserFromDto(id, userDTO);
+        }catch (UserNotFoundException e){
+            System.out.println("User not found");
+        }
+    }
+
     @PostMapping("/{id}/message")
     public ResponseEntity<MessageResponseDTO> addReviewToVehicle(
             @PathVariable("id") int id,
