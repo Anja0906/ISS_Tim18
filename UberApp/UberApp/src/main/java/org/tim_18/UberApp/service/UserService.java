@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.tim_18.UberApp.dto.UserDTO;
 import org.tim_18.UberApp.dto.UserDTOwithPassword;
 import org.tim_18.UberApp.exception.UserNotFoundException;
 import org.tim_18.UberApp.model.Role;
@@ -32,6 +33,18 @@ public class UserService {
     public User addUser(User user) {
         return userRepository.save(user);
     }
+    public User updateUserFromDto(Integer id, UserDTO userDTO){
+        User user = this.findUserById(id);
+        user.setName(userDTO.getName());
+        user.setSurname(userDTO.getSurname());
+        user.setEmail(userDTO.getEmail());
+        user.setAddress(userDTO.getAddress());
+        user.setProfilePicture(userDTO.getProfilePicture());
+        user.setTelephoneNumber(userDTO.getTelephoneNumber());
+        user.setBlocked(userDTO.isBlocked());
+        return this.updateUser(user);
+    }
+
 
 
     public List<User> findAllUsers() {
