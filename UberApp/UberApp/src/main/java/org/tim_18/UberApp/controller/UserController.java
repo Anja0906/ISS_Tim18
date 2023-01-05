@@ -1,5 +1,4 @@
 package org.tim_18.UberApp.controller;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -9,15 +8,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.tim_18.UberApp.dto.*;
-import org.tim_18.UberApp.dto.driverDTOs.DriverDTO;
 import org.tim_18.UberApp.dto.noteDTOs.NotePostDTO;
 import org.tim_18.UberApp.dto.noteDTOs.NoteResponseDTO;
 import org.tim_18.UberApp.dto.rideDTOs.RideRetDTO;
 import org.tim_18.UberApp.exception.UserNotFoundException;
 import org.tim_18.UberApp.model.*;
 import org.tim_18.UberApp.service.*;
-
-import javax.naming.ldap.HasControls;
 import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -54,6 +50,7 @@ public class UserController {
         return new ResponseEntity<>(map, HttpStatus.OK);
 
     }
+
     @GetMapping("/{id}")
     public ResponseEntity<UserDTO> getUser (
             @PathVariable("id") int id) {
@@ -71,6 +68,7 @@ public class UserController {
             System.out.println("User not found");
         }
     }
+
     @GetMapping("/{id}/ride")
     public ResponseEntity<Map<String, Object>> getRides (
             @PathVariable("id") int id,
@@ -81,10 +79,8 @@ public class UserController {
             @RequestParam(defaultValue = "2022-12-08T10:40:00") String to) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(sort));
         Page<Ride> rides = rideService.findRidesForUserPage(id,pageable);
-
         Map<String, Object> map = new HashMap<>();
         HashSet<RideRetDTO> ridesDTO = new RideRetDTO().makeRideRideDTOS(rides);
-
         map.put("totalCount",ridesDTO.size());
         map.put("results",ridesDTO);
         return new ResponseEntity<>(map, HttpStatus.OK);
@@ -116,15 +112,14 @@ public class UserController {
     }
 
     private Message messageFromMessageDTO(Integer id, MessageDTO messageDTO){
-        Message message = new Message(id,userService.findUserById(id),
+        return new Message(id,userService.findUserById(id),
                                       userService.findUserById(messageDTO.getReceiverId()),
                                       messageDTO.getMessage(),LocalDateTime.now(),
                                       messageDTO.getType(),rideService.findRideById(messageDTO.getRideId()));
-        return message;
     }
 
     @PutMapping("/{id}/block")
-    public ResponseEntity blockUser(@PathVariable("id") int id) {
+    public ResponseEntity<?> blockUser(@PathVariable("id") int id) {
         try{
             User user = userService.findUserById(id);
             user.setBlocked(true);
@@ -136,7 +131,7 @@ public class UserController {
     }
 
     @PutMapping("/{id}/unblock")
-    public ResponseEntity unblockUser(@PathVariable("id") int id) {
+    public ResponseEntity<?> unblockUser(@PathVariable("id") int id) {
         try{
             User user = userService.findUserById(id);
             user.setBlocked(false);
@@ -147,7 +142,7 @@ public class UserController {
         }
     }
     @PostMapping("/{id}/note")
-    public ResponseEntity<NoteResponseDTO> addReviewToVehicle(
+    public ResponseEntity<NoteResponseDTO> addNoteForUser(
             @PathVariable("id") int id,
             @RequestBody NotePostDTO notePostDTO) {
         try{
