@@ -61,16 +61,16 @@ public class UserService {
 
 
     public User findUserById(Integer id) {
-        return userRepository.findUserById(id)
-                .orElseThrow(() -> new UserNotFoundException("User by id " + id + " was not found"));
+        return userRepository.findUserById(id).orElseThrow(() -> new UserNotFoundException("User by id " + id + " was not found"));
     }
     public void deleteUser(Integer id) {
         userRepository.deleteById(id);
     }
 
-    public User findByEmail(String email) throws UsernameNotFoundException {
-        return userRepository.findByEmail(email);
+    public User findUserByEmail(String email) throws UsernameNotFoundException {
+        return userRepository.findUserByEmail(email);
     }
+
 
     public User save(UserDTOwithPassword userRequest) {
         User u = new User();

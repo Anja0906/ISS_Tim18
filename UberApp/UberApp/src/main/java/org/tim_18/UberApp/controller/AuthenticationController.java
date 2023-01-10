@@ -90,7 +90,7 @@ public class AuthenticationController {
 	//@TODO
 	@PostMapping("/signupPassenger")
 	public ResponseEntity<User> addPassenger(@RequestBody UserDTOwithPassword userRequest, UriComponentsBuilder ucBuilder) {
-		User existUser = this.userService.findByEmail(userRequest.getEmail());
+		User existUser = this.userService.findUserByEmail(userRequest.getEmail());
 
 		if (existUser != null) {
 			throw new ResourceConflictException(userRequest.getId(), "Username already exists");
@@ -104,7 +104,7 @@ public class AuthenticationController {
 	}
 	@PostMapping("/signupDriver")
 	public ResponseEntity<User> addDriver(@RequestBody UserDTOwithPassword userRequest, UriComponentsBuilder ucBuilder) {
-		User existUser = this.userService.findByEmail(userRequest.getEmail());
+		User existUser = this.userService.findUserByEmail(userRequest.getEmail());
 
 		if (existUser != null) {
 			throw new ResourceConflictException(userRequest.getId(), "Username already exists");

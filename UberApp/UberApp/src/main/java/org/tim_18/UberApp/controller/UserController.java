@@ -181,7 +181,7 @@ public class UserController {
     @GetMapping("/whoami")
     @PreAuthorize("hasRole('ROLE_USER')")
     public User user(Principal user) {
-        return this.userService.findByEmail(user.getName());
+        return this.userService.findUserByEmail(user.getName());
     }
 
 }

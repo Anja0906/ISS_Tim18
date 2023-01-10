@@ -54,8 +54,8 @@ INSERT INTO documents (id, document_image, name, driver_id) VALUES ('3', 'ajshdj
 
 # --work_time--
 INSERT INTO work_time (end, start, driver_id) VALUES ('2022-12-7 01:55:00', '2022-12-7 01:10:00', '1');
-INSERT INTO work_time (end, start, driver_id) VALUES ('2022-12-7 01:55:00', '2022-12-7 01:10:00', '2');
-INSERT INTO work_time (end, start, driver_id) VALUES ('2022-12-7 01:55:00', '2022-12-7 01:10:00', '3');
+INSERT INTO work_time (end, start, driver_id) VALUES ('2022-12-8 01:55:00', '2022-12-8 01:10:00', '2');
+INSERT INTO work_time (end, start, driver_id) VALUES ('2022-12-9 01:55:00', '2022-12-9 01:10:00', '3');
 
 # --rides--
 INSERT INTO rides (baby_transport, end_time, estimated_time_in_minutes, pet_transport, start_time, status, total_cost, vehicle_type, driver_id, panic_id, rejection_id)
@@ -139,6 +139,14 @@ INSERT INTO locations (address, latitude, longitude, ride_id)
 VALUES ('asbdsabjc', '515555', '897456', '4');
 INSERT INTO locations (address, latitude, longitude, ride_id)
 VALUES ('Bulevar oslobodjenja 46', '45.267136', '19.833549', '4');
+INSERT INTO locations (address, latitude, longitude, ride_id)
+VALUES ('asbdsabjc', '515555', '897456', '5');
+INSERT INTO locations (address, latitude, longitude, ride_id)
+VALUES ('Bulevar oslobodjenja 46', '45.267136', '19.833549', '5');
+INSERT INTO locations (address, latitude, longitude, ride_id)
+VALUES ('asbdsabjc', '515555', '897456', '6');
+INSERT INTO locations (address, latitude, longitude, ride_id)
+VALUES ('Bulevar oslobodjenja 46', '45.267136', '19.833549', '6');
 # --reviews--
 INSERT INTO reviews (comment, rating, ride_id) VALUES ('jashjfhasfhjsa', 1, '1');
 INSERT INTO reviews (comment, rating, ride_id) VALUES ('jashjfhasfhjsa', 5, '2');
