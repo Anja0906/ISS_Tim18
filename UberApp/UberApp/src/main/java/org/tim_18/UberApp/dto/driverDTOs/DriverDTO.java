@@ -1,6 +1,7 @@
 package org.tim_18.UberApp.dto.driverDTOs;
 
 
+import com.sun.istack.NotNull;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.springframework.data.domain.Page;
@@ -11,6 +12,7 @@ import java.util.HashSet;
 @Data
 public class DriverDTO{
 
+    
     private Integer id;
     private String name;
     private String surname;

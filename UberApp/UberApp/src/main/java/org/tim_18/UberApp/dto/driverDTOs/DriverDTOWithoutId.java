@@ -1,13 +1,24 @@
 package org.tim_18.UberApp.dto.driverDTOs;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import lombok.Data;
+import org.hibernate.validator.constraints.Length;
 import org.tim_18.UberApp.model.Driver;
 @Data
 public class DriverDTOWithoutId {
+    @NotNull
     private String name;
+    @NotNull
+
     private String surname;
+    @NotNull
+
     private String profilePicture;
+    @Length(min = 9, message = "Bad phone number format")
     private String telephoneNumber;
+    @Email(regexp = "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$", message = "Bad email format")
     private String email;
     private String password;
     private String address;

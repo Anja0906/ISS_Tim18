@@ -35,6 +35,10 @@ public class RideService {
         return rideRepository.findRidesByPassengersId(id, from, to, pageable);
     }
 
+    public Page<Ride> findPendingRidesByStatus(String status,Pageable pageable) {
+        return rideRepository.findPendingRidesByStatus(status,pageable);
+    }
+
     public Ride createRide(Ride ride){
         return rideRepository.save(ride);
     }

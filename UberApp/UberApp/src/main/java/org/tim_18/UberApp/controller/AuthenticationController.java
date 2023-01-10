@@ -20,6 +20,7 @@ import org.tim_18.UberApp.dto.UserDTOwithPassword;
 import org.tim_18.UberApp.dto.UserTokenState;
 import org.tim_18.UberApp.exception.ResourceConflictException;
 import org.tim_18.UberApp.mapper.UserDTOwithPasswordMapper;
+import org.tim_18.UberApp.model.JwtResponse;
 import org.tim_18.UberApp.model.Role;
 import org.tim_18.UberApp.model.User;
 import org.tim_18.UberApp.security.TokenUtils;
@@ -59,10 +60,10 @@ public class AuthenticationController {
 //	public User user(Principal user) {
 //		return this.userService.findByEmail(user.getName());
 //	}
-	
+
 
 	@PostMapping("/login")
-	public ResponseEntity<UserTokenState> createAuthenticationToken(
+	public ResponseEntity<JwtResponse> createAuthenticationToken(
 			@RequestBody JwtAuthenticationRequest authenticationRequest, HttpServletResponse response) {
 		// Ukoliko kredencijali nisu ispravni, logovanje nece biti uspesno, desice se
 		// AuthenticationException
@@ -77,16 +78,19 @@ public class AuthenticationController {
 		User user = (User) authentication.getPrincipal();
 		String jwt = tokenUtils.generateToken(user.getEmail());
 		int expiresIn = tokenUtils.getExpiredIn();
-
+		List<String> rolesStr = new ArrayList<>();
+		for (Role r:user.getRoles()) {
+			rolesStr.add(r.getName());
+		}
 		// Vrati token kao odgovor na uspesnu autentifikaciju
-		return ResponseEntity.ok(new UserTokenState(jwt, expiresIn));
+		return ResponseEntity.ok(new JwtResponse(jwt, expiresIn, user.getId(), user.getEmail(), rolesStr, user.getName() + " " + user.getSurname()));
 	}
 
 	// Endpoint za registraciju novog korisnika
 	//@TODO
 	@PostMapping("/signupPassenger")
 	public ResponseEntity<User> addPassenger(@RequestBody UserDTOwithPassword userRequest, UriComponentsBuilder ucBuilder) {
-		User existUser = this.userService.findByEmail(userRequest.getEmail());
+		User existUser = this.userService.findUserByEmail(userRequest.getEmail());
 
 		if (existUser != null) {
 			throw new ResourceConflictException(userRequest.getId(), "Username already exists");
@@ -100,7 +104,7 @@ public class AuthenticationController {
 	}
 	@PostMapping("/signupDriver")
 	public ResponseEntity<User> addDriver(@RequestBody UserDTOwithPassword userRequest, UriComponentsBuilder ucBuilder) {
-		User existUser = this.userService.findByEmail(userRequest.getEmail());
+		User existUser = this.userService.findUserByEmail(userRequest.getEmail());
 
 		if (existUser != null) {
 			throw new ResourceConflictException(userRequest.getId(), "Username already exists");

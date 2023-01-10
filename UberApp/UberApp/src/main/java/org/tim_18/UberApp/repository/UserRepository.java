@@ -11,11 +11,12 @@ import java.util.Optional;
 public interface UserRepository extends JpaRepository<User, Integer> {
     Optional<User> findUserById(Integer id);
 
-    User findByEmail(String email);
+    User findUserByEmail(String email);
 
     void deleteById(Integer id);
 
 
     Page<User> findAll(Pageable pageable);
     List<User> findAll();
+
 }

@@ -2,6 +2,7 @@ package org.tim_18.UberApp.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import org.tim_18.UberApp.dto.driverDTOs.DriverDTOWithoutId;
@@ -40,16 +41,16 @@ public class Driver extends User{
 
     public Driver(String name, String surname, String profilePicture, String telephoneNumber, String email, String address, String password, boolean blocked, boolean active, Integer id, Vehicle vehicle) {
         super(name, surname, profilePicture, telephoneNumber, email, address, password, blocked, active);
-        this.id = id;
-        this.documents = new HashSet<Document>();
-        this.rides = new HashSet<Ride>();
-        this.vehicle = vehicle;
+        this.id         = id;
+        this.documents  = new HashSet<Document>();
+        this.rides      = new HashSet<Ride>();
+        this.vehicle    = vehicle;
     }
     public Driver(String name, String surname, String profilePicture, String telephoneNumber, String email, String address, String password, boolean blocked, boolean active) {
         super(name, surname, profilePicture, telephoneNumber, email, address, password, blocked, active);
-        this.documents = new HashSet<Document>();
-        this.rides = new HashSet<Ride>();
-        this.vehicle = null;
+        this.documents  = new HashSet<Document>();
+        this.rides      = new HashSet<Ride>();
+        this.vehicle    = null;
     }
 
     public void driverUpdate(DriverDTOWithoutId driverDTOWithoutId){
