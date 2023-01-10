@@ -9,19 +9,19 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import org.tim_18.UberApp.dto.FindAllDTO;
 import org.tim_18.UberApp.dto.passengerDTOs.PassengerDTOnoPassword;
 import org.tim_18.UberApp.dto.passengerDTOs.PassengerDTOwithPassword;
 import org.tim_18.UberApp.dto.rideDTOs.RideRetDTO;
 import org.tim_18.UberApp.exception.PassengerNotFoundException;
 import org.tim_18.UberApp.exception.UserActivationNotFoundException;
-import org.tim_18.UberApp.exception.UserNotFoundException;
 import org.tim_18.UberApp.mapper.passengerDTOmappers.PassengerDTOwithPasswordMapper;
 import org.tim_18.UberApp.model.Passenger;
 import org.tim_18.UberApp.model.Ride;
+import org.tim_18.UberApp.model.Role;
 import org.tim_18.UberApp.model.UserActivation;
 import org.tim_18.UberApp.service.PassengerService;
 import org.tim_18.UberApp.service.RideService;
+import org.tim_18.UberApp.service.RoleService;
 import org.tim_18.UberApp.service.UserActivationService;
 
 import java.util.*;
@@ -29,24 +29,37 @@ import java.util.*;
 @RestController
 @RequestMapping("/api/passenger")
 @CrossOrigin(origins = "http://localhost:4200")
+//@PreAuthorize("hasRole('PASSENGER')")
 public class PassengerController {
     private final PassengerService passengerService;
     private final RideService rideService;
     private final UserActivationService userActivationService;
+    private final RoleService roleService;
     @Autowired
     private PassengerDTOwithPasswordMapper dtoWithPasswordMapper;
 
-    public PassengerController(PassengerService passengerService, RideService rideService, UserActivationService userActivationService) {
+    public PassengerController(PassengerService passengerService, RideService rideService, UserActivationService userActivationService, RoleService roleService) {
         this.passengerService       = passengerService;
         this.rideService            = rideService;
         this.userActivationService  = userActivationService;
+        this.roleService = roleService;
     }
 
     @PostMapping()
     public ResponseEntity<PassengerDTOnoPassword> addPassenger(@RequestBody PassengerDTOwithPassword dto) {
         Passenger passenger = dtoWithPasswordMapper.fromDTOtoPassenger(dto);
+        passenger.setRoles(this.getRoles());
         passenger = passengerService.addPassenger(passenger);
         return new ResponseEntity<>(new PassengerDTOnoPassword(passenger), HttpStatus.OK);
+    }
+
+    private List<Role> getRoles() {
+        List<Role> rP = roleService.findByName("ROLE_PASSENGER");
+        List<Role> rU = roleService.findByName("ROLE_USER");
+        List<Role> roles = new ArrayList<>();
+        roles.add(rU.get(0));
+        roles.add(rP.get(0));
+        return roles;
     }
 
     @GetMapping()
@@ -76,6 +89,7 @@ public class PassengerController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('PASSENGER')")
     public ResponseEntity<PassengerDTOnoPassword> findById(@PathVariable("id") Integer id) {
         try {
             Passenger passenger = passengerService.findById(id);

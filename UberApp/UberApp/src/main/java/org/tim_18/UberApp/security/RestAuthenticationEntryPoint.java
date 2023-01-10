@@ -1,23 +1,28 @@
 package org.tim_18.UberApp.security;
 
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.web.AuthenticationEntryPoint;
-import org.springframework.stereotype.Component;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import java.io.IOException;
 
-@Component
-public class RestAuthenticationEntryPoint implements AuthenticationEntryPoint {
+@ControllerAdvice
+public class RestAuthenticationEntryPoint extends ResponseEntityExceptionHandler{
+    @ExceptionHandler(AccessDeniedException.class)
+    public final ResponseEntity<?> handleAccessDeniedException(Exception ex, WebRequest request) {
+        String header = request.getHeader("Authorization");
 
-	//Metoda koja se izvrsava ukoliko za prosledjene kredencijale korisnik pokusa da pristupi zasticenom REST servisu
-	//Metoda vraca 401 Unauthorized response, ukoliko postoji Login Page u aplikaciji, pozeljno je da se korisnik redirektuje na tu stranicu
 
-    @Override
-    public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
-        response.sendError(HttpServletResponse.SC_UNAUTHORIZED, authException.getMessage());
+        if (header == null || !header.startsWith("Bearer ")) {
+            return new ResponseEntity<>("Unauthorized!", HttpStatus.UNAUTHORIZED);
+        }
+        return new ResponseEntity<>("Access denied!", HttpStatus.FORBIDDEN);
     }
 }
+
+
+
 

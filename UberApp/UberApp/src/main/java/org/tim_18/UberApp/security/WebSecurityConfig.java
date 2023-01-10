@@ -60,11 +60,7 @@ public class WebSecurityConfig {
  	}
  	
  	
- 	
- 	 // Handler za vracanje 401 kada klijent sa neodogovarajucim korisnickim imenom i lozinkom pokusa da pristupi resursu
- 	@Autowired
- 	private RestAuthenticationEntryPoint restAuthenticationEntryPoint;
- 
+
  	
     // Registrujemo authentication manager koji ce da uradi autentifikaciju korisnika za nas
  	@Bean
@@ -86,8 +82,7 @@ public class WebSecurityConfig {
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 //        http.csrf().disable();
         // sve neautentifikovane zahteve obradi uniformno i posalji 401 gresku
-        http.exceptionHandling().authenticationEntryPoint(restAuthenticationEntryPoint);
-    	http.authorizeHttpRequests().requestMatchers("/api/**").permitAll()		// /auth/**
+        http.authorizeHttpRequests().requestMatchers("/api/**").permitAll()		// /auth/**
 //			.requestMatchers("/h2-console/**").permitAll()	// /h2-console/** ako se koristi H2 baza)
 //			.requestMatchers("/api/foo").permitAll()		// /api/foo
 			// ukoliko ne zelimo da koristimo @PreAuthorize anotacije nad metodama kontrolera, moze se iskoristiti hasRole() metoda da se ogranici
