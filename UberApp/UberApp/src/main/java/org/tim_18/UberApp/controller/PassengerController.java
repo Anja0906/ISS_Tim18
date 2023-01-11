@@ -9,20 +9,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.tim_18.UberApp.Validation.ErrorMessage;
 import org.tim_18.UberApp.dto.passengerDTOs.PassengerDTOnoPassword;
 import org.tim_18.UberApp.dto.passengerDTOs.PassengerDTOwithPassword;
 import org.tim_18.UberApp.dto.rideDTOs.RideRetDTO;
 import org.tim_18.UberApp.exception.PassengerNotFoundException;
 import org.tim_18.UberApp.exception.UserActivationNotFoundException;
 import org.tim_18.UberApp.mapper.passengerDTOmappers.PassengerDTOwithPasswordMapper;
-import org.tim_18.UberApp.model.Passenger;
-import org.tim_18.UberApp.model.Ride;
-import org.tim_18.UberApp.model.Role;
-import org.tim_18.UberApp.model.UserActivation;
-import org.tim_18.UberApp.service.PassengerService;
-import org.tim_18.UberApp.service.RideService;
-import org.tim_18.UberApp.service.RoleService;
-import org.tim_18.UberApp.service.UserActivationService;
+import org.tim_18.UberApp.model.*;
+import org.tim_18.UberApp.service.*;
 
 import java.util.*;
 
@@ -35,22 +30,29 @@ public class PassengerController {
     private final RideService rideService;
     private final UserActivationService userActivationService;
     private final RoleService roleService;
+    private final UserService userService;
     @Autowired
     private PassengerDTOwithPasswordMapper dtoWithPasswordMapper;
 
-    public PassengerController(PassengerService passengerService, RideService rideService, UserActivationService userActivationService, RoleService roleService) {
+    public PassengerController(PassengerService passengerService, RideService rideService, UserActivationService userActivationService, RoleService roleService, UserService userService) {
         this.passengerService       = passengerService;
         this.rideService            = rideService;
         this.userActivationService  = userActivationService;
         this.roleService = roleService;
+        this.userService = userService;
     }
 
     @PostMapping()
-    public ResponseEntity<PassengerDTOnoPassword> addPassenger(@RequestBody PassengerDTOwithPassword dto) {
-        Passenger passenger = dtoWithPasswordMapper.fromDTOtoPassenger(dto);
-        passenger.setRoles(this.getRoles());
-        passenger = passengerService.addPassenger(passenger);
-        return new ResponseEntity<>(new PassengerDTOnoPassword(passenger), HttpStatus.OK);
+    public ResponseEntity<?> addPassenger(@RequestBody PassengerDTOwithPassword dto) {
+        User user = userService.findUserByEmail(dto.getEmail());
+        if (user == null) {
+            Passenger passenger = dtoWithPasswordMapper.fromDTOtoPassenger(dto);
+            passenger.setRoles(this.getRoles());
+            passenger = passengerService.addPassenger(passenger);
+            return new ResponseEntity<>(new PassengerDTOnoPassword(passenger), HttpStatus.OK);
+        } else{
+            return new ResponseEntity<>(new ErrorMessage("User with that email already exists!"),HttpStatus.BAD_REQUEST);
+        }
     }
 
     private List<Role> getRoles() {
@@ -77,6 +79,7 @@ public class PassengerController {
     }
 
 
+    // @TODO !!!!!!!!!!!!!!!!!!!!!!!!!
     @GetMapping("activate/{activationId}")
     public ResponseEntity activateUser(@PathVariable("activationId") Integer id){
         try {
@@ -89,19 +92,18 @@ public class PassengerController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('PASSENGER')")
-    public ResponseEntity<PassengerDTOnoPassword> findById(@PathVariable("id") Integer id) {
+    public ResponseEntity<?> findById(@PathVariable("id") Integer id) {
         try {
             Passenger passenger = passengerService.findById(id);
             return new ResponseEntity<>(new PassengerDTOnoPassword(passenger), HttpStatus.OK);
         } catch(PassengerNotFoundException passengerNotFoundException){
-            return new ResponseEntity<>(null,HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new ErrorMessage("Passenger does not exist!"),HttpStatus.NOT_FOUND);
         }
     }
 
 
     @PutMapping("/{id}")
-    public ResponseEntity<PassengerDTOnoPassword> updatePassenger(
+    public ResponseEntity<?> updatePassenger(
             @RequestBody PassengerDTOwithPassword dto,
             @PathVariable("id") Integer id) {
         try {
@@ -111,12 +113,12 @@ public class PassengerController {
             PassengerDTOnoPassword updatedPassengerDTO = new PassengerDTOnoPassword(updatedPassenger);
             return new ResponseEntity<>(updatedPassengerDTO, HttpStatus.OK);
         } catch(PassengerNotFoundException passengerNotFoundException){
-            return new ResponseEntity<>(null,HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new ErrorMessage("Passenger does not exist!"), HttpStatus.NOT_FOUND);
         }
     }
 
     @GetMapping("/{id}/ride")
-    public ResponseEntity<Map<String, Object>> findPassengersRides(
+    public ResponseEntity<?> findPassengersRides(
             @PathVariable("id") Integer id,
             @RequestParam(defaultValue = "0") Integer page,
             @RequestParam(defaultValue = "4") Integer size,
@@ -135,7 +137,7 @@ public class PassengerController {
             response.put("results", ridesDTO);
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch(PassengerNotFoundException passengerNotFoundException){
-            return new ResponseEntity<>(null,HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new ErrorMessage("Passenger does not exist!"),HttpStatus.NOT_FOUND);
         }
     }
 }
