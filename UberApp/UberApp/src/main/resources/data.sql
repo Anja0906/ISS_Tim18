@@ -58,20 +58,20 @@ INSERT INTO work_time (end, start, driver_id) VALUES ('2022-12-8 01:55:00', '202
 INSERT INTO work_time (end, start, driver_id) VALUES ('2022-12-9 01:55:00', '2022-12-9 01:10:00', '3');
 
 # --rides--
-INSERT INTO rides (baby_transport, end_time, estimated_time_in_minutes, pet_transport, start_time, status, total_cost, vehicle_type, driver_id, panic_id, rejection_id)
-VALUES (true, '2023-12-11 23:59:59', 1, false, '2022-12-10 05:00:00', 5, 500, 0, '2', '1', '1');
-INSERT INTO rides (baby_transport, end_time, estimated_time_in_minutes, pet_transport, start_time, status, total_cost, vehicle_type, driver_id, panic_id, rejection_id)
-VALUES (true, '2022-12-7 07:55:00', 5, false, '2022-12-7 07:40:00', 0, 500, 0, '1', '2', '2');
-INSERT INTO rides (baby_transport, end_time, estimated_time_in_minutes, pet_transport, start_time, status, total_cost, vehicle_type, driver_id, panic_id, rejection_id)
-VALUES (true, '2022-12-7 07:55:00', 15, false, '2022-12-7 07:40:00', 0, 500, 0, '1', '3', '3');
-INSERT INTO rides (baby_transport, end_time, estimated_time_in_minutes, pet_transport, start_time, status, total_cost, vehicle_type, driver_id, panic_id, rejection_id)
-VALUES (true, '2022-12-11 23:59:59', 1, false, '2022-12-10 05:00:00', 0, 500, 0, '3', '4', '4');
-INSERT INTO rides (baby_transport, end_time, estimated_time_in_minutes, pet_transport, start_time, status, total_cost, vehicle_type, driver_id, panic_id, rejection_id)
-VALUES (true, '2022-12-11 22:55:00', 5, false, '2022-12-11 20:40:00', 0, 500, 0, '1', '5', '5');
-INSERT INTO rides (baby_transport, end_time, estimated_time_in_minutes, pet_transport, start_time, status, total_cost, vehicle_type, driver_id, panic_id, rejection_id)
-VALUES (true, '2022-12-7 07:55:00', 15, false, '2022-12-7 07:40:00', 0, 500, 0, '1', '6', '6');
-INSERT INTO rides (baby_transport, end_time, estimated_time_in_minutes, pet_transport, start_time, status, total_cost, vehicle_type, driver_id, panic_id, rejection_id)
-VALUES (true, '2023-12-11 23:59:59', 1, false, '2022-12-10 05:00:00', 0, 500, 0, '2', '1', '1');
+INSERT INTO rides (baby_transport, end_time, estimated_time_in_minutes, pet_transport, start_time, status, total_cost, vehicle_type, driver_id, panic_id, rejection_id, scheduled_time)
+VALUES (true, '2023-12-11 23:59:59', 1, false, '2022-12-10 05:00:00', 5, 500, 0, '2', '1', '1', '2022-12-10 05:00:00');
+INSERT INTO rides (baby_transport, end_time, estimated_time_in_minutes, pet_transport, start_time, status, total_cost, vehicle_type, driver_id, panic_id, rejection_id, scheduled_time)
+VALUES (true, '2022-12-7 07:55:00', 5, false, '2022-12-7 07:40:00', 0, 500, 0, '1', '2', '2', '2022-12-10 05:00:00');
+INSERT INTO rides (baby_transport, end_time, estimated_time_in_minutes, pet_transport, start_time, status, total_cost, vehicle_type, driver_id, panic_id, rejection_id, scheduled_time)
+VALUES (true, '2022-12-7 07:55:00', 15, false, '2022-12-7 07:40:00', 0, 500, 0, '1', '3', '3', '2022-12-10 05:00:00');
+INSERT INTO rides (baby_transport, end_time, estimated_time_in_minutes, pet_transport, start_time, status, total_cost, vehicle_type, driver_id, panic_id, rejection_id, scheduled_time)
+VALUES (true, '2022-12-11 23:59:59', 1, false, '2022-12-10 05:00:00', 0, 500, 0, '3', '4', '4', '2022-12-10 05:00:00');
+INSERT INTO rides (baby_transport, end_time, estimated_time_in_minutes, pet_transport, start_time, status, total_cost, vehicle_type, driver_id, panic_id, rejection_id, scheduled_time)
+VALUES (true, '2022-12-11 22:55:00', 5, false, '2022-12-11 20:40:00', 0, 500, 0, '1', '5', '5', '2022-12-10 05:00:00');
+INSERT INTO rides (baby_transport, end_time, estimated_time_in_minutes, pet_transport, start_time, status, total_cost, vehicle_type, driver_id, panic_id, rejection_id, scheduled_time)
+VALUES (true, '2022-12-7 07:55:00', 15, false, '2022-12-7 07:40:00', 0, 500, 0, '1', '6', '6', '2022-12-10 05:00:00');
+INSERT INTO rides (baby_transport, end_time, estimated_time_in_minutes, pet_transport, start_time, status, total_cost, vehicle_type, driver_id, panic_id, rejection_id, scheduled_time)
+VALUES (true, '2023-12-11 23:59:59', 1, false, '2022-12-10 05:00:00', 0, 500, 0, '2', '1', '1', '2022-12-10 05:00:00');
 
 # --vehicle--
 INSERT INTO vehicle (id, license_number, vehicle_type, model,  current_location_id, driver_id, passenger_seats, baby_transport, pet_transport)
@@ -125,30 +125,31 @@ INSERT INTO passenger (id, passenger_id) VALUES ('5', '2');
 INSERT INTO passenger (id, passenger_id) VALUES ('6', '3');
 
 # --locations--
-INSERT INTO locations (address, latitude, longitude, ride_id)
-VALUES ('bane1', '54478412154', '875154444', '1');
-INSERT INTO locations (address, latitude, longitude, ride_id)
-VALUES ('bane', '515555', '897456', '2');
-INSERT INTO locations (address, latitude, longitude, ride_id)
-VALUES ('bane3', '54478412154', '875154444', '3');
-INSERT INTO locations (address, latitude, longitude, ride_id)
-VALUES ('asbdsabjc', '515555', '897456', '2');
-INSERT INTO locations (address, latitude, longitude, ride_id)
-VALUES ('Bulevar oslobodjenja 46', '45.267136', '19.833549', '1');
-INSERT INTO locations (address, latitude, longitude, ride_id)
-VALUES ('asbdsabjc', '515555', '897456', '3');
-INSERT INTO locations (address, latitude, longitude, ride_id)
-VALUES ('asbdsabjc', '515555', '897456', '4');
-INSERT INTO locations (address, latitude, longitude, ride_id)
-VALUES ('Bulevar oslobodjenja 46', '45.267136', '19.833549', '4');
-INSERT INTO locations (address, latitude, longitude, ride_id)
-VALUES ('asbdsabjc', '515555', '897456', '5');
-INSERT INTO locations (address, latitude, longitude, ride_id)
-VALUES ('Bulevar oslobodjenja 46', '45.267136', '19.833549', '5');
-INSERT INTO locations (address, latitude, longitude, ride_id)
-VALUES ('asbdsabjc', '515555', '897456', '6');
-INSERT INTO locations (address, latitude, longitude, ride_id)
-VALUES ('Bulevar oslobodjenja 46', '45.267136', '19.833549', '6');
+INSERT INTO locations (address, latitude, longitude, ride_id, fav_ride_id)
+VALUES ('bane1', '54478412154', '875154444', '1', '1');
+INSERT INTO locations (address, latitude, longitude, ride_id, fav_ride_id)
+VALUES ('bane', '515555', '897456', '1', '1');
+INSERT INTO locations (address, latitude, longitude, ride_id, fav_ride_id)
+VALUES ('bane3', '54478412154', '875154444', '3', '1');
+INSERT INTO locations (address, latitude, longitude, ride_id, fav_ride_id)
+VALUES ('asbdsabjc', '515555', '897456', '2', '2');
+INSERT INTO locations (address, latitude, longitude, ride_id, fav_ride_id)
+VALUES ('Bulevar oslobodjenja 46', '45.267136', '19.833549', '1', '2');
+INSERT INTO locations (address, latitude, longitude, ride_id, fav_ride_id)
+VALUES ('asbdsabjc', '515555', '897456', '3', '2');
+INSERT INTO locations (address, latitude, longitude, ride_id, fav_ride_id)
+VALUES ('asbdsabjc', '515555', '897456', '4', '3');
+INSERT INTO locations (address, latitude, longitude, ride_id, fav_ride_id)
+VALUES ('Bulevar oslobodjenja 46', '45.267136', '19.833549', '4', '3');
+INSERT INTO locations (address, latitude, longitude, ride_id, fav_ride_id)
+VALUES ('asbdsabjc', '515555', '897456', '5', '3');
+INSERT INTO locations (address, latitude, longitude, ride_id, fav_ride_id)
+VALUES ('Bulevar oslobodjenja 46', '45.267136', '19.833549', '5', '4');
+INSERT INTO locations (address, latitude, longitude, ride_id, fav_ride_id)
+VALUES ('asbdsabjc', '515555', '897456', '6', '4');
+INSERT INTO locations (address, latitude, longitude, ride_id, fav_ride_id)
+VALUES ('Bulevar oslobodjenja 46', '45.267136', '19.833549', '6', '4');
+
 # --reviews--
 INSERT INTO reviews (comment, rating, ride_id) VALUES ('jashjfhasfhjsa', 1, '1');
 INSERT INTO reviews (comment, rating, ride_id) VALUES ('jashjfhasfhjsa', 5, '2');
@@ -213,3 +214,12 @@ INSERT INTO user_role (user_id, role_id) VALUES (13, 1);
 INSERT INTO user_role (user_id, role_id) VALUES (13, 4);
 INSERT INTO user_role (user_id, role_id) VALUES (14, 1);
 INSERT INTO user_role (user_id, role_id) VALUES (14, 4);
+
+INSERT INTO favourite_rides (baby_transport, favourite_name, pet_transport, vehicle_type, passenger_id)
+VALUES (true, 'Home-Work', true, '0', '4');
+INSERT INTO favourite_rides (baby_transport, favourite_name, pet_transport, vehicle_type, passenger_id)
+VALUES (false, 'School-Work', false, '0', '4');
+INSERT INTO favourite_rides (baby_transport, favourite_name, pet_transport, vehicle_type, passenger_id)
+VALUES (true, 'School-Home', false, '0', '4');
+INSERT INTO favourite_rides (baby_transport, favourite_name, pet_transport, vehicle_type, passenger_id)
+VALUES (false, 'School-Hospital', true, '0', '4');

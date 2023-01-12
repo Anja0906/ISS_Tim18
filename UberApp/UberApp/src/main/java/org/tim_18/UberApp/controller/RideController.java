@@ -265,6 +265,8 @@ public class RideController {
         }
     }
 
+
+
     private void checkPassengersAuthorities(Principal principal, Ride ride) throws RideNotFoundException{
         User user = userService.findUserByEmail(principal.getName());
         Integer userId = user.getId();

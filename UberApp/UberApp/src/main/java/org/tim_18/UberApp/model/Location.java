@@ -17,6 +17,9 @@ public class Location implements Serializable {
     private String address;
     @JsonIgnore
     @ManyToOne
+    private FavouriteRide favRide;
+    @JsonIgnore
+    @ManyToOne
     private Ride ride;
 
     public Location() {}
