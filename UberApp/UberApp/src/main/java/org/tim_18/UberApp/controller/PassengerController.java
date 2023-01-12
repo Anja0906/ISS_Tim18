@@ -15,10 +15,12 @@ import org.tim_18.UberApp.dto.passengerDTOs.PassengerDTOwithPassword;
 import org.tim_18.UberApp.dto.rideDTOs.RideRetDTO;
 import org.tim_18.UberApp.exception.PassengerNotFoundException;
 import org.tim_18.UberApp.exception.UserActivationNotFoundException;
+import org.tim_18.UberApp.mapper.passengerDTOmappers.PassengerDTOnoPasswordMapper;
 import org.tim_18.UberApp.mapper.passengerDTOmappers.PassengerDTOwithPasswordMapper;
 import org.tim_18.UberApp.model.*;
 import org.tim_18.UberApp.service.*;
 
+import java.security.Principal;
 import java.util.*;
 
 @RestController
@@ -33,6 +35,8 @@ public class PassengerController {
     private final UserService userService;
     @Autowired
     private PassengerDTOwithPasswordMapper dtoWithPasswordMapper;
+    @Autowired
+    private PassengerDTOnoPasswordMapper dtoNoPasswordMapper;
 
     public PassengerController(PassengerService passengerService, RideService rideService, UserActivationService userActivationService, RoleService roleService, UserService userService) {
         this.passengerService       = passengerService;
@@ -91,53 +95,71 @@ public class PassengerController {
         }
     }
 
+    @PreAuthorize("hasRole('PASSENGER')")
     @GetMapping("/{id}")
-    public ResponseEntity<?> findById(@PathVariable("id") Integer id) {
+    public ResponseEntity<?> findById(Principal principal, @PathVariable("id") Integer id) {
         try {
+            checkAuthorities(principal, id);
             Passenger passenger = passengerService.findById(id);
             return new ResponseEntity<>(new PassengerDTOnoPassword(passenger), HttpStatus.OK);
         } catch(PassengerNotFoundException passengerNotFoundException){
-            return new ResponseEntity<>(new ErrorMessage("Passenger does not exist!"),HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Passenger does not exist!",HttpStatus.NOT_FOUND);
         }
     }
 
 
+    @PreAuthorize("hasRole('PASSENGER')")
     @PutMapping("/{id}")
     public ResponseEntity<?> updatePassenger(
-            @RequestBody PassengerDTOwithPassword dto,
+            Principal principal,
+            @RequestBody PassengerDTOnoPassword dto,
             @PathVariable("id") Integer id) {
         try {
+            checkAuthorities(principal, id);
             Passenger oldPassenger = passengerService.findById(id); //throws 404
-            oldPassenger = dtoWithPasswordMapper.fromDTOtoPassenger(dto, id);
-            Passenger updatedPassenger = passengerService.update(oldPassenger);
+            Passenger newPassenger = dtoNoPasswordMapper.fromDTOtoPassenger(dto, id);
+            newPassenger.setPassword(oldPassenger.getPassword());
+            Passenger updatedPassenger = passengerService.update(newPassenger);
             PassengerDTOnoPassword updatedPassengerDTO = new PassengerDTOnoPassword(updatedPassenger);
             return new ResponseEntity<>(updatedPassengerDTO, HttpStatus.OK);
         } catch(PassengerNotFoundException passengerNotFoundException){
-            return new ResponseEntity<>(new ErrorMessage("Passenger does not exist!"), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Passenger does not exist!", HttpStatus.NOT_FOUND);
         }
     }
 
+    @PreAuthorize("hasRole('PASSENGER')")
     @GetMapping("/{id}/ride")
-    public ResponseEntity<?> findPassengersRides(
-            @PathVariable("id") Integer id,
-            @RequestParam(defaultValue = "0") Integer page,
-            @RequestParam(defaultValue = "4") Integer size,
-            @RequestParam(defaultValue = "id") String sort,
-            @RequestParam (defaultValue = "2021-10-10T10:00")String from,
-            @RequestParam (defaultValue = "2023-10-10T10:00")String to) {
+    public ResponseEntity<?> findPassengersRides(Principal principal,
+                                                                   @PathVariable("id") Integer id,
+                                                                   @RequestParam(defaultValue = "0") Integer page,
+                                                                   @RequestParam(defaultValue = "4") Integer size,
+                                                                   @RequestParam(defaultValue = "id") String sort,
+                                                                   @RequestParam (defaultValue = "2021-10-10T10:00")String from,
+                                                                   @RequestParam (defaultValue = "2023-10-10T10:00")String to) {
         try {
-            Passenger passenger = passengerService.findById(id); //throws 404
-
+            checkAuthorities(principal, id);
+            Passenger passenger = passengerService.findById(id);
             Pageable paging = PageRequest.of(page, size, Sort.by(sort));
-            Page<Ride> rides = rideService.findRidesByPassengersId(id, from, to, paging);
-            List<RideRetDTO> ridesDTO = RideRetDTO.getRidesDTO(rides);
-
+            List<Ride> rides = rideService.findRidesByPassengersId(id, from, to);
+//            Page<Ride> pagedResult = rideService.findRidesByPassengersId(id, from, to, paging);
+            List<RideRetDTO> ridesDTO = new ArrayList<>();
+            for (Ride r : rides) {
+                ridesDTO.add(new RideRetDTO(r));
+            }
             Map<String, Object> response = new HashMap<>();
-            response.put("totalCount", rides.getTotalElements());
+            response.put("totalCount", ridesDTO.size());
+//            response.put("totalCount", pagedResult.getTotalElements());
             response.put("results", ridesDTO);
             return new ResponseEntity<>(response, HttpStatus.OK);
-        } catch(PassengerNotFoundException passengerNotFoundException){
-            return new ResponseEntity<>(new ErrorMessage("Passenger does not exist!"),HttpStatus.NOT_FOUND);
+        } catch(PassengerNotFoundException e){
+            return new ResponseEntity<>("Passenger does not exist!",HttpStatus.NOT_FOUND);
+        }
+    }
+
+    private void checkAuthorities(Principal principal, Integer id) throws PassengerNotFoundException {
+        Integer userId = userService.findUserByEmail(principal.getName()).getId();
+        if (!userId.equals(id)){
+            throw new PassengerNotFoundException("Passenger does not exist!");
         }
     }
 }
