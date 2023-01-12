@@ -45,13 +45,13 @@ public class RideService {
 
     public Ride getDriverActiveRide(Integer driverId) {
         return rideRepository.findDriverActiveRide(driverId)
-                .orElseThrow(() -> new UserNotFoundException("Ride was not found"));
+                .orElseThrow(() -> new RideNotFoundException("Ride was not found"));
 
     }
 
     public Ride getPassengerActiveRide(Integer passengerId) {
         return rideRepository.findPassengerActiveRide(passengerId)
-                .orElseThrow(() -> new UserNotFoundException("Ride was not found"));
+                .orElseThrow(() -> new RideNotFoundException("Ride was not found"));
 
     }
 
@@ -69,4 +69,9 @@ public class RideService {
 
     public Page<Ride> findRidesForDriver(Integer id, String start, String end, Pageable pageable){return rideRepository.findRidesForDriver(id,start,end,pageable);}
 
+    public boolean checkRide(Integer passengerId) {
+        List<Ride> pendingRides = rideRepository.findPassengersRidesByStatus(passengerId, "PENDING");
+        return pendingRides.isEmpty();
+        // returns true if there's no pending rides => passenger can make a new ride
+    }
 }

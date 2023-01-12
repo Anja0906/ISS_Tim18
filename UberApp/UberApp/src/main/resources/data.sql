@@ -4,9 +4,9 @@ VALUES (false, 'Strumicka 6', false, 'anja@gmail.com', 'Anja', 'profile_picture'
 INSERT INTO users (active, address, blocked, email, name, profile_picture, surname, password, telephone_number)
 VALUES (false, 'Strumicka 5', false, 'branislac@gmail.com', 'Branislav', 'profile_picture1', 'Stojkovic', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', '0654315454');
 INSERT INTO users (active, address, blocked, email, name, profile_picture, surname, password, telephone_number)
-VALUES (false, 'Narodnog fronta 5', false, 'kristina@gmail.com', 'Kristina', 'profile_picture5', 'Andrijin', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', '6521545154');
-INSERT INTO users (active, address, blocked, email, name, profile_picture, surname, password, telephone_number)
 VALUES (false, 'Strumicka 6', true, 'pera@gmail.com', 'Pera', 'profile_picture', 'Peric', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', '45421545151');
+INSERT INTO users (active, address, blocked, email, name, profile_picture, surname, password, telephone_number)
+VALUES (false, 'Narodnog fronta 5', false, 'kristina@gmail.com', 'Kristina', 'profile_picture5', 'Andrijin', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', '6521545154');
 INSERT INTO users (active, address, blocked, email, name, profile_picture, surname, password, telephone_number)
 VALUES (false, 'Strumicka 5', true, 'mika@gmail.com', 'Mika', 'profile_picture1', 'Mikic', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', '852741963');
 INSERT INTO users (active, address, blocked, email, name, profile_picture, surname, password, telephone_number)
@@ -59,7 +59,7 @@ INSERT INTO work_time (end, start, driver_id) VALUES ('2022-12-9 01:55:00', '202
 
 # --rides--
 INSERT INTO rides (baby_transport, end_time, estimated_time_in_minutes, pet_transport, start_time, status, total_cost, vehicle_type, driver_id, panic_id, rejection_id)
-VALUES (true, '2022-12-11 23:59:59', 1, false, '2022-12-10 05:00:00', 0, 500, 0, '2', '1', '1');
+VALUES (true, '2023-12-11 23:59:59', 1, false, '2022-12-10 05:00:00', 5, 500, 0, '2', '1', '1');
 INSERT INTO rides (baby_transport, end_time, estimated_time_in_minutes, pet_transport, start_time, status, total_cost, vehicle_type, driver_id, panic_id, rejection_id)
 VALUES (true, '2022-12-7 07:55:00', 5, false, '2022-12-7 07:40:00', 0, 500, 0, '1', '2', '2');
 INSERT INTO rides (baby_transport, end_time, estimated_time_in_minutes, pet_transport, start_time, status, total_cost, vehicle_type, driver_id, panic_id, rejection_id)
@@ -70,6 +70,8 @@ INSERT INTO rides (baby_transport, end_time, estimated_time_in_minutes, pet_tran
 VALUES (true, '2022-12-11 22:55:00', 5, false, '2022-12-11 20:40:00', 0, 500, 0, '1', '5', '5');
 INSERT INTO rides (baby_transport, end_time, estimated_time_in_minutes, pet_transport, start_time, status, total_cost, vehicle_type, driver_id, panic_id, rejection_id)
 VALUES (true, '2022-12-7 07:55:00', 15, false, '2022-12-7 07:40:00', 0, 500, 0, '1', '6', '6');
+INSERT INTO rides (baby_transport, end_time, estimated_time_in_minutes, pet_transport, start_time, status, total_cost, vehicle_type, driver_id, panic_id, rejection_id)
+VALUES (true, '2023-12-11 23:59:59', 1, false, '2022-12-10 05:00:00', 0, 500, 0, '2', '1', '1');
 
 # --vehicle--
 INSERT INTO vehicle (id, license_number, vehicle_type, model,  current_location_id, driver_id, passenger_seats, baby_transport, pet_transport)
@@ -164,13 +166,16 @@ INSERT INTO administrators (name, profile_picture, surname, password, username)
 VALUES ('VDsgfsjhfka', 'asbfhasfj', 'petkovic', 'scbshhfcjsh', 'jsdchhshc');
 
 # -- passenger_rides --
-INSERT INTO passenger_rides (passenger_id, ride_id) VALUES (1, 1);
+INSERT INTO passenger_rides (passenger_id, ride_id) VALUES (4, 1);
 INSERT INTO passenger_rides (passenger_id, ride_id) VALUES (4, 2);
 INSERT INTO passenger_rides (passenger_id, ride_id) VALUES (4, 3);
-INSERT INTO passenger_rides (passenger_id, ride_id) VALUES (1, 4);
-INSERT INTO passenger_rides (passenger_id, ride_id) VALUES (1, 5);
-INSERT INTO passenger_rides (passenger_id, ride_id) VALUES (1, 6);
-INSERT INTO passenger_rides (passenger_id, ride_id) VALUES (4, 5);
+INSERT INTO passenger_rides (passenger_id, ride_id) VALUES (4, 7);
+INSERT INTO passenger_rides (passenger_id, ride_id) VALUES (5, 4);
+INSERT INTO passenger_rides (passenger_id, ride_id) VALUES (5, 5);
+INSERT INTO passenger_rides (passenger_id, ride_id) VALUES (5, 6);
+INSERT INTO passenger_rides (passenger_id, ride_id) VALUES (6, 1);
+INSERT INTO passenger_rides (passenger_id, ride_id) VALUES (6, 2);
+INSERT INTO passenger_rides (passenger_id, ride_id) VALUES (6, 3);
 
 #roles
 INSERT INTO role (name) VALUES ('ROLE_USER');
@@ -180,23 +185,31 @@ INSERT INTO role (name) VALUES ('ROLE_ADMIN');
 
 
 #user_role
-INSERT INTO user_role (user_id, role_id) VALUES (1, 1); #anja
-INSERT INTO user_role (user_id, role_id) VALUES (1, 4); #admin
-INSERT INTO user_role (user_id, role_id) VALUES (2, 1); #bane
-INSERT INTO user_role (user_id, role_id) VALUES (2, 3); #vozac
-INSERT INTO user_role (user_id, role_id) VALUES (3, 1); #kris
-INSERT INTO user_role (user_id, role_id) VALUES (3, 2); #ptnik
+INSERT INTO user_role (user_id, role_id) VALUES (1, 1);
+INSERT INTO user_role (user_id, role_id) VALUES (1, 3);
+INSERT INTO user_role (user_id, role_id) VALUES (2, 1);
+INSERT INTO user_role (user_id, role_id) VALUES (2, 3);
+INSERT INTO user_role (user_id, role_id) VALUES (3, 1);
+INSERT INTO user_role (user_id, role_id) VALUES (3, 3);
 INSERT INTO user_role (user_id, role_id) VALUES (4, 1);
+INSERT INTO user_role (user_id, role_id) VALUES (4, 2);
 INSERT INTO user_role (user_id, role_id) VALUES (5, 1);
+INSERT INTO user_role (user_id, role_id) VALUES (5, 2);
 INSERT INTO user_role (user_id, role_id) VALUES (6, 1);
+INSERT INTO user_role (user_id, role_id) VALUES (6, 2);
 INSERT INTO user_role (user_id, role_id) VALUES (7, 1);
+INSERT INTO user_role (user_id, role_id) VALUES (7, 3);
 INSERT INTO user_role (user_id, role_id) VALUES (8, 1);
+INSERT INTO user_role (user_id, role_id) VALUES (8, 3);
 INSERT INTO user_role (user_id, role_id) VALUES (9, 1);
+INSERT INTO user_role (user_id, role_id) VALUES (9, 3);
 INSERT INTO user_role (user_id, role_id) VALUES (10, 1);
+INSERT INTO user_role (user_id, role_id) VALUES (10, 4);
 INSERT INTO user_role (user_id, role_id) VALUES (11, 1);
+INSERT INTO user_role (user_id, role_id) VALUES (11, 4);
 INSERT INTO user_role (user_id, role_id) VALUES (12, 1);
+INSERT INTO user_role (user_id, role_id) VALUES (12, 4);
 INSERT INTO user_role (user_id, role_id) VALUES (13, 1);
+INSERT INTO user_role (user_id, role_id) VALUES (13, 4);
 INSERT INTO user_role (user_id, role_id) VALUES (14, 1);
-
-# passenger_rides(treba da dobavim passengere)
-#
+INSERT INTO user_role (user_id, role_id) VALUES (14, 4);
