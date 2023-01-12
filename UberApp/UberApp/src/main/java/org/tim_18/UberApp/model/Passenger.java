@@ -22,7 +22,8 @@ public class Passenger extends User {
     @JsonIgnore
     @ManyToMany(fetch = FetchType.LAZY, cascade = {
             CascadeType.PERSIST,
-            CascadeType.MERGE
+            CascadeType.MERGE,
+            CascadeType.ALL
     })
     @JoinTable(name = "passenger_rides",
             joinColumns = @JoinColumn(name = "passenger_id"),

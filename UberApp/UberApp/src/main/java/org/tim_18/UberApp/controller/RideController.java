@@ -24,6 +24,9 @@ import org.tim_18.UberApp.model.*;
 import org.tim_18.UberApp.service.*;
 
 import java.security.Principal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.*;
 
 @RestController
@@ -38,13 +41,12 @@ public class RideController {
     private final PanicService panicService;
     private final PassengerService passengerService;
     private final UserService userService;
-    private final RoleService roleService;
 
 
     private LocationDTOMapper locationDTOMapper = new LocationDTOMapper(new ModelMapper());
 
 
-    public RideController(RideService rideService, DriverService driverService, RejectionService rejectionService, ReviewService reviewService, PanicService panicService, PassengerService passengerService, UserService userService, RoleService roleService) {
+    public RideController(RideService rideService, DriverService driverService, RejectionService rejectionService, ReviewService reviewService, PanicService panicService, PassengerService passengerService, UserService userService) {
         this.rideService        = rideService;
         this.driverService      = driverService;
         this.rejectionService   = rejectionService;
@@ -52,17 +54,31 @@ public class RideController {
         this.panicService       = panicService;
         this.passengerService   = passengerService;
         this.userService        = userService;
-        this.roleService = roleService;
     }
 
     @PreAuthorize("hasRole('PASSENGER')")
     @PostMapping
     public ResponseEntity<?> createARide(Principal principal, @RequestBody RideRecDTO oldDTO){
         User user = userService.findUserByEmail(principal.getName());
+        boolean found = false;
+        for (PassengerEmailDTO p:oldDTO.getPassengers()) {
+            if (p.getId().equals(user.getId())){
+                found = true;
+                break;
+            }
+        }
+        if (!found) {
+            return new ResponseEntity<>("Cannot make ride for other people!",HttpStatus.NOT_FOUND);
+        }
         boolean canMakeRide = rideService.checkRide(user.getId());
         if (canMakeRide) {
+            Passenger p = passengerService.findById(user.getId());
+            Set<Ride> pr = p.getRides();
             Ride ride = rideService.createRide(fromDTOtoRide(oldDTO));
-            return new ResponseEntity<>(new RideRetDTO(ride), HttpStatus.CREATED);
+            pr.add(ride);
+            p.setRides(new HashSet<>(pr));
+            passengerService.update(p);
+            return new ResponseEntity<>(new RideRetDTO(ride), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(new ErrorMessage("Cannot create a ride while you have one already pending!"),HttpStatus.BAD_REQUEST);
         }
@@ -349,7 +365,9 @@ public class RideController {
             newRejection = rejections.get(0);
         }
         RejectionDTO rejectionDTO = new RejectionDTO(newRejection);
+        Instant instant = Instant.parse(dto.getScheduledTime());
+        Date date = Date.from(instant);
         return new Ride(startTime, endTime, totalCost, driver, passengers, estimatedTimeInMinutes, dto.getVehicleType(),
-                dto.isBabyTransport(), dto.isPetTransport(), newRejection, locations, status, reviews, panic);
+                dto.isBabyTransport(), dto.isPetTransport(), newRejection, locations, status, reviews, panic, date);
     }
 }

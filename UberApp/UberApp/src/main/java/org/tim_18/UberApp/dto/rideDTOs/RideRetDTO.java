@@ -8,10 +8,7 @@ import org.tim_18.UberApp.dto.locationDTOs.LocationSetDTO;
 import org.tim_18.UberApp.dto.passengerDTOs.PassengerEmailDTO;
 import org.tim_18.UberApp.model.*;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Data
 public class RideRetDTO {
@@ -28,10 +25,11 @@ public class RideRetDTO {
     private RejectionDTO rejection;
     private Set<LocationSetDTO> locations;
     private Status status;
+    private String scheduledTime;
 
     public RideRetDTO(){}
 
-    public RideRetDTO(Integer id, String startTime, String endTime, long totalCost, Driver driver, Set<Passenger> passengers, int estimatedTimeInMinutes, VehicleType vehicleType, boolean babyTransport, boolean petTransport, Rejection rejection, Set<Location> _locations, Status status) {
+    public RideRetDTO(Integer id, String startTime, String endTime, long totalCost, Driver driver, Set<Passenger> passengers, int estimatedTimeInMinutes, VehicleType vehicleType, boolean babyTransport, boolean petTransport, Rejection rejection, Set<Location> _locations, Status status, String scheduledTime) {
         this.id                             = id;
         this.startTime                      = startTime;
         this.endTime                        = endTime;
@@ -61,6 +59,7 @@ public class RideRetDTO {
         }
         this.locations                      = locationSetDTOSet;
         this.status                         = status;
+        this.scheduledTime                  = scheduledTime;
     }
     public RideRetDTO(Ride ride){
         this(ride.getId(), ride.getStartTime().toString(), ride.getEndTime().toString(),
@@ -68,7 +67,7 @@ public class RideRetDTO {
              ride.getPassengers(), ride.getEstimatedTimeInMinutes(),
              ride.getVehicleType(), ride.isBabyTransport(),
              ride.isPetTransport(), ride.getRejection(),
-             ride.getLocations(), ride.getStatus());
+             ride.getLocations(), ride.getStatus(), ride.getScheduledTime().toString());
 
     }
 
