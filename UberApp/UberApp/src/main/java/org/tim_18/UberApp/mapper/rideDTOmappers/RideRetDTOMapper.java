@@ -15,6 +15,6 @@ public class RideRetDTOMapper {
 
     public Ride fromDTOtoRide(RideRetDTO dto) {return modelMapper.map(dto, Ride.class);}
 
-    public RideRetDTO fromLocationToDTO(Ride dto) {return modelMapper.map(dto, RideRetDTO.class);}
+    public RideRetDTO fromRideToDTO(Ride dto) {return modelMapper.map(dto, RideRetDTO.class);}
 
 }

@@ -53,6 +53,11 @@ public class Driver extends User{
         this.vehicle    = null;
     }
 
+    public Driver(User user) {
+        super(user.getName(), user.getSurname(), user.getProfilePicture(), user.getTelephoneNumber(),
+                user.getEmail(), user.getAddress(), user.getPassword(), user.isBlocked(), user.isActive());
+    }
+
     public void driverUpdate(DriverDTOWithoutId driverDTOWithoutId){
         setName(driverDTOWithoutId.getName());
         setSurname(driverDTOWithoutId.getSurname());

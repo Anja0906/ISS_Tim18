@@ -2,13 +2,14 @@ package org.tim_18.UberApp.controller;
 
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.tim_18.UberApp.Validation.ErrorMessage;
 import org.tim_18.UberApp.dto.*;
@@ -27,7 +28,6 @@ import org.tim_18.UberApp.service.VehicleService;
 import org.tim_18.UberApp.model.*;
 import org.tim_18.UberApp.service.*;
 
-import java.time.LocalDateTime;
 import java.util.*;
 
 
@@ -43,7 +43,12 @@ public class DriverController {
     private final RideService rideService;
     private final UserService userService;
 
-    public DriverController(DriverService driverService,DocumentService documentService,VehicleService vehicleService,LocationService locationService, WorkTimeService workTimeService,RideService rideService,UserService userService) {
+    private final RoleService roleService;
+
+    @Autowired
+    PasswordEncoder passwordEncoder;
+
+    public DriverController(DriverService driverService, DocumentService documentService, VehicleService vehicleService, LocationService locationService, WorkTimeService workTimeService, RideService rideService, UserService userService, RoleService roleService) {
         this.driverService   = driverService;
         this.documentService = documentService;
         this.vehicleService  = vehicleService;
@@ -51,6 +56,7 @@ public class DriverController {
         this.workTimeService = workTimeService;
         this.rideService     = rideService;
         this.userService     = userService;
+        this.roleService = roleService;
     }
 
     @GetMapping
@@ -86,6 +92,8 @@ public class DriverController {
                         driverDTOWithoutId.getProfilePicture(), driverDTOWithoutId.getTelephoneNumber(),
                         driverDTOWithoutId.getEmail(), driverDTOWithoutId.getAddress(),
                         driverDTOWithoutId.getPassword(),false,false) ;
+                driver.setRoles(this.getRoles());
+                driver.setPassword(passwordEncoder.encode(driver.getPassword()));
                 driverService.addDriver(driver);
                 DriverDTO driverDTO = new DriverDTO(driver);
                 return new ResponseEntity<>(driverDTO, HttpStatus.OK);
@@ -279,5 +287,14 @@ public class DriverController {
         map.put("totalCount",ridesDTO.size());
         map.put("results",ridesDTO);
         return new ResponseEntity<>(map, HttpStatus.OK);
+    }
+
+    private List<Role> getRoles() {
+        List<Role> rD = roleService.findByName("ROLE_DRIVER");
+        List<Role> rU = roleService.findByName("ROLE_USER");
+        List<Role> roles = new ArrayList<>();
+        roles.add(rU.get(0));
+        roles.add(rD.get(0));
+        return roles;
     }
 }

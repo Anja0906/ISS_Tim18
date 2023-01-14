@@ -8,6 +8,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.tim_18.UberApp.Validation.ErrorMessage;
 import org.tim_18.UberApp.dto.passengerDTOs.PassengerDTOnoPassword;
@@ -38,6 +39,9 @@ public class PassengerController {
     @Autowired
     private PassengerDTOnoPasswordMapper dtoNoPasswordMapper;
 
+    @Autowired
+    PasswordEncoder passwordEncoder;
+
     public PassengerController(PassengerService passengerService, RideService rideService, UserActivationService userActivationService, RoleService roleService, UserService userService) {
         this.passengerService       = passengerService;
         this.rideService            = rideService;
@@ -52,6 +56,7 @@ public class PassengerController {
         if (user == null) {
             Passenger passenger = dtoWithPasswordMapper.fromDTOtoPassenger(dto);
             passenger.setRoles(this.getRoles());
+            passenger.setPassword(passwordEncoder.encode(passenger.getPassword()));
             passenger = passengerService.addPassenger(passenger);
             return new ResponseEntity<>(new PassengerDTOnoPassword(passenger), HttpStatus.OK);
         } else{

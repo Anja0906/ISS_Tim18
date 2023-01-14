@@ -8,11 +8,6 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-
-
-
-
-
 @Entity
 @Table(name = "rides")
 public class Ride implements Serializable {
@@ -22,6 +17,8 @@ public class Ride implements Serializable {
     private Integer id;
     private Date startTime;
     private Date endTime;
+
+    private Date scheduledTime;
     private long totalCost;
     @JsonIgnore
     @ManyToOne
@@ -53,7 +50,7 @@ public class Ride implements Serializable {
     @OneToMany(targetEntity = Review.class,cascade = {CascadeType.ALL}, fetch = FetchType.LAZY, mappedBy = "ride")
     private Set<Review> reviews = new HashSet<Review>();
 
-    public Ride(Date startTime, Date endTime, long totalCost, Driver driver, HashSet<Passenger> passengers, int estimatedTimeInMinutes, VehicleType vehicleType, boolean babyTransport, boolean petTransport, Rejection rejection, HashSet<Location> locations, Status status, HashSet<Review> reviews, Panic panic) {
+    public Ride(Date startTime, Date endTime, long totalCost, Driver driver, HashSet<Passenger> passengers, int estimatedTimeInMinutes, VehicleType vehicleType, boolean babyTransport, boolean petTransport, Rejection rejection, HashSet<Location> locations, Status status, HashSet<Review> reviews, Panic panic, Date scheduledTime) {
         this.startTime              = startTime;
         this.endTime                = endTime;
         this.totalCost              = totalCost;
@@ -68,6 +65,7 @@ public class Ride implements Serializable {
         this.status                 = status;
         this.reviews                = reviews;
         this.panic                  = panic;
+        this.scheduledTime          = scheduledTime;
     }
 
     public Ride() {}
@@ -174,6 +172,14 @@ public class Ride implements Serializable {
     }
     public void setPanic(Panic panic) {
         this.panic = panic;
+    }
+
+    public Date getScheduledTime() {
+        return scheduledTime;
+    }
+
+    public void setScheduledTime(Date scheduledTime) {
+        this.scheduledTime = scheduledTime;
     }
 
     @Override
