@@ -3,9 +3,11 @@ package org.tim_18.UberApp.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
+import org.tim_18.UberApp.exception.UserNotFoundException;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "panics")
@@ -22,8 +24,6 @@ public class Panic implements Serializable {
     private Ride ride;
     private Date time;
     private String reason;
-<<<<<<< Updated upstream
-=======
 
 
     public Panic(Ride ride, User user, Date time, String reason) {
@@ -85,5 +85,4 @@ public class Panic implements Serializable {
                 ", reason='" + reason + '\'' +
                 '}';
     }
->>>>>>> Stashed changes
 }

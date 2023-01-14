@@ -17,16 +17,17 @@ public interface RideRepository extends JpaRepository<Ride, Integer> {
     @Query(value = "SELECT * FROM rides rid natural join passenger p where rid.driver_id = ?1 OR p.id = ?1", nativeQuery = true)
     ArrayList<Ride> findRidesForUser(int id);
 
-    Ride findRideById(Integer id);
+    Optional<Ride> findRideById(Integer id);
     @Query(value = "SELECT * FROM rides r INNER JOIN passenger_rides pr on r.id=pr.ride_id WHERE pr.passenger_id = ?1 and date(r.start_time) > ?2 and date(r.start_time) < ?3 and date(r.end_time) >?2 and date(r.end_time) < ?3", nativeQuery = true)
     List<Ride> findRidesByPassengersId(Integer passenger_id, String from, String to);
+
     @Query(value = "SELECT * FROM rides r INNER JOIN passenger_rides pr on r.id=pr.ride_id WHERE pr.passenger_id = ?1 and date(r.start_time) > ?2 and date(r.start_time) < ?3 and date(r.end_time) >?2 and date(r.end_time) < ?3", nativeQuery = true)
     Page<Ride> findRidesByPassengersId(Integer passenger_id, String from, String to, Pageable pageable);
 
     @Query(value = "SELECT * FROM rides r WHERE driver_id=?1 and now() between r.start_time and r.end_time", nativeQuery = true)
-    Ride findDriverActiveRide(Integer driver_id);
+    Optional<Ride> findDriverActiveRide(Integer driver_id);
     @Query(value = "SELECT * FROM rides r INNER JOIN passenger_rides pr on r.id=pr.ride_id WHERE pr.passenger_id = ?1 and now() between r.start_time and r.end_time", nativeQuery = true)
-    Ride findPassengerActiveRide(Integer passenger_id);
+    Optional<Ride> findPassengerActiveRide(Integer passenger_id);
 
     @Query(value = "SELECT * FROM rides r NATURAL JOIN passenger p WHERE p.id = ?1 or r.driver_id = ?1", nativeQuery = true)
     Page<Ride> findRidesForUserPage(Integer id, Pageable pageable);
@@ -37,4 +38,7 @@ public interface RideRepository extends JpaRepository<Ride, Integer> {
     @Query(value = "SELECT * FROM rides WHERE rides.status = ?1 ", nativeQuery = true)
     Page<Ride> findPendingRidesByStatus(String status,Pageable pageable);
 
+
+    @Query(value = "SELECT * FROM rides r INNER JOIN passenger_rides pr on r.id=pr.ride_id WHERE pr.passenger_id = ?1 and r.status = ?2", nativeQuery = true)
+    ArrayList<Ride> findPassengersRidesByStatus(Integer id, String status);
 }

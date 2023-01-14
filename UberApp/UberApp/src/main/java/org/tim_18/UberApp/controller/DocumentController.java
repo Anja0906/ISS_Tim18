@@ -9,6 +9,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/document")
+@CrossOrigin(origins = "http://localhost:4200")
 public class DocumentController {
     private final DocumentService documentService;
 
@@ -41,7 +42,7 @@ public class DocumentController {
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> deleteDocument(@PathVariable("id") Integer id) {
-        documentService.remove(id);
+        documentService.deleteDocumentById(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

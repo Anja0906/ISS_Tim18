@@ -18,32 +18,15 @@ import java.util.HashSet;
 public class ReviewService {
     @Autowired
     private final ReviewRepository reviewRepository;
-    @Autowired
-    private final RideRepository rideRepository;
-
-    @Autowired
-    private final VehicleRepository vehicleRepository;
 
     public ReviewService(ReviewRepository reviewRepository, RideRepository rideRepository, VehicleRepository vehicleRepository) {
         this.reviewRepository = reviewRepository;
-        this.rideRepository = rideRepository;
-        this.vehicleRepository = vehicleRepository;
     }
 
-    public Ride getRideById(Integer id){
-        return rideRepository.findById(id).get();
-    }
 
     public void save(Review review) {
         reviewRepository.save(review);
     }
-
-    public Vehicle getVehicleById(Integer id){
-        return vehicleRepository.findById(id).get();
-    }
-
-
-
     public Page<Review> findAll(Pageable page){
         return reviewRepository.findAll(page);
     }

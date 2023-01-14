@@ -1,9 +1,10 @@
 package org.tim_18.UberApp.model;
 
 import jakarta.persistence.*;
-import org.hibernate.annotations.Fetch;
 
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "reviews")
@@ -15,37 +16,36 @@ public class Review implements Serializable {
     private Integer rating;
     private String comment;
 
-    @ManyToOne
-    @JoinColumn(name = "passenger_id")
-    private Passenger passenger;
+    @OneToMany
+    private Set<Passenger> passengers = new HashSet<Passenger>();
 
     @ManyToOne
     @JoinColumn(name = "ride_id")
     private Ride ride;
 
-    private Boolean isDriver;
-
     public Review() {}
 
-    public Review(Integer id, Integer rating, String comment, Passenger passenger, Boolean isDriver) {
+    public Review(Integer id, Integer rating, String comment, HashSet<Passenger> passengers) {
         this.rating     = rating;
         this.comment    = comment;
-        this.passenger  = passenger;
+        this.passengers = passengers;
         this.id         = id;
-        this.isDriver   = isDriver;
     }
 
-<<<<<<< Updated upstream
-=======
-
-    public Review(Integer rating, String comment, Ride ride, Boolean isDriver) {
+    public Review(Integer rating, String comment) {
         this.rating     = rating;
         this.comment    = comment;
-        this.ride       = ride;
-        this.isDriver   = isDriver;
+        this.passengers = new HashSet<>();
+        this.ride       = new Ride();
     }
 
->>>>>>> Stashed changes
+    public Review(Integer rating, String comment, Ride ride) {
+        this.rating     = rating;
+        this.comment    = comment;
+        this.passengers = new HashSet<>();
+        this.ride       = ride;
+    }
+
     public void setId(Integer id) {
         this.id = id;
     }
@@ -56,6 +56,7 @@ public class Review implements Serializable {
     public Integer getRating() {
         return rating;
     }
+
     public void setRating(Integer rating) {
         this.rating = rating;
     }
@@ -63,26 +64,30 @@ public class Review implements Serializable {
     public String getComment() {
         return comment;
     }
+
     public void setComment(String comment) {
         this.comment = comment;
     }
 
-    public Passenger getPassenger() {
-        return passenger;
+    public Set<Passenger> getPassengers() {
+        return passengers;
     }
-    public void setPassenger(Passenger passenger) {this.passenger = passenger;}
+
+    public void setPassengers(HashSet<Passenger> passengers) {
+        this.passengers = passengers;
+    }
+
+    public void setPassengers(Set<Passenger> passengers) {
+        this.passengers = passengers;
+    }
 
     public Ride getRide() {
         return ride;
     }
+
     public void setRide(Ride ride) {
         this.ride = ride;
     }
-
-    public Boolean getDriver() {return isDriver;}
-    public void setDriver(Boolean driver) {isDriver = driver;}
-
-
 
     @Override
     public String toString() {
@@ -90,8 +95,8 @@ public class Review implements Serializable {
                 "id=" + id +
                 ", rating=" + rating +
                 ", comment='" + comment + '\'' +
+                ", passengers=" + passengers +
                 ", ride=" + ride +
-                ", isDriver=" + isDriver +
                 '}';
     }
 }

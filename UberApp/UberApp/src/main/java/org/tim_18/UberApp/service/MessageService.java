@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.tim_18.UberApp.exception.MessageNotFoundException;
 import org.tim_18.UberApp.exception.UserNotFoundException;
 import org.tim_18.UberApp.model.Message;
 import org.tim_18.UberApp.repository.MessageRepository;
@@ -31,8 +32,10 @@ public class MessageService {
 
     public Message findMessageById(Integer id) {
         return messageRepository.findMessageById(id)
-                .orElseThrow(() -> new UserNotFoundException("Message by id " + id + " was not found"));
+                .orElseThrow(() -> new MessageNotFoundException("Message by id " + id + " was not found"));
     }
+
+    public void saveMessage(Message message){messageRepository.save(message);}
 
     public void deleteMessage(Integer id) {
         messageRepository.deleteMessageById(id);

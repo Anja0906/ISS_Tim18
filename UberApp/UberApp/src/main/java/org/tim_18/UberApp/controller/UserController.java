@@ -1,56 +1,55 @@
 package org.tim_18.UberApp.controller;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.tim_18.UberApp.dto.*;
-import org.tim_18.UberApp.dto.driverDTOs.DriverDTO;
 import org.tim_18.UberApp.dto.noteDTOs.NotePostDTO;
 import org.tim_18.UberApp.dto.noteDTOs.NoteResponseDTO;
+import org.tim_18.UberApp.dto.rideDTOs.RideRetDTO;
+import org.tim_18.UberApp.exception.UserNotFoundException;
 import org.tim_18.UberApp.model.*;
-import org.tim_18.UberApp.service.MessageService;
-import org.tim_18.UberApp.service.UserService;
-
-import javax.naming.ldap.HasControls;
+import org.tim_18.UberApp.service.*;
+import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.*;
 
 @RestController
 @RequestMapping("/api/user")
+@CrossOrigin(origins = "http://localhost:4200")
 public class UserController {
     private final UserService userService;
     private final MessageService messageService;
+    private final RideService rideService;
+    private final NoteService noteService;
+    private final ReviewService reviewService;
 
-    public UserController(UserService userService,MessageService messageService) {
-        this.userService = userService;
+    public UserController(UserService userService,MessageService messageService,RideService rideService,NoteService noteService,ReviewService reviewService) {
+        this.userService    = userService;
         this.messageService = messageService;
+        this.rideService    = rideService;
+        this.noteService    = noteService;
+        this.reviewService  = reviewService;
     }
     @GetMapping("")
-    public ResponseEntity<Map<String, Object>> getUserDetails (@RequestParam(defaultValue = "0") Integer page,
-                                                                  @RequestParam(defaultValue = "4") Integer size) {
+    public ResponseEntity<Map<String, Object>> getUserDetails (
+            @RequestParam(defaultValue = "0") Integer page,
+            @RequestParam(defaultValue = "4") Integer size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<User> users = userService.findAll(pageable);
+
         Map<String, Object> map = new HashMap<>();
-        HashSet<UserDTO> usersDTO = new HashSet<>();
-        for (User user:users) {
-            usersDTO.add(new UserDTO(user));
-        }
+        HashSet<UserDTO> usersDTO = new UserDTO().makeUserDTOS(users);
 
         map.put("totalCount",usersDTO.size());
         map.put("results",usersDTO);
         return new ResponseEntity<>(map, HttpStatus.OK);
 
     }
-<<<<<<< Updated upstream
-    @GetMapping("{id}/ride")
-    public ResponseEntity<Map<String, Object>> getRidesForUsers(@PathVariable("id") int id, @RequestParam(defaultValue = "0") Integer page,
-                                                       @RequestParam(defaultValue = "4") Integer size) {
-        Pageable pageable = PageRequest.of(page, size);
-        Page<Ride> rides = userService.findRidesForUser(id, pageable);
-=======
 
     @GetMapping("/{id}")
     public ResponseEntity<UserDTO> getUser (
@@ -81,28 +80,22 @@ public class UserController {
             @RequestParam(defaultValue = "2022-12-08T10:40:00") String to) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(sort));
         Page<Ride> rides = rideService.findRidesForUserPage(id,pageable);
->>>>>>> Stashed changes
         Map<String, Object> map = new HashMap<>();
-//        HashSet<RideDTO> ridesDTO = new HashSet<>();
-//        for (Ride ride:rides) {
-//            ridesDTO.add(new Ride(ride));
-//        }
-
-        map.put("totalCount",rides.getSize());
-        map.put("results",rides);
+        HashSet<RideRetDTO> ridesDTO = new RideRetDTO().makeRideRideDTOS(rides);
+        map.put("totalCount",ridesDTO.size());
+        map.put("results",ridesDTO);
         return new ResponseEntity<>(map, HttpStatus.OK);
     }
     @GetMapping("{id}/message")
     public ResponseEntity<Map<String, Object>> getMessagesForUser(
-            @PathVariable("id") int id, @RequestParam(defaultValue = "0") Integer page,
+            @PathVariable("id") int id,
+            @RequestParam(defaultValue = "0") Integer page,
             @RequestParam(defaultValue = "4") Integer size){
         Pageable pageable = PageRequest.of(page, size);
         Page<Message> messages = messageService.findMessagesByUserId(id, pageable);
+
         Map<String, Object> map = new HashMap<>();
-        HashSet<MessageResponseDTO> messageDTOS = new HashSet<>();
-        for (Message message:messages) {
-            messageDTOS.add(new MessageResponseDTO(message));
-        }
+        HashSet<MessageResponseDTO> messageDTOS = new MessageResponseDTO().makeMessageResponseDTOS(messages);
 
         map.put("totalCount",messageDTOS.size());
         map.put("results",messageDTOS);
@@ -111,81 +104,82 @@ public class UserController {
 
 
     @PostMapping("/{id}/message")
-    public ResponseEntity<MessageResponseDTO> addReviewToVehicle(@PathVariable("id") int id,  @RequestBody MessageDTO messageDTO) {
+    public ResponseEntity<MessageResponseDTO> addReviewToVehicle(
+            @PathVariable("id") int id,
+            @RequestBody MessageDTO messageDTO) {
         Message message = messageFromMessageDTO(id, messageDTO);
-        userService.saveMessage(message);
+        messageService.saveMessage(message);
+
         MessageResponseDTO messageResponseDTO = new MessageResponseDTO(message);
-        return new ResponseEntity<>(messageResponseDTO, HttpStatus.CREATED);
+        return new ResponseEntity<>(messageResponseDTO, HttpStatus.OK);
     }
 
     private Message messageFromMessageDTO(Integer id, MessageDTO messageDTO){
-        Message message = new Message();
-        message.setReceiver(userService.findUserById(messageDTO.getReceiverId()));
-        message.setMessage(messageDTO.getMessage());
-        message.setMessageType(messageDTO.getType());
-        message.setRide(userService.findRideById(messageDTO.getRideId()));
-        message.setSender(userService.findUserById(id));
-        message.setTime(LocalDateTime.now());
-        return message;
+        return new Message(id,userService.findUserById(id),
+                                      userService.findUserById(messageDTO.getReceiverId()),
+                                      messageDTO.getMessage(),LocalDateTime.now(),
+                                      messageDTO.getType(),rideService.findRideById(messageDTO.getRideId()));
     }
 
     @PutMapping("/{id}/block")
-    @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    public void blockUser(
-            @PathVariable("id") int id) {
-        User user = userService.findUserById(id);
-        if(user!=null){
+    public ResponseEntity<?> blockUser(@PathVariable("id") int id) {
+        try{
+            User user = userService.findUserById(id);
             user.setBlocked(true);
             userService.updateUser(user);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }catch (UserNotFoundException e){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
     @PutMapping("/{id}/unblock")
-    @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    public void unblockUser(
-            @PathVariable("id") int id) {
-        User user = userService.findUserById(id);
-        if(user!=null){
+    public ResponseEntity<?> unblockUser(@PathVariable("id") int id) {
+        try{
+            User user = userService.findUserById(id);
             user.setBlocked(false);
             userService.updateUser(user);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }catch (UserNotFoundException e){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
     @PostMapping("/{id}/note")
-    public ResponseEntity<NoteResponseDTO> addReviewToVehicle(@PathVariable("id") int id, @RequestBody NotePostDTO notePostDTO) {
-        Note note = new Note();
-        note.setUser(userService.findUserById(id));
-        note.setMessage(notePostDTO.getMessage());
-        userService.saveNote(note);
-        NoteResponseDTO noteResponseDTO = new NoteResponseDTO(note);
-        return new ResponseEntity<>(noteResponseDTO, HttpStatus.OK);
+    public ResponseEntity<NoteResponseDTO> addNoteForUser(
+            @PathVariable("id") int id,
+            @RequestBody NotePostDTO notePostDTO) {
+        try{
+            User user =userService.findUserById(id);
+            Note note = new Note(user,notePostDTO.getMessage());
+            noteService.saveNote(note);
+            NoteResponseDTO noteResponseDTO = new NoteResponseDTO(note);
+            return new ResponseEntity<>(noteResponseDTO, HttpStatus.OK);
+        }catch (UserNotFoundException e){
+            return new ResponseEntity<>(null,HttpStatus.NOT_FOUND);
+        }
     }
 
     @GetMapping("{id}/note")
     public ResponseEntity<Map<String, Object>> getNotesForUser(
-            @PathVariable("id") int id, @RequestParam(defaultValue = "0") Integer page,
+            @PathVariable("id") int id,
+            @RequestParam(defaultValue = "0") Integer page,
             @RequestParam(defaultValue = "4") Integer size){
+
         Pageable pageable = PageRequest.of(page, size);
-        Page<Note> notes = userService.findNotesByUserId(id, pageable);
+        Page<Note> notes = noteService.findNotesByUserId(id, pageable);
+
         Map<String, Object> map = new HashMap<>();
-        HashSet<NoteResponseDTO> noteResponseDTOS = new HashSet<>();
-        for (Note note:notes) {
-            noteResponseDTOS.add(new NoteResponseDTO(note));
-        }
+        HashSet<NoteResponseDTO> noteResponseDTOS = new NoteResponseDTO().makeNoteResponseDTOS(notes);
 
         map.put("totalCount",noteResponseDTOS.size());
         map.put("results",noteResponseDTOS);
         return new ResponseEntity<>(map, HttpStatus.OK);
     }
-<<<<<<< Updated upstream
-
-
-=======
     @GetMapping("/whoami")
     @PreAuthorize("hasRole('ROLE_USER')")
     public User user(Principal user) {
         return this.userService.findUserByEmail(user.getName());
     }
->>>>>>> Stashed changes
 
 }
 

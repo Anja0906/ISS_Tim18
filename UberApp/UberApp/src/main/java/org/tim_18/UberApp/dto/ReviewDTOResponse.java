@@ -14,7 +14,7 @@ public class ReviewDTOResponse {
 
     public ReviewDTOResponse(VehicleReviewDTO vehicleReview, DriverReviewDTO driverReview) {
         this.vehicleReview = vehicleReview;
-        this.driverReview = driverReview;
+        this.driverReview  = driverReview;
     }
 
 

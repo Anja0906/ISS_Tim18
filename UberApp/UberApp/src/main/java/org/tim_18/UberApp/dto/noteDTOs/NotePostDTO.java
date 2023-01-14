@@ -6,8 +6,7 @@ import lombok.Data;
 public class NotePostDTO {
     private String message;
 
-    public NotePostDTO() {
-    }
+    public NotePostDTO() {}
 
     public NotePostDTO(String message) {
         this.message = message;

@@ -1,9 +1,10 @@
 package org.tim_18.UberApp.dto;
 
+import lombok.Data;
 import org.tim_18.UberApp.dto.locationDTOs.LocationDTO;
 import org.tim_18.UberApp.model.Vehicle;
 import org.tim_18.UberApp.model.VehicleType;
-
+@Data
 public class VehicleDTO {
 
     private Integer id;
@@ -35,78 +36,11 @@ public class VehicleDTO {
     }
 
     public VehicleDTO(Vehicle vehicle,LocationDTO locationDTO){
-        this(vehicle.getId(), vehicle.getDriver().getId(), vehicle.getVehicleType(),
-                vehicle.getModel(),vehicle.getLicenseNumber(),
-                locationDTO,
-                vehicle.getPassengerSeats(),vehicle.getBabyTransport(),
-                vehicle.getPetTransport());
-    }
-
-    public LocationDTO getCurrentLocation() {
-        return currentLocation;
-    }
-
-    public void setCurrentLocation(LocationDTO currentLocation) {
-        this.currentLocation = currentLocation;
-    }
-
-    public Integer getDriverId() {
-        return driverId;
-    }
-    public void setDriverId(Integer integer) {
-        this.driverId = driverId;
-    }
-
-    public String getModel() {
-        return model;
-    }
-    public void setModel(String model) {
-        this.model = model;
-    }
-
-    public VehicleType getVehicleType() {
-        return vehicleType;
-    }
-    public void setVehicleType(VehicleType vehicleType) {
-        this.vehicleType = vehicleType;
-    }
-
-    public String getLicenseNumber() {
-        return licenseNumber;
-    }
-    public void setLicenseNumber(String licenseNumber) {
-        this.licenseNumber = licenseNumber;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public Integer getPassengerSeats() {
-        return passengerSeats;
-    }
-
-    public void setPassengerSeats(Integer passengerSeats) {
-        this.passengerSeats = passengerSeats;
-    }
-
-    public Boolean getBabyTransport() {
-        return babyTransport;
-    }
-
-    public void setBabyTransport(Boolean babyTransport) {
-        this.babyTransport = babyTransport;
-    }
-
-    public Boolean getPetTransport() {
-        return petTransport;
-    }
-
-    public void setPetTransport(Boolean petTransport) {
-        this.petTransport = petTransport;
+        this(vehicle.getId(), vehicle.getDriver().getId(),
+             vehicle.getVehicleType(), vehicle.getModel(),
+             vehicle.getLicenseNumber(), locationDTO,
+             vehicle.getPassengerSeats(),vehicle.getBabyTransport(),
+             vehicle.getPetTransport());
     }
 
     @Override

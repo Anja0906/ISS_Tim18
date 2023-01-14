@@ -13,10 +13,10 @@ public class DriverReviewDTO {
 
     public DriverReviewDTO(){}
     public DriverReviewDTO(Integer id, Integer rating, String comment, PassengerEmailDTO passenger) {
-        this.id = id;
-        this.rating = rating;
-        this.comment = comment;
-        this.passenger = passenger;
+        this.id         = id;
+        this.rating     = rating;
+        this.comment    = comment;
+        this.passenger  = passenger;
     }
 
     public DriverReviewDTO(Review review, PassengerEmailDTO passenger){

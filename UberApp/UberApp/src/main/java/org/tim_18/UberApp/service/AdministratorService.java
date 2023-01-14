@@ -2,6 +2,7 @@ package org.tim_18.UberApp.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.tim_18.UberApp.exception.AdministratorNotFoundException;
 import org.tim_18.UberApp.exception.UserNotFoundException;
 import org.tim_18.UberApp.model.Administrator;
 import org.tim_18.UberApp.repository.AdministratorRepository;
@@ -30,7 +31,7 @@ public class AdministratorService {
 
     public Administrator findAdministratorById(Integer id) {
         return administratorRepository.findAdministratorById(id)
-                .orElseThrow(() -> new UserNotFoundException("Administrator by id " + id + " was not found"));
+                .orElseThrow(() -> new AdministratorNotFoundException("Administrator by id " + id + " was not found"));
     }
 
     public void deleteAdministrator(Integer id) {

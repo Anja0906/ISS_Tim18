@@ -12,10 +12,10 @@ public class VehicleReviewDTO {
 
     public VehicleReviewDTO(){}
     public VehicleReviewDTO(Integer id, Integer rating, String comment, PassengerEmailDTO passenger) {
-        this.id = id;
-        this.rating = rating;
-        this.comment = comment;
-        this.passenger = passenger;
+        this.id         = id;
+        this.rating     = rating;
+        this.comment    = comment;
+        this.passenger  = passenger;
     }
     public VehicleReviewDTO(Review review,PassengerEmailDTO passenger){
         this(review.getId(),review.getRating(),review.getComment(), passenger);
