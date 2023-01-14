@@ -19,8 +19,8 @@ public class LocationDTO {
 
     }
     public LocationDTO(Location location){
-        this(location.getAddress(),location.getLatitude(),
-             location.getLongitude());
+        this(location.getAddress(),location.getLongitude(),
+             location.getLatitude());
     }
 
 }

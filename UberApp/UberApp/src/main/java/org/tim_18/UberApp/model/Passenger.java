@@ -9,14 +9,14 @@ import java.util.Objects;
 import java.util.Set;
 
 @Entity
-@DiscriminatorValue("Passengers")
 @Table(name = "passengers")
 public class Passenger extends User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
+    @Column(name = "passenger_id", nullable = false)
     private Integer id;
 
+    @JsonIgnore
     @ManyToMany(targetEntity = Location.class,cascade = {CascadeType.ALL}, fetch = FetchType.LAZY)
     private Set<Location> favouriteLocations = new HashSet<Location>();
     @JsonIgnore
@@ -29,6 +29,10 @@ public class Passenger extends User {
             joinColumns = @JoinColumn(name = "passenger_id"),
             inverseJoinColumns = @JoinColumn(name = "ride_id"))
     private Set<Ride> rides = new HashSet<Ride>();
+
+    @JsonIgnore
+    @ManyToMany(targetEntity = FavoriteRide.class,cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.ALL}, fetch = FetchType.LAZY)
+    private Set<FavoriteRide> favoriteRides = new HashSet<FavoriteRide>();
     @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "passenger_id")
@@ -37,15 +41,21 @@ public class Passenger extends User {
 
     public Passenger(){}
 
-    public Passenger(String name, String surname, String profilePicture, String telephoneNumber, String email, String address, String password, boolean blocked, boolean active, Integer id, HashSet<Location> favouriteLocations, HashSet<Ride> rides) {
+    public Passenger(String name, String surname, String profilePicture, String telephoneNumber, String email, String address, String password, boolean blocked, boolean active, Integer id, HashSet<Location> favouriteLocations, HashSet<Ride> rides, HashSet<FavoriteRide> favoriteRides) {
         super(name, surname, profilePicture, telephoneNumber, email, address, password, blocked, active);
         this.id                 = id;
         this.favouriteLocations = favouriteLocations;
         this.rides              = rides;
+        this.favoriteRides      = favoriteRides;
     }
 
     public Passenger(String name, String surname, String profilePicture, String telephoneNumber, String email, String address, String password, boolean blocked, boolean active) {
         super(name, surname, profilePicture, telephoneNumber, email, address, password, blocked, active);
+    }
+
+    public Passenger(User user) {
+        super(user.getName(), user.getSurname(), user.getProfilePicture(), user.getTelephoneNumber(),
+                user.getEmail(), user.getAddress(), user.getPassword(), user.isBlocked(), user.isActive());
     }
     @Override
     public Integer getId() {
@@ -73,18 +83,12 @@ public class Passenger extends User {
         this.rides = rides;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        Passenger p = (Passenger) o;
-        return this.id.equals(p.getId());
+    public Set<FavoriteRide> getFavoriteRides() {
+        return favoriteRides;
     }
 
-    @Override
-    public int hashCode() {
-        int result = getId() != null ? getId().hashCode() : 0;
-        result = 31 * result + (getFavouriteLocations() != null ? getFavouriteLocations().hashCode() : 0);
-        result = 31 * result + (getRides() != null ? getRides().hashCode() : 0);
-        result = 31 * result + (review != null ? review.hashCode() : 0);
-        return result;
+    public void setFavoriteRides(Set<FavoriteRide> favoriteRides) {
+        this.favoriteRides = favoriteRides;
     }
+
 }

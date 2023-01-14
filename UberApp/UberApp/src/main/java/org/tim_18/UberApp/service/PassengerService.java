@@ -50,4 +50,8 @@ public class PassengerService {
         passenger = passengerRepository.save(passenger);
         return dtoMapper.fromPassengerToDTO(passenger);
     }
+
+    public Passenger save(Passenger passenger) {
+        return passengerRepository.save(passenger);
+    }
 }

@@ -8,19 +8,19 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "favourite_rides")
+@Table(name = "favorite_rides")
 @Data
-public class FavouriteRide implements Serializable {
+public class FavoriteRide implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Integer id;
-    private String favouriteName;
-    @ManyToOne(cascade = CascadeType.ALL)
-    private Passenger passenger;
+    private String favoriteName;
     private VehicleType vehicleType;
     private boolean babyTransport;
     private boolean petTransport;
     @OneToMany(targetEntity = Location.class,cascade = {CascadeType.ALL}, fetch = FetchType.LAZY, mappedBy = "favRide")
     private Set<Location> locations = new HashSet<Location>();
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL}, mappedBy = "favoriteRides")
+    private Set<Passenger> passengers = new HashSet<Passenger>();
 }
