@@ -34,9 +34,9 @@ public class Passenger extends User {
     @ManyToMany(targetEntity = FavoriteRide.class,cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.ALL}, fetch = FetchType.LAZY)
     private Set<FavoriteRide> favoriteRides = new HashSet<FavoriteRide>();
     @JsonIgnore
-    @ManyToOne
+    @OneToMany
     @JoinColumn(name = "passenger_id")
-    private Review review;
+    private Set<Review> review;
 
 
     public Passenger(){}
@@ -90,5 +90,11 @@ public class Passenger extends User {
     public void setFavoriteRides(Set<FavoriteRide> favoriteRides) {
         this.favoriteRides = favoriteRides;
     }
-
+    
+    @Override
+    public String toString() {
+        return "Passenger{" +
+                "id=" + id +
+                '}';
+    }
 }

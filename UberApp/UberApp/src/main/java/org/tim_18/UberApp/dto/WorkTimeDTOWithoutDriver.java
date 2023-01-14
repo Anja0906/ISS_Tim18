@@ -37,8 +37,8 @@ public class WorkTimeDTOWithoutDriver {
     public String toString() {
         return "WorkTimeDTOWithoutDriver{" +
                 "id=" + id +
-                ", start=" + start +
-                ", end=" + end +
+                ", start=" + start.toString() +
+                ", end=" + end.toString() +
                 '}';
     }
 }
