@@ -170,13 +170,16 @@ INSERT INTO administrators (name, profile_picture, surname, password, username)
 VALUES ('VDsgfsjhfka', 'asbfhasfj', 'petkovic', 'scbshhfcjsh', 'jsdchhshc');
 
 # -- passenger_rides --
-INSERT INTO passenger_rides (passenger_id, ride_id) VALUES (5, 1);
+INSERT INTO passenger_rides (passenger_id, ride_id) VALUES (4, 1);
 INSERT INTO passenger_rides (passenger_id, ride_id) VALUES (4, 2);
 INSERT INTO passenger_rides (passenger_id, ride_id) VALUES (4, 3);
+INSERT INTO passenger_rides (passenger_id, ride_id) VALUES (4, 7);
 INSERT INTO passenger_rides (passenger_id, ride_id) VALUES (5, 4);
-INSERT INTO passenger_rides (passenger_id, ride_id) VALUES (6, 5);
-INSERT INTO passenger_rides (passenger_id, ride_id) VALUES (6, 6);
-INSERT INTO passenger_rides (passenger_id, ride_id) VALUES (4, 5);
+INSERT INTO passenger_rides (passenger_id, ride_id) VALUES (5, 5);
+INSERT INTO passenger_rides (passenger_id, ride_id) VALUES (5, 6);
+INSERT INTO passenger_rides (passenger_id, ride_id) VALUES (6, 1);
+INSERT INTO passenger_rides (passenger_id, ride_id) VALUES (6, 2);
+INSERT INTO passenger_rides (passenger_id, ride_id) VALUES (6, 3);
 
 #roles
 INSERT INTO role (name) VALUES ('ROLE_USER');
@@ -187,21 +190,32 @@ INSERT INTO role (name) VALUES ('ROLE_ADMIN');
 
 #user_role
 INSERT INTO user_role (user_id, role_id) VALUES (1, 1);
+INSERT INTO user_role (user_id, role_id) VALUES (1, 3);
 INSERT INTO user_role (user_id, role_id) VALUES (2, 1);
+INSERT INTO user_role (user_id, role_id) VALUES (2, 3);
 INSERT INTO user_role (user_id, role_id) VALUES (3, 1);
+INSERT INTO user_role (user_id, role_id) VALUES (3, 3);
 INSERT INTO user_role (user_id, role_id) VALUES (4, 1);
+INSERT INTO user_role (user_id, role_id) VALUES (4, 2);
 INSERT INTO user_role (user_id, role_id) VALUES (5, 1);
+INSERT INTO user_role (user_id, role_id) VALUES (5, 2);
 INSERT INTO user_role (user_id, role_id) VALUES (6, 1);
+INSERT INTO user_role (user_id, role_id) VALUES (6, 2);
 INSERT INTO user_role (user_id, role_id) VALUES (7, 1);
+INSERT INTO user_role (user_id, role_id) VALUES (7, 3);
 INSERT INTO user_role (user_id, role_id) VALUES (8, 1);
+INSERT INTO user_role (user_id, role_id) VALUES (8, 3);
 INSERT INTO user_role (user_id, role_id) VALUES (9, 1);
+INSERT INTO user_role (user_id, role_id) VALUES (9, 3);
 INSERT INTO user_role (user_id, role_id) VALUES (10, 1);
+INSERT INTO user_role (user_id, role_id) VALUES (10, 4);
 INSERT INTO user_role (user_id, role_id) VALUES (11, 1);
+INSERT INTO user_role (user_id, role_id) VALUES (11, 4);
 INSERT INTO user_role (user_id, role_id) VALUES (12, 1);
+INSERT INTO user_role (user_id, role_id) VALUES (12, 4);
 INSERT INTO user_role (user_id, role_id) VALUES (13, 1);
+INSERT INTO user_role (user_id, role_id) VALUES (13, 4);
 INSERT INTO user_role (user_id, role_id) VALUES (14, 1);
-
-
 INSERT INTO user_role (user_id, role_id) VALUES (14, 4);
 
 INSERT INTO favourite_rides (baby_transport, favourite_name, pet_transport, vehicle_type, passenger_id)
@@ -212,4 +226,12 @@ INSERT INTO favourite_rides (baby_transport, favourite_name, pet_transport, vehi
 VALUES (true, 'School-Home', false, '0', '4');
 INSERT INTO favourite_rides (baby_transport, favourite_name, pet_transport, vehicle_type, passenger_id)
 VALUES (false, 'School-Hospital', true, '0', '4');
+
+
+INSERT INTO passenger_favorite_rides (passengers_id, favorite_rides_id) VALUES (4, 1);
+INSERT INTO passenger_favorite_rides (passengers_id, favorite_rides_id) VALUES (5, 1);
+INSERT INTO passenger_favorite_rides (passengers_id, favorite_rides_id) VALUES (4, 2);
+INSERT INTO passenger_favorite_rides (passengers_id, favorite_rides_id) VALUES (4, 3);
+INSERT INTO passenger_favorite_rides (passengers_id, favorite_rides_id) VALUES (4, 4);
+
 
