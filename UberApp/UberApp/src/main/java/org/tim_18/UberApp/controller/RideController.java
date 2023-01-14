@@ -7,6 +7,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.tim_18.UberApp.dto.PanicDTO;
+<<<<<<< Updated upstream
+=======
+import org.tim_18.UberApp.dto.RejectionDTO;
+import org.tim_18.UberApp.dto.RejectionDTO;
+import org.tim_18.UberApp.dto.driverDTOs.DriverDTO;
+>>>>>>> Stashed changes
 import org.tim_18.UberApp.dto.locationDTOs.LocationDTO;
 import org.tim_18.UberApp.dto.locationDTOs.LocationSetDTO;
 import org.tim_18.UberApp.dto.passengerDTOs.PassengerEmailDTO;
@@ -46,6 +52,7 @@ public class RideController {
         this.userService = userService;
     }
 
+<<<<<<< Updated upstream
     @PostMapping
     public ResponseEntity<RideRetDTO> createARide(@RequestBody RideRecDTO oldDTO){
         Ride ride = fromDTOtoRide(oldDTO);
@@ -53,6 +60,14 @@ public class RideController {
         RideRetDTO newDto = new RideRetDTO(ride);
         return new ResponseEntity<>(newDto, HttpStatus.CREATED);
     }
+=======
+//    @PostMapping
+//    public ResponseEntity<RideRetDTO> createARide(@RequestBody RideRecDTO oldDTO){
+//        Ride ride = fromDTOtoRide(oldDTO);
+//        ride = rideService.createRide(ride);
+//        return new ResponseEntity<>(new RideRetDTO(ride), HttpStatus.CREATED);
+//    }
+>>>>>>> Stashed changes
 
     @GetMapping("/driver/{driverId}/active")
     public RideRetDTO getDriverActiveRide(@PathVariable("driverId") Integer driverId) {
@@ -70,6 +85,23 @@ public class RideController {
     public ResponseEntity<RideRetDTO> findRideById(@PathVariable("id") Integer id) {
         Ride ride = rideService.findRideById(id);
         return new ResponseEntity<>(new RideRetDTO(ride), HttpStatus.OK);
+
+    }
+
+    @GetMapping("/pending")
+    public ResponseEntity<Map<String, Object>> getPendingRides(
+            @RequestParam(defaultValue = "0") Integer page,
+            @RequestParam(defaultValue = "4") Integer size) {
+        Pageable pageable = PageRequest.of(page, size);
+
+        Page<Ride> rides = rideService.findPendingRidesByStatus("PENDING",pageable);
+        Map<String, Object> map = new HashMap<>();
+        HashSet<RideRetDTO> rideRetDTOS = new RideRetDTO().makeRideRideDTOS(rides);
+
+        map.put("totalCount",rideRetDTOS.size());
+        map.put("results",rideRetDTOS);
+        return new ResponseEntity<>(map, HttpStatus.OK);
+        //TREBA OVO IZMENITI DA DOBIJA PENDING RIDES ZA POSEBNOG DRIVERA SA ID JER JOS UVEK NEMAMO LOGIN
 
     }
 
@@ -123,6 +155,7 @@ public class RideController {
         return new RideRetDTO(ride);
     }
 
+<<<<<<< Updated upstream
     private Ride fromDTOtoRide(RideRecDTO dto) {
         Date startTime = new Date();
         Date endTime = new Date();
@@ -167,4 +200,54 @@ public class RideController {
         return new Ride(startTime, endTime, totalCost, driver, passengers, estimatedTimeInMinutes, dto.getVehicleType(),
                 dto.isBabyTransport(), dto.isPetTransport(), null, locations, status, reviews, panic);
     }
+=======
+//    private Ride fromDTOtoRide(RideRecDTO dto) throws UserNotFoundException {
+//        Date startTime = new Date();
+//        Date endTime = new Date();
+//        long totalCost = 5000;
+//        List<Driver> drivers = driverService.findAllDrivers();
+//        if (drivers.size() == 0) throw new UserNotFoundException("No available driver");
+//        Driver driver = drivers.get(0);
+//        Set<PassengerEmailDTO> passengersDTOs = dto.getPassengers();
+//        HashSet<Passenger> passengers = new HashSet<>();
+//        for (PassengerEmailDTO passDTO: passengersDTOs) {
+//            passengers.add(passengerService.findById(passDTO.getId()));
+//        }
+//        int estimatedTimeInMinutes = 4;
+//        Set<LocationSetDTO> locationsDTO = dto.getLocations();
+//        ArrayList<LocationSetDTO> locationSetDTOArrayList = new ArrayList<>();
+//        for (LocationSetDTO locDTO:locationsDTO) {
+//            locationSetDTOArrayList.add(locDTO);
+//        }
+//        HashSet<Location> locations = new HashSet<>();
+//        for (int i = 0; i < locationSetDTOArrayList.size(); i++) {
+//            LocationSetDTO lsd = locationSetDTOArrayList.get(i);
+//            LocationDTO ld = lsd.getDeparture();
+//            Location loc = LocationDTOMapper.fromDTOtoLocation(ld);
+//            locations.add(loc);
+//            if (i == locationSetDTOArrayList.size() - 1 ) {
+//                ld = lsd.getDestination();
+//                loc = LocationDTOMapper.fromDTOtoLocation(ld);
+//                locations.add(loc);
+//            }
+//        }
+//        Status status = Status.PENDING;
+//        HashSet<Review> reviews = new HashSet<>();
+//        Review review = new Review();
+//        review = reviewService.addReview(review);
+//        reviews.add(review);
+//        Panic panic = new Panic();
+//        panic = panicService.addPanic(panic);
+//        List<Rejection> rejections = rejectionService.findAll();
+//        Rejection newRejection;
+//        if (rejections.size() == 0) {
+//            newRejection = null;
+//        }else {
+//            newRejection = rejections.get(0);
+//        }
+//        RejectionDTO rejectionDTO = new RejectionDTO(newRejection);
+//        return new Ride(startTime, endTime, totalCost, driver, passengers, estimatedTimeInMinutes, dto.getVehicleType(),
+//                dto.isBabyTransport(), dto.isPetTransport(), newRejection, locations, status, reviews, panic);
+//    }
+>>>>>>> Stashed changes
 }

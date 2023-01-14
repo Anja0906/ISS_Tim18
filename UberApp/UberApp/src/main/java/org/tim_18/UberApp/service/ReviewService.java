@@ -11,6 +11,7 @@ import org.tim_18.UberApp.repository.ReviewRepository;
 import org.tim_18.UberApp.repository.RideRepository;
 import org.tim_18.UberApp.repository.VehicleRepository;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 
 @Service("reviewService")
@@ -62,4 +63,7 @@ public class ReviewService {
         return reviewRepository.save(review);
     }
 
+    public HashSet<Review> findByRideIdHash(Integer id) {
+        return reviewRepository.findByRideIdHash(id);
+    }
 }

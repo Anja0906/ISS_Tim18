@@ -1,7 +1,13 @@
 package org.tim_18.UberApp.model;
 
 import jakarta.persistence.*;
+<<<<<<< Updated upstream
 
+=======
+import jakarta.validation.constraints.NotNull;
+import lombok.Data;
+import org.tim_18.UberApp.dto.UserDTO;
+>>>>>>> Stashed changes
 import java.io.Serializable;
 
 @Inheritance(strategy = InheritanceType.JOINED)

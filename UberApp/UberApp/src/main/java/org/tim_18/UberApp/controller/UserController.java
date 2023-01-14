@@ -44,11 +44,44 @@ public class UserController {
         return new ResponseEntity<>(map, HttpStatus.OK);
 
     }
+<<<<<<< Updated upstream
     @GetMapping("{id}/ride")
     public ResponseEntity<Map<String, Object>> getRidesForUsers(@PathVariable("id") int id, @RequestParam(defaultValue = "0") Integer page,
                                                        @RequestParam(defaultValue = "4") Integer size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<Ride> rides = userService.findRidesForUser(id, pageable);
+=======
+
+    @GetMapping("/{id}")
+    public ResponseEntity<UserDTO> getUser (
+            @PathVariable("id") int id) {
+        User user = userService.findUserById(id);
+        System.out.println(user);
+        UserDTO userDTO = new UserDTO(user);
+        return new ResponseEntity<>(userDTO, HttpStatus.OK);
+    }
+
+    @PutMapping("/{id}")
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
+    public void updateUser(@PathVariable("id") int id, @RequestBody UserDTO userDTO) {
+        try{
+            userService.updateUserFromDto(id, userDTO);
+        }catch (UserNotFoundException e){
+            System.out.println("User not found");
+        }
+    }
+
+    @GetMapping("/{id}/ride")
+    public ResponseEntity<Map<String, Object>> getRides (
+            @PathVariable("id") int id,
+            @RequestParam(defaultValue = "0") Integer page,
+            @RequestParam(defaultValue = "4") Integer size,
+            @RequestParam(defaultValue = "start_time") String sort,
+            @RequestParam(defaultValue = "2022-12-07T07:00:50") String from,
+            @RequestParam(defaultValue = "2022-12-08T10:40:00") String to) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sort));
+        Page<Ride> rides = rideService.findRidesForUserPage(id,pageable);
+>>>>>>> Stashed changes
         Map<String, Object> map = new HashMap<>();
 //        HashSet<RideDTO> ridesDTO = new HashSet<>();
 //        for (Ride ride:rides) {
@@ -75,6 +108,8 @@ public class UserController {
         map.put("results",messageDTOS);
         return new ResponseEntity<>(map, HttpStatus.OK);
     }
+
+
     @PostMapping("/{id}/message")
     public ResponseEntity<MessageResponseDTO> addReviewToVehicle(@PathVariable("id") int id,  @RequestBody MessageDTO messageDTO) {
         Message message = messageFromMessageDTO(id, messageDTO);
@@ -141,8 +176,16 @@ public class UserController {
         map.put("results",noteResponseDTOS);
         return new ResponseEntity<>(map, HttpStatus.OK);
     }
+<<<<<<< Updated upstream
 
 
+=======
+    @GetMapping("/whoami")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    public User user(Principal user) {
+        return this.userService.findUserByEmail(user.getName());
+    }
+>>>>>>> Stashed changes
 
 }
 

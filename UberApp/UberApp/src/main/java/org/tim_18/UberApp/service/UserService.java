@@ -4,6 +4,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+<<<<<<< Updated upstream
+=======
+import org.tim_18.UberApp.dto.UserDTO;
+import org.tim_18.UberApp.dto.UserDTOwithPassword;
+import org.tim_18.UberApp.dto.UserDTO;
+import org.tim_18.UberApp.dto.UserDTOwithPassword;
+>>>>>>> Stashed changes
 import org.tim_18.UberApp.exception.UserNotFoundException;
 import org.tim_18.UberApp.model.*;
 import org.tim_18.UberApp.repository.MessageRepository;
@@ -46,10 +53,10 @@ public class UserService {
 
 
     public User findUserById(Integer id) {
-        return userRepository.findUserById(id)
-                .orElseThrow(() -> new UserNotFoundException("User by id " + id + " was not found"));
+        return userRepository.findUserById(id).orElseThrow(() -> new UserNotFoundException("User by id " + id + " was not found"));
     }
 
+<<<<<<< Updated upstream
     public Page<Ride> findRidesForUser(Integer id, Pageable pageable) {
         return rideRepository.findRidesForUserPage(id, pageable);
     }
@@ -60,6 +67,20 @@ public class UserService {
     public void saveMessage(Message message){
         messageRepository.save(message);
     }
+=======
+    public User findUserByEmail(String email) throws UsernameNotFoundException {
+        return userRepository.findUserByEmail(email);
+    }
+
+
+    public User save(UserDTOwithPassword userRequest) {
+        User u = new User();
+        u.setEmail(userRequest.getEmail());
+
+        // pre nego sto postavimo lozinku u atribut hesiramo je kako bi se u bazi nalazila hesirana lozinka
+        // treba voditi racuna da se koristi isi password encoder bean koji je postavljen u AUthenticationManager-u kako bi koristili isti algoritam
+        u.setPassword(passwordEncoder.encode(userRequest.getPassword()));
+>>>>>>> Stashed changes
 
     public void saveNote(Note note){
         noteRepository.save(note);

@@ -29,9 +29,9 @@ public class Passenger extends User {
             inverseJoinColumns = @JoinColumn(name = "ride_id"))
     private Set<Ride> rides = new HashSet<Ride>();
     @JsonIgnore
-    @ManyToOne
+    @OneToMany
     @JoinColumn(name = "passenger_id")
-    private Review review;
+    private Set<Review> review;
 
 
     public Passenger(){}
@@ -85,5 +85,12 @@ public class Passenger extends User {
         result = 31 * result + (getRides() != null ? getRides().hashCode() : 0);
         result = 31 * result + (review != null ? review.hashCode() : 0);
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return "Passenger{" +
+                "id=" + id +
+                '}';
     }
 }

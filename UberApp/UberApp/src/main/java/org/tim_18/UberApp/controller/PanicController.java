@@ -12,7 +12,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.tim_18.UberApp.dto.FindAllDTO;
 import org.tim_18.UberApp.dto.PanicDTO;
+<<<<<<< Updated upstream
+=======
+import org.tim_18.UberApp.dto.UserDTO;
+import org.tim_18.UberApp.exception.PanicNotFoundException;
+import org.tim_18.UberApp.exception.UserNotFoundException;
+>>>>>>> Stashed changes
 import org.tim_18.UberApp.model.Panic;
+import org.tim_18.UberApp.model.User;
 import org.tim_18.UberApp.service.PanicService;
 
 import java.util.ArrayList;
@@ -45,5 +52,14 @@ public class PanicController {
         response.put("totalcounts", pagedResult.getTotalElements());
         response.put("results", panicDTOs);
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<PanicDTO> getUser (
+            @PathVariable("id") int id) {
+        Panic panic = panicService.findById(id);
+        System.out.println(panic);
+        PanicDTO panicDTO = new PanicDTO(panic);
+        return new ResponseEntity<>(panicDTO, HttpStatus.OK);
     }
 }

@@ -1,5 +1,13 @@
 package org.tim_18.UberApp.dto;
 
+<<<<<<< Updated upstream
+=======
+
+import lombok.Data;
+
+
+@Data
+>>>>>>> Stashed changes
 public class ReviewPostDTO {
     //{
     //  "rating": 3,
@@ -8,6 +16,8 @@ public class ReviewPostDTO {
     private Integer rating;
     private String comment;
 
+    public ReviewPostDTO(){
+    }
     public ReviewPostDTO(Integer rating, String comment) {
         this.rating = rating;
         this.comment = comment;

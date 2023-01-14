@@ -1,12 +1,16 @@
 package org.tim_18.UberApp.controller;
 
+import jakarta.validation.ConstraintViolationException;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
+import org.tim_18.UberApp.Validation.ErrorMessage;
 import org.tim_18.UberApp.dto.*;
 
 import org.tim_18.UberApp.dto.driverDTOs.DriverDTO;
@@ -36,16 +40,22 @@ public class DriverController {
     private final LocationService locationService;
     private final WorkTimeService workTimeService;
     private final RideService rideService;
+    private final UserService userService;
 
+<<<<<<< Updated upstream
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     public DriverController(DriverService driverService,DocumentService documentService,VehicleService vehicleService,LocationService locationService, WorkTimeService workTimeService,RideService rideService) {
+=======
+    public DriverController(DriverService driverService,DocumentService documentService,VehicleService vehicleService,LocationService locationService, WorkTimeService workTimeService,RideService rideService,UserService userService) {
+>>>>>>> Stashed changes
         this.driverService   = driverService;
         this.documentService = documentService;
         this.vehicleService  = vehicleService;
         this.locationService = locationService;
         this.workTimeService = workTimeService;
         this.rideService     = rideService;
+        this.userService     = userService;
     }
 
     @GetMapping
@@ -73,6 +83,7 @@ public class DriverController {
     }
 
     @PostMapping()
+<<<<<<< Updated upstream
     public ResponseEntity<DriverDTO> addDriver(@RequestBody DriverDTOWithoutId driverDTOWithoutId) {
         Driver driver = new Driver(driverDTOWithoutId.getName(), driverDTOWithoutId.getSurname(),
                                    driverDTOWithoutId.getProfilePicture(), driverDTOWithoutId.getTelephoneNumber(),
@@ -81,30 +92,56 @@ public class DriverController {
 
         driverService.addDriver(driver);
         return new ResponseEntity<>(new DriverDTO(driver), HttpStatus.CREATED);
+=======
+    public ResponseEntity<?> addDriver(@RequestBody DriverDTOWithoutId driverDTOWithoutId) {
+            User user = userService.findUserByEmail(driverDTOWithoutId.getEmail());
+            if(user.equals(null)){
+                Driver driver = new Driver(driverDTOWithoutId.getName(), driverDTOWithoutId.getSurname(),
+                        driverDTOWithoutId.getProfilePicture(), driverDTOWithoutId.getTelephoneNumber(),
+                        driverDTOWithoutId.getEmail(), driverDTOWithoutId.getAddress(),
+                        driverDTOWithoutId.getPassword(),false,false) ;
+                driverService.addDriver(driver);
+                DriverDTO driverDTO = new DriverDTO(driver);
+                return new ResponseEntity<>(driverDTO, HttpStatus.OK);
+            }else{
+                return new ResponseEntity<>(new ErrorMessage("User with that email already exists!"),HttpStatus.BAD_REQUEST);
+            }
+>>>>>>> Stashed changes
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<DriverDTO> updateDriver(
+    public ResponseEntity<?> updateDriver(
             @PathVariable("id") int id,
-            @RequestBody DriverDTOWithoutId driverDTOWithoutId) {
+            @Valid @RequestBody DriverDTOWithoutId driverDTOWithoutId) {
         try {
             Driver driver = driverService.findDriverById(id);
             driver.driverUpdate(driverDTOWithoutId);
             Driver updateDriver = driverService.updateDriver(driver);
             DriverDTO driverDTO = new DriverDTO(updateDriver);
             return new ResponseEntity<>(driverDTO, HttpStatus.OK);
+<<<<<<< Updated upstream
         } catch (UserNotFoundException userNotFoundException) {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+=======
+        }catch (ConstraintViolationException constraintViolationException){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        } catch (DriverNotFoundException driverNotFoundException) {
+            return new ResponseEntity<>(new ErrorMessage("Driver does not exist!"), HttpStatus.NOT_FOUND);
+>>>>>>> Stashed changes
         }
     }
 
     @GetMapping("/{id}/documents")
-    public ResponseEntity<HashSet<DocumentDTO>> getDocumentById (
+    public ResponseEntity<?> getDocumentById (
             @PathVariable("id") int id) {
         HashSet<DocumentDTO> documentDTOS = new HashSet<>();
         HashSet<Document> documents = documentService.findByDriverId(id);
         if(documents.isEmpty()) {
+<<<<<<< Updated upstream
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+=======
+            return new ResponseEntity<>(new ErrorMessage("Driver does not exist!"), HttpStatus.NOT_FOUND);
+>>>>>>> Stashed changes
         }else{
             for(Document document:documents){
                 DocumentDTO documentDTO = new DocumentDTO(document);
@@ -114,7 +151,7 @@ public class DriverController {
         }
     }
     @PostMapping("/{id}/documents")
-    public ResponseEntity<DocumentDTO> addDocument(
+    public ResponseEntity<?> addDocument(
             @PathVariable("id") int id,
             @RequestBody DocumentDTO documentDTO) {
         try{
@@ -122,8 +159,13 @@ public class DriverController {
         Document document = new Document().makeDocumentFromDTO(documentDTO,driver);
         document = documentService.addDocument(document);
             return new ResponseEntity<>(new DocumentDTO(document), HttpStatus.CREATED);
+<<<<<<< Updated upstream
         }catch (UserNotFoundException userNotFoundException){
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+=======
+        }catch (DriverNotFoundException driverNotFoundException){
+            return new ResponseEntity<>(new ErrorMessage("Driver does not exist!"), HttpStatus.NOT_FOUND);
+>>>>>>> Stashed changes
         }
     }
 
@@ -141,15 +183,22 @@ public class DriverController {
 //OVDE GA NE BRISE NE ZNAM ZASTO
 
     @GetMapping("/{id}/vehicle")
-    public ResponseEntity<VehicleDTO> getVehicleById (
+    public ResponseEntity<?> getVehicleById (
             @PathVariable("id") int id) {
         try {
             Driver driver = driverService.findDriverById(id);
             Vehicle vehicle = vehicleService.findVehicleByDriverId(driver.getId());
             LocationDTO locationDTO = new LocationDTO(vehicle.getCurrentLocation());
             return new ResponseEntity<>(new VehicleDTO(vehicle,locationDTO), HttpStatus.OK);
+<<<<<<< Updated upstream
         }catch (UserNotFoundException e){
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+=======
+        }catch (DriverNotFoundException driverNotFoundException){
+            return new ResponseEntity<>(new ErrorMessage("Driver does not exist!"), HttpStatus.NOT_FOUND);
+        }catch (VehicleNotFoundException vehicleNotFoundException){
+            return new ResponseEntity<>(new ErrorMessage("Vehicle does not exist!"), HttpStatus.NOT_FOUND);
+>>>>>>> Stashed changes
         }
     }
 
@@ -196,7 +245,14 @@ public class DriverController {
     public ResponseEntity<Map<String, Object>> getWorkingHours (
             @PathVariable("id") int id,
             @RequestParam(defaultValue = "0") Integer page,
+<<<<<<< Updated upstream
             @RequestParam(defaultValue = "4") Integer size) {
+=======
+            @RequestParam(defaultValue = "4") Integer size,
+            @RequestParam(defaultValue = "start") String sort,
+            @RequestParam(defaultValue = "2022-12-07T07:00:50") String from,
+            @RequestParam(defaultValue = "2022-12-08T10:40:00") String to) {
+>>>>>>> Stashed changes
         Map<String, Object> map = new HashMap<>();
         Pageable pageable = PageRequest.of(page, size);
 
@@ -212,7 +268,7 @@ public class DriverController {
     }
 
     @PostMapping("/{id}/working-hour")
-    public ResponseEntity<WorkTimeDTOWithoutDriver> addWorkingHourForDriver(
+    public ResponseEntity<?> addWorkingHourForDriver(
             @PathVariable("id") int id,
             @RequestBody WorkTimeDTOWithoutDriver workTimeDTOWithoutDriver) {
         try{
@@ -221,24 +277,34 @@ public class DriverController {
             WorkTime workTime = new WorkTime(workTimeDTOWithoutDriver.getStart(),workTimeDTOWithoutDriver.getEnd(), driver);
             workTime = workTimeService.addWorkTime(workTime);
             return new ResponseEntity<>(new WorkTimeDTOWithoutDriver(workTime), HttpStatus.CREATED);
+<<<<<<< Updated upstream
         }catch (UserNotFoundException userNotFoundException){
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+=======
+        }catch (DriverNotFoundException driverNotFoundException){
+            return new ResponseEntity<>(new ErrorMessage("Driver does not exist!"), HttpStatus.NOT_FOUND);
+>>>>>>> Stashed changes
         }
     }
 
     @GetMapping("/working-hour/{working-hour-id}")
-    public ResponseEntity<WorkTimeDTOWithoutDriver> getWorkingHourById (
+    public ResponseEntity<?> getWorkingHourById (
             @PathVariable("working-hour-id") int id) {
         try {
             WorkTime workTime = workTimeService.findWorkTimeById(id);
             return new ResponseEntity<>(new WorkTimeDTOWithoutDriver(workTime),HttpStatus.OK);
+<<<<<<< Updated upstream
         }catch(UserNotFoundException e){
             return new ResponseEntity<>(null,HttpStatus.NOT_FOUND);
+=======
+        }catch(WorkTimeNotFoundException workTimeNotFoundException){
+            return new ResponseEntity<>(new ErrorMessage("Working hour does not exist!"),HttpStatus.NOT_FOUND);
+>>>>>>> Stashed changes
         }
     }
 
     @PutMapping("/working-hour/{working-hour-id}")
-    public ResponseEntity<WorkTimeDTOWithoutDriver> updateWorkingHourById (
+    public ResponseEntity<?> updateWorkingHourById (
             @PathVariable("working-hour-id") int id,
             @RequestBody WorkTimeDTOWithoutDriver workTimeDTOWithoutDriver) {
         try {
@@ -246,8 +312,13 @@ public class DriverController {
             workTime.updateWorkTime(workTimeDTOWithoutDriver);
             workTime = workTimeService.updateWorkTime(workTime);
             return new ResponseEntity<>(new WorkTimeDTOWithoutDriver(workTime),HttpStatus.OK);
+<<<<<<< Updated upstream
         }catch(UserNotFoundException e){
             return new ResponseEntity<>(null,HttpStatus.NOT_FOUND);
+=======
+        }catch(WorkTimeNotFoundException workTimeNotFoundException){
+            return new ResponseEntity<>(new ErrorMessage("Working hour does not exist!"),HttpStatus.NOT_FOUND);
+>>>>>>> Stashed changes
         }
     }
 
@@ -257,9 +328,16 @@ public class DriverController {
             @RequestParam(defaultValue = "0") Integer page,
             @RequestParam(defaultValue = "4") Integer size,
             @RequestParam(defaultValue = "start_time") String sort,
+<<<<<<< Updated upstream
             @RequestParam(defaultValue = "2022-12-07T07:00:50") String from,
             @RequestParam(defaultValue = "2022-12-08T10:40:00") String to) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(sort));
+=======
+            @RequestParam(defaultValue = "2021-12-07T07:00:50") String from,
+            @RequestParam(defaultValue = "2023-12-08T10:40:00") String to) {
+
+        Pageable pageable = PageRequest.of(page, size,Sort.by(sort));
+>>>>>>> Stashed changes
         Page<Ride> rides = rideService.findRidesForDriver(id,from,to,pageable);
         Map<String, Object> map = new HashMap<>();
         HashSet<RideDTO> ridesDTO = new RideDTO().makeRides(rides);
