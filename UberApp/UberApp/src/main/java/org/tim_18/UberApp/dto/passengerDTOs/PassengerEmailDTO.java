@@ -5,17 +5,15 @@ import org.tim_18.UberApp.model.Passenger;
 
 @Data
 public class PassengerEmailDTO {
-    private Integer id;
     private String email;
 
     public PassengerEmailDTO(){}
 
     public PassengerEmailDTO(Passenger passenger) {
-        this(passenger.getId(), passenger.getEmail());
+        this(passenger.getEmail());
     }
 
-    public PassengerEmailDTO(Integer id, String email) {
-        this.id     = id;
+    public PassengerEmailDTO(String email) {
         this.email  = email;
     }
 }

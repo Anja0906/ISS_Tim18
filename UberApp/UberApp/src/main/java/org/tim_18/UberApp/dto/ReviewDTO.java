@@ -2,7 +2,6 @@ package org.tim_18.UberApp.dto;
 
 import lombok.Data;
 import org.springframework.data.domain.Page;
-import org.tim_18.UberApp.model.Passenger;
 import org.tim_18.UberApp.model.Review;
 
 import java.util.HashSet;
@@ -12,9 +11,9 @@ public class ReviewDTO {
     private Integer id;
     private Integer rating;
     private String comment;
-    private PassengerEmailDTO passenger;
+    private PassengerIdEmailDTO passenger;
 
-    public ReviewDTO(Integer id, Integer rating, String comment, PassengerEmailDTO passenger) {
+    public ReviewDTO(Integer id, Integer rating, String comment, PassengerIdEmailDTO passenger) {
         this.id         = id;
         this.rating     = rating;
         this.comment    = comment;
@@ -23,7 +22,7 @@ public class ReviewDTO {
 
     public ReviewDTO(){}
 
-    public ReviewDTO(Review review,PassengerEmailDTO passengerEmailDTO) {
+    public ReviewDTO(Review review, PassengerIdEmailDTO passengerEmailDTO) {
         this(review.getId(),review.getRating(),review.getComment(),passengerEmailDTO);
     }
 
@@ -31,7 +30,7 @@ public class ReviewDTO {
         this.id         = review.getId();
         this.rating     = review.getRating();
         this.comment    = review.getComment();
-        this.passenger  = new PassengerEmailDTO(1, "Anja@gmail.com");
+        this.passenger  = new PassengerIdEmailDTO(1, "Anja@gmail.com");
     }
 
     public HashSet<ReviewDTO> makeReviewDTOS(Page<Review> reviews){

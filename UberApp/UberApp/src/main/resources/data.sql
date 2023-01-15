@@ -112,12 +112,12 @@ INSERT INTO locations_for_rides (id, kilometers, departure_id, destination_id)
 VALUES ('3', 2, '3', '2');
 
 # --rejections--
-INSERT INTO rejections (id, reason, time_of_rejection) VALUES ('1', 'zhscgs', '2022-07-12 00:15:45');
-INSERT INTO rejections (id, reason, time_of_rejection) VALUES ('2', 'sbcjs', '2022-07-12 00:15:45');
-INSERT INTO rejections (id, reason, time_of_rejection) VALUES ('3', 'sjchjshc', '2022-07-12 00:15:45');
-INSERT INTO rejections (id, reason, time_of_rejection) VALUES ('4', 'zhscgs', '2022-07-12 00:15:45');
-INSERT INTO rejections (id, reason, time_of_rejection) VALUES ('5', 'sbcjs', '2022-07-12 00:15:45');
-INSERT INTO rejections (id, reason, time_of_rejection) VALUES ('6', 'sjchjshc', '2022-07-12 00:15:45');
+-- INSERT INTO rejections (id, reason, time_of_rejection) VALUES ('1', 'zhscgs', '2022-07-12 00:15:45');
+-- INSERT INTO rejections (id, reason, time_of_rejection) VALUES ('2', 'sbcjs', '2022-07-12 00:15:45');
+-- INSERT INTO rejections (id, reason, time_of_rejection) VALUES ('3', 'sjchjshc', '2022-07-12 00:15:45');
+-- INSERT INTO rejections (id, reason, time_of_rejection) VALUES ('4', 'zhscgs', '2022-07-12 00:15:45');
+-- INSERT INTO rejections (id, reason, time_of_rejection) VALUES ('5', 'sbcjs', '2022-07-12 00:15:45');
+-- INSERT INTO rejections (id, reason, time_of_rejection) VALUES ('6', 'sjchjshc', '2022-07-12 00:15:45');
 
 # --passenger--
 INSERT INTO passenger (id) VALUES ('4');

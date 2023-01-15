@@ -5,10 +5,13 @@ import org.springframework.data.domain.Page;
 import org.tim_18.UberApp.dto.RejectionDTO;
 import org.tim_18.UberApp.dto.driverDTOs.DriverEmailDTO;
 import org.tim_18.UberApp.dto.locationDTOs.LocationSetDTO;
-import org.tim_18.UberApp.dto.passengerDTOs.PassengerEmailDTO;
+import org.tim_18.UberApp.dto.passengerDTOs.PassengerIdEmailDTO;
 import org.tim_18.UberApp.model.*;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Data
 public class RideRetDTO {
@@ -17,7 +20,7 @@ public class RideRetDTO {
     private String endTime;
     private long totalCost;
     private DriverEmailDTO driver;
-    private Set<PassengerEmailDTO> passengers;
+    private Set<PassengerIdEmailDTO> passengers;
     private int estimatedTimeInMinutes;
     private VehicleType vehicleType;
     private boolean babyTransport;
@@ -35,9 +38,9 @@ public class RideRetDTO {
         this.endTime                        = endTime;
         this.totalCost                      = totalCost;
         this.driver                         = new DriverEmailDTO(driver);
-        Set<PassengerEmailDTO> passengerSet = new HashSet<>();
+        Set<PassengerIdEmailDTO> passengerSet = new HashSet<>();
         for (Passenger p:passengers) {
-            passengerSet.add(new PassengerEmailDTO(p));
+            passengerSet.add(new PassengerIdEmailDTO(p));
         }
         this.passengers                     = passengerSet;
         this.estimatedTimeInMinutes         = estimatedTimeInMinutes;

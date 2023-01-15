@@ -51,7 +51,7 @@ public class ReviewController {
             review.setRide(ride);
             reviewService.save(review);
 
-            PassengerEmailDTO passengerEmailDTO = new PassengerEmailDTO(1, "bane");
+            PassengerIdEmailDTO passengerEmailDTO = new PassengerIdEmailDTO(1, "bane");
             ReviewDTO reviewDTO = new ReviewDTO(review, passengerEmailDTO);
 
             return new ResponseEntity<>(reviewDTO, HttpStatus.OK);
@@ -94,7 +94,7 @@ public class ReviewController {
             Review review = new Review(reviewPostDTO.getRating(), reviewPostDTO.getComment(), ride, true);
             reviewService.save(review);
 
-            PassengerEmailDTO passengerEmailDTO = new PassengerEmailDTO(1, "bane");
+            PassengerIdEmailDTO passengerEmailDTO = new PassengerIdEmailDTO(1, "bane");
             ReviewDTO reviewDTO = new ReviewDTO(review, passengerEmailDTO);
 
             return new ResponseEntity<>(reviewDTO, HttpStatus.OK);
@@ -133,11 +133,11 @@ public class ReviewController {
             HashSet<Review> reviews = reviewService.findByRideIdHash(id);
             HashSet<ReviewDTOResponse> reviewsDTO = new HashSet<>();
             Passenger passenger;
-            PassengerEmailDTO passengerEmailDTO;
+            PassengerIdEmailDTO passengerEmailDTO;
             int ind = 0;
             for (Review review : reviews) {
                 passenger = passengerService.findById(review.getPassenger().getId());
-                passengerEmailDTO = new PassengerEmailDTO(passenger);
+                passengerEmailDTO = new PassengerIdEmailDTO(passenger);
                 if (review.getDriver() == true) {
                     for (Review reviewVehicle : reviews)
                         if (reviewVehicle.getPassenger().getId() == review.getPassenger().getId() && reviewVehicle.getDriver() == false) {
