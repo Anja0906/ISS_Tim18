@@ -186,11 +186,11 @@ public class ReviewController {
             HashSet<Review> reviews = reviewService.findByRideIdHash(id);
             HashSet<ReviewDTOResponse> reviewsDTO = new HashSet<>();
             Passenger passenger;
-            PassengerEmailDTO passengerEmailDTO;
+            PassengerIdEmailDTO passengerEmailDTO;
             int ind = 0;
             for (Review review : reviews) {
                 passenger = passengerService.findById(review.getPassenger().getId());
-                passengerEmailDTO = new PassengerEmailDTO(passenger);
+                passengerEmailDTO = new PassengerIdEmailDTO(passenger);
                 if (review.getDriver() == true) {
                     for (Review reviewVehicle : reviews)
                         if (reviewVehicle.getPassenger().getId() == review.getPassenger().getId() && reviewVehicle.getDriver() == false) {
