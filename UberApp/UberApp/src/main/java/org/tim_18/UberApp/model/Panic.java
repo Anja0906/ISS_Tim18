@@ -35,6 +35,7 @@ public class Panic implements Serializable {
 
     public Panic() {}
 
+
     public Integer getId() {
         return id;
     }
@@ -85,4 +86,5 @@ public class Panic implements Serializable {
                 ", reason='" + reason + '\'' +
                 '}';
     }
+
 }

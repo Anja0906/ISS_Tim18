@@ -198,7 +198,6 @@ public class Ride implements Serializable {
                 ", rejection=" + rejection +
                 ", locations=" + locations +
                 ", status=" + status +
-
                 '}';
     }
 }
