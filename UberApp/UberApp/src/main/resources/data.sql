@@ -218,14 +218,14 @@ INSERT INTO user_role (user_id, role_id) VALUES (13, 4);
 INSERT INTO user_role (user_id, role_id) VALUES (14, 1);
 INSERT INTO user_role (user_id, role_id) VALUES (14, 4);
 
-INSERT INTO favourite_rides (baby_transport, favourite_name, pet_transport, vehicle_type, passenger_id)
-VALUES (true, 'Home-Work', true, '0', '4');
-INSERT INTO favourite_rides (baby_transport, favourite_name, pet_transport, vehicle_type, passenger_id)
-VALUES (false, 'School-Work', false, '0', '4');
-INSERT INTO favourite_rides (baby_transport, favourite_name, pet_transport, vehicle_type, passenger_id)
-VALUES (true, 'School-Home', false, '0', '4');
-INSERT INTO favourite_rides (baby_transport, favourite_name, pet_transport, vehicle_type, passenger_id)
-VALUES (false, 'School-Hospital', true, '0', '4');
+INSERT INTO favorite_rides (baby_transport, favorite_name, pet_transport, vehicle_type)
+VALUES (true, 'Home-Work', true, '0');
+INSERT INTO favorite_rides (baby_transport, favorite_name, pet_transport, vehicle_type)
+VALUES (false, 'School-Work', false, '0');
+INSERT INTO favorite_rides (baby_transport, favorite_name, pet_transport, vehicle_type)
+VALUES (true, 'School-Home', false, '0');
+INSERT INTO favorite_rides (baby_transport, favorite_name, pet_transport, vehicle_type)
+VALUES (false, 'School-Hospital', true, '0');
 
 
 INSERT INTO passenger_favorite_rides (passengers_id, favorite_rides_id) VALUES (4, 1);
