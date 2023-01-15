@@ -6,6 +6,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.tim_18.UberApp.dto.FindAllDTO;
 import org.tim_18.UberApp.dto.PanicDTO;
@@ -33,6 +34,8 @@ public class PanicController {
         this.panicService = service;
     }
 
+
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public ResponseEntity<Map<String, Object>> findAllPanics(@RequestParam(defaultValue = "0") Integer page,
                                                              @RequestParam(defaultValue = "4") Integer size) {
