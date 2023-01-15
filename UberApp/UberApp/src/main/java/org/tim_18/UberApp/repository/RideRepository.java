@@ -38,4 +38,7 @@ public interface RideRepository extends JpaRepository<Ride, Integer> {
     @Query(value = "SELECT * FROM rides WHERE rides.status = ?1 ", nativeQuery = true)
     Page<Ride> findPendingRidesByStatus(String status,Pageable pageable);
 
+
+    @Query(value = "SELECT * FROM rides r INNER JOIN passenger_rides pr on r.id=pr.ride_id WHERE pr.passenger_id = ?1 and r.status = ?2", nativeQuery = true)
+    ArrayList<Ride> findPassengersRidesByStatus(Integer id, String status);
 }

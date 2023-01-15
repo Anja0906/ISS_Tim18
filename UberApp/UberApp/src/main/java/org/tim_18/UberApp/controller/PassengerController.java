@@ -8,45 +8,69 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-import org.tim_18.UberApp.dto.FindAllDTO;
+import org.tim_18.UberApp.Validation.ErrorMessage;
 import org.tim_18.UberApp.dto.passengerDTOs.PassengerDTOnoPassword;
 import org.tim_18.UberApp.dto.passengerDTOs.PassengerDTOwithPassword;
 import org.tim_18.UberApp.dto.rideDTOs.RideRetDTO;
 import org.tim_18.UberApp.exception.PassengerNotFoundException;
 import org.tim_18.UberApp.exception.UserActivationNotFoundException;
-import org.tim_18.UberApp.exception.UserNotFoundException;
+import org.tim_18.UberApp.mapper.passengerDTOmappers.PassengerDTOnoPasswordMapper;
 import org.tim_18.UberApp.mapper.passengerDTOmappers.PassengerDTOwithPasswordMapper;
-import org.tim_18.UberApp.model.Passenger;
-import org.tim_18.UberApp.model.Ride;
-import org.tim_18.UberApp.model.UserActivation;
-import org.tim_18.UberApp.service.PassengerService;
-import org.tim_18.UberApp.service.RideService;
-import org.tim_18.UberApp.service.UserActivationService;
+import org.tim_18.UberApp.model.*;
+import org.tim_18.UberApp.service.*;
 
+import java.security.Principal;
 import java.util.*;
 
 @RestController
 @RequestMapping("/api/passenger")
 @CrossOrigin(origins = "http://localhost:4200")
+//@PreAuthorize("hasRole('PASSENGER')")
 public class PassengerController {
     private final PassengerService passengerService;
     private final RideService rideService;
     private final UserActivationService userActivationService;
+    private final RoleService roleService;
+    private final UserService userService;
     @Autowired
     private PassengerDTOwithPasswordMapper dtoWithPasswordMapper;
+    @Autowired
+    private PassengerDTOnoPasswordMapper dtoNoPasswordMapper;
 
-    public PassengerController(PassengerService passengerService, RideService rideService, UserActivationService userActivationService) {
+    @Autowired
+    PasswordEncoder passwordEncoder;
+
+    public PassengerController(PassengerService passengerService, RideService rideService, UserActivationService userActivationService, RoleService roleService, UserService userService) {
         this.passengerService       = passengerService;
         this.rideService            = rideService;
         this.userActivationService  = userActivationService;
+        this.roleService = roleService;
+        this.userService = userService;
     }
 
     @PostMapping()
-    public ResponseEntity<PassengerDTOnoPassword> addPassenger(@RequestBody PassengerDTOwithPassword dto) {
-        Passenger passenger = dtoWithPasswordMapper.fromDTOtoPassenger(dto);
-        passenger = passengerService.addPassenger(passenger);
-        return new ResponseEntity<>(new PassengerDTOnoPassword(passenger), HttpStatus.OK);
+    public ResponseEntity<?> addPassenger(@RequestBody PassengerDTOwithPassword dto) {
+        User user = userService.findUserByEmail(dto.getEmail());
+        if (user == null) {
+            Passenger passenger = dtoWithPasswordMapper.fromDTOtoPassenger(dto);
+            passenger.setRoles(this.getRoles());
+            passenger.setPassword(passwordEncoder.encode(passenger.getPassword()));
+            passenger = passengerService.addPassenger(passenger);
+            return new ResponseEntity<>(new PassengerDTOnoPassword(passenger), HttpStatus.OK);
+        } else{
+            return new ResponseEntity<>(new ErrorMessage("User with that email already exists!"),HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    private List<Role> getRoles() {
+        List<Role> rP = roleService.findByName("ROLE_PASSENGER");
+        List<Role> rU = roleService.findByName("ROLE_USER");
+        List<Role> roles = new ArrayList<>();
+        roles.add(rU.get(0));
+        roles.add(rP.get(0));
+        return roles;
     }
 
     @GetMapping()
@@ -64,6 +88,7 @@ public class PassengerController {
     }
 
 
+    // @TODO !!!!!!!!!!!!!!!!!!!!!!!!!
     @GetMapping("activate/{activationId}")
     public ResponseEntity activateUser(@PathVariable("activationId") Integer id){
         try {
@@ -75,53 +100,71 @@ public class PassengerController {
         }
     }
 
+    @PreAuthorize("hasRole('PASSENGER')")
     @GetMapping("/{id}")
-    public ResponseEntity<PassengerDTOnoPassword> findById(@PathVariable("id") Integer id) {
+    public ResponseEntity<?> findById(Principal principal, @PathVariable("id") Integer id) {
         try {
+            checkAuthorities(principal, id);
             Passenger passenger = passengerService.findById(id);
             return new ResponseEntity<>(new PassengerDTOnoPassword(passenger), HttpStatus.OK);
         } catch(PassengerNotFoundException passengerNotFoundException){
-            return new ResponseEntity<>(null,HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Passenger does not exist!",HttpStatus.NOT_FOUND);
         }
     }
 
 
+    @PreAuthorize("hasRole('PASSENGER')")
     @PutMapping("/{id}")
-    public ResponseEntity<PassengerDTOnoPassword> updatePassenger(
-            @RequestBody PassengerDTOwithPassword dto,
+    public ResponseEntity<?> updatePassenger(
+            Principal principal,
+            @RequestBody PassengerDTOnoPassword dto,
             @PathVariable("id") Integer id) {
         try {
+            checkAuthorities(principal, id);
             Passenger oldPassenger = passengerService.findById(id); //throws 404
-            oldPassenger = dtoWithPasswordMapper.fromDTOtoPassenger(dto, id);
-            Passenger updatedPassenger = passengerService.update(oldPassenger);
+            Passenger newPassenger = dtoNoPasswordMapper.fromDTOtoPassenger(dto, id);
+            newPassenger.setPassword(oldPassenger.getPassword());
+            Passenger updatedPassenger = passengerService.update(newPassenger);
             PassengerDTOnoPassword updatedPassengerDTO = new PassengerDTOnoPassword(updatedPassenger);
             return new ResponseEntity<>(updatedPassengerDTO, HttpStatus.OK);
         } catch(PassengerNotFoundException passengerNotFoundException){
-            return new ResponseEntity<>(null,HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Passenger does not exist!", HttpStatus.NOT_FOUND);
         }
     }
 
+    @PreAuthorize("hasRole('PASSENGER')")
     @GetMapping("/{id}/ride")
-    public ResponseEntity<Map<String, Object>> findPassengersRides(
-            @PathVariable("id") Integer id,
-            @RequestParam(defaultValue = "0") Integer page,
-            @RequestParam(defaultValue = "4") Integer size,
-            @RequestParam(defaultValue = "id") String sort,
-            @RequestParam (defaultValue = "2021-10-10T10:00")String from,
-            @RequestParam (defaultValue = "2023-10-10T10:00")String to) {
+    public ResponseEntity<?> findPassengersRides(Principal principal,
+                                                                   @PathVariable("id") Integer id,
+                                                                   @RequestParam(defaultValue = "0") Integer page,
+                                                                   @RequestParam(defaultValue = "4") Integer size,
+                                                                   @RequestParam(defaultValue = "id") String sort,
+                                                                   @RequestParam (defaultValue = "2021-10-10T10:00")String from,
+                                                                   @RequestParam (defaultValue = "2023-10-10T10:00")String to) {
         try {
-            Passenger passenger = passengerService.findById(id); //throws 404
-
+            checkAuthorities(principal, id);
+            Passenger passenger = passengerService.findById(id);
             Pageable paging = PageRequest.of(page, size, Sort.by(sort));
-            Page<Ride> rides = rideService.findRidesByPassengersId(id, from, to, paging);
-            List<RideRetDTO> ridesDTO = RideRetDTO.getRidesDTO(rides);
-
+            List<Ride> rides = rideService.findRidesByPassengersId(id, from, to);
+//            Page<Ride> pagedResult = rideService.findRidesByPassengersId(id, from, to, paging);
+            List<RideRetDTO> ridesDTO = new ArrayList<>();
+            for (Ride r : rides) {
+                ridesDTO.add(new RideRetDTO(r));
+            }
             Map<String, Object> response = new HashMap<>();
-            response.put("totalCount", rides.getTotalElements());
+            response.put("totalCount", ridesDTO.size());
+//            response.put("totalCount", pagedResult.getTotalElements());
             response.put("results", ridesDTO);
             return new ResponseEntity<>(response, HttpStatus.OK);
-        } catch(PassengerNotFoundException passengerNotFoundException){
-            return new ResponseEntity<>(null,HttpStatus.NOT_FOUND);
+        } catch(PassengerNotFoundException e){
+            return new ResponseEntity<>("Passenger does not exist!",HttpStatus.NOT_FOUND);
+        }
+    }
+
+    private void checkAuthorities(Principal principal, Integer id) throws PassengerNotFoundException {
+        Integer userId = userService.findUserByEmail(principal.getName()).getId();
+        if (!userId.equals(id)){
+            throw new PassengerNotFoundException("Passenger does not exist!");
         }
     }
 }
