@@ -2,7 +2,7 @@ package org.tim_18.UberApp.dto.rideDTOs;
 
 import lombok.Data;
 import org.tim_18.UberApp.dto.locationDTOs.LocationSetDTO;
-import org.tim_18.UberApp.dto.passengerDTOs.PassengerIdEmailDTO;
+import org.tim_18.UberApp.dto.passengerDTOs.PassengerEmailDTO;
 import org.tim_18.UberApp.model.Location;
 import org.tim_18.UberApp.model.Passenger;
 import org.tim_18.UberApp.model.Ride;
@@ -14,19 +14,19 @@ import java.util.List;
 import java.util.Set;
 
 @Data
-public class RideRecDTO {
+public class RideAndroidDTO {
     private Integer id;
     private Set<LocationSetDTO> locations;
-    private Set<PassengerIdEmailDTO> passengers;
+    private Set<PassengerEmailDTO> passengers;
     private VehicleType vehicleType;
     private boolean babyTransport;
     private boolean petTransport;
 
     private String scheduledTime;
 
-    public RideRecDTO(){}
+    public RideAndroidDTO(){}
 
-    public RideRecDTO(Integer id, Set<Location> _locations, Set<Passenger> passengers, VehicleType vehicleType, boolean babyTransport, boolean petTransport, String scheduledTime) {
+    public RideAndroidDTO(Integer id, Set<Location> _locations, Set<Passenger> passengers, VehicleType vehicleType, boolean babyTransport, boolean petTransport, String scheduledTime) {
         this.id                     = id;
         this.vehicleType            = vehicleType;
         this.babyTransport          = babyTransport;
@@ -41,16 +41,16 @@ public class RideRecDTO {
             locationSetDTOSet.add(new LocationSetDTO(locList.get(i-1), locList.get(i)));
         }
         this.locations              = locationSetDTOSet;
-        Set<PassengerIdEmailDTO> passengerSet = new HashSet<>();
+        Set<PassengerEmailDTO> passengerSet = new HashSet<>();
         for (Passenger p:passengers) {
-            passengerSet.add(new PassengerIdEmailDTO(p));
+            passengerSet.add(new PassengerEmailDTO(p));
         }
         this.passengers             = passengerSet;
     }
 
-    public RideRecDTO(Ride ride){
+    public RideAndroidDTO(Ride ride){
         this(ride.getId(), ride.getLocations(),
-             ride.getPassengers(), ride.getVehicleType(),
-             ride.isBabyTransport(), ride.isPetTransport(), ride.getScheduledTime().toString());
+                ride.getPassengers(), ride.getVehicleType(),
+                ride.isBabyTransport(), ride.isPetTransport(), ride.getScheduledTime().toString());
     }
 }

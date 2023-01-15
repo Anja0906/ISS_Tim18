@@ -20,10 +20,10 @@ import org.tim_18.UberApp.dto.UserDTOwithPassword;
 import org.tim_18.UberApp.dto.UserTokenState;
 import org.tim_18.UberApp.exception.ResourceConflictException;
 import org.tim_18.UberApp.mapper.UserDTOwithPasswordMapper;
-import org.tim_18.UberApp.model.JwtResponse;
-import org.tim_18.UberApp.model.Role;
-import org.tim_18.UberApp.model.User;
+import org.tim_18.UberApp.model.*;
 import org.tim_18.UberApp.security.TokenUtils;
+import org.tim_18.UberApp.service.DriverService;
+import org.tim_18.UberApp.service.PassengerService;
 import org.tim_18.UberApp.service.RoleService;
 import org.tim_18.UberApp.service.UserService;
 
@@ -48,6 +48,12 @@ public class AuthenticationController {
 
 	@Autowired
 	private RoleService roleService;
+
+	@Autowired
+	private PassengerService passengerService;
+
+	@Autowired
+	private DriverService driverService;
 
 	@Autowired
 	private UserDTOwithPasswordMapper mapper;
@@ -89,33 +95,51 @@ public class AuthenticationController {
 	// Endpoint za registraciju novog korisnika
 	//@TODO
 	@PostMapping("/signupPassenger")
-	public ResponseEntity<User> addPassenger(@RequestBody UserDTOwithPassword userRequest, UriComponentsBuilder ucBuilder) {
+	public ResponseEntity<Passenger> addPassenger(@RequestBody UserDTOwithPassword userRequest, UriComponentsBuilder ucBuilder) {
 		User existUser = this.userService.findUserByEmail(userRequest.getEmail());
 
 		if (existUser != null) {
 			throw new ResourceConflictException(userRequest.getId(), "Username already exists");
 		}
 		User user = mapper.fromDTOtoUser(userRequest);
-		List<Role> roles = roleService.findByName("ROLE_PASSENGER");
-		user.setRoles(roles);
 		user.setPassword(passwordEncoder.encode(userRequest.getPassword()));
-		user = this.userService.save(user);
-		return new ResponseEntity<>(user, HttpStatus.CREATED);
+//		user = this.userService.save(user);
+		Passenger passenger = new Passenger(user);
+		passenger.setRoles(getRoles(1));
+		this.passengerService.save(passenger);
+		return new ResponseEntity<>(passenger, HttpStatus.CREATED);
 	}
+
+	private List<Role> getRoles(int role) {
+		List<Role> rP = roleService.findByName("ROLE_PASSENGER");
+		List<Role> rD = roleService.findByName("ROLE_DRIVER");
+		List<Role> rU = roleService.findByName("ROLE_USER");
+		List<Role> roles = new ArrayList<>();
+		roles.add(rU.get(0));
+		if (role==1) {
+			roles.add(rP.get(0));
+		} else {
+			roles.add(rD.get(0));
+		}
+		return roles;
+	}
+
 	@PostMapping("/signupDriver")
-	public ResponseEntity<User> addDriver(@RequestBody UserDTOwithPassword userRequest, UriComponentsBuilder ucBuilder) {
+	public ResponseEntity<Driver> addDriver(@RequestBody UserDTOwithPassword userRequest, UriComponentsBuilder ucBuilder) {
 		User existUser = this.userService.findUserByEmail(userRequest.getEmail());
 
 		if (existUser != null) {
 			throw new ResourceConflictException(userRequest.getId(), "Username already exists");
 		}
 		User user = mapper.fromDTOtoUser(userRequest);
-		List<Role> roles = roleService.findByName("ROLE_DRIVER");
-		user.setRoles(roles);
 		user.setPassword(passwordEncoder.encode(userRequest.getPassword()));
 
 		user = this.userService.save(user);
 
-		return new ResponseEntity<>(user, HttpStatus.CREATED);
+		Driver driver = new Driver(user);
+		driver.setRoles(getRoles(2));
+		this.driverService.save(driver);
+
+		return new ResponseEntity<>(driver, HttpStatus.CREATED);
 	}
 }

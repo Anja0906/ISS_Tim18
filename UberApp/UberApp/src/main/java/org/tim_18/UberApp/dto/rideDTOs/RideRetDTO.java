@@ -5,7 +5,7 @@ import org.springframework.data.domain.Page;
 import org.tim_18.UberApp.dto.RejectionDTO;
 import org.tim_18.UberApp.dto.driverDTOs.DriverEmailDTO;
 import org.tim_18.UberApp.dto.locationDTOs.LocationSetDTO;
-import org.tim_18.UberApp.dto.passengerDTOs.PassengerEmailDTO;
+import org.tim_18.UberApp.dto.passengerDTOs.PassengerIdEmailDTO;
 import org.tim_18.UberApp.model.*;
 
 import java.util.ArrayList;
@@ -20,7 +20,7 @@ public class RideRetDTO {
     private String endTime;
     private long totalCost;
     private DriverEmailDTO driver;
-    private Set<PassengerEmailDTO> passengers;
+    private Set<PassengerIdEmailDTO> passengers;
     private int estimatedTimeInMinutes;
     private VehicleType vehicleType;
     private boolean babyTransport;
@@ -28,18 +28,19 @@ public class RideRetDTO {
     private RejectionDTO rejection;
     private Set<LocationSetDTO> locations;
     private Status status;
+    private String scheduledTime;
 
     public RideRetDTO(){}
 
-    public RideRetDTO(Integer id, String startTime, String endTime, long totalCost, Driver driver, Set<Passenger> passengers, int estimatedTimeInMinutes, VehicleType vehicleType, boolean babyTransport, boolean petTransport, Rejection rejection, Set<Location> _locations, Status status) {
+    public RideRetDTO(Integer id, String startTime, String endTime, long totalCost, Driver driver, Set<Passenger> passengers, int estimatedTimeInMinutes, VehicleType vehicleType, boolean babyTransport, boolean petTransport, Rejection rejection, Set<Location> _locations, Status status, String scheduledTime) {
         this.id                             = id;
         this.startTime                      = startTime;
         this.endTime                        = endTime;
         this.totalCost                      = totalCost;
         this.driver                         = new DriverEmailDTO(driver);
-        Set<PassengerEmailDTO> passengerSet = new HashSet<>();
+        Set<PassengerIdEmailDTO> passengerSet = new HashSet<>();
         for (Passenger p:passengers) {
-            passengerSet.add(new PassengerEmailDTO(p));
+            passengerSet.add(new PassengerIdEmailDTO(p));
         }
         this.passengers                     = passengerSet;
         this.estimatedTimeInMinutes         = estimatedTimeInMinutes;
@@ -61,6 +62,7 @@ public class RideRetDTO {
         }
         this.locations                      = locationSetDTOSet;
         this.status                         = status;
+        this.scheduledTime                  = scheduledTime;
     }
     public RideRetDTO(Ride ride){
         this(ride.getId(), ride.getStartTime().toString(), ride.getEndTime().toString(),
@@ -68,7 +70,7 @@ public class RideRetDTO {
              ride.getPassengers(), ride.getEstimatedTimeInMinutes(),
              ride.getVehicleType(), ride.isBabyTransport(),
              ride.isPetTransport(), ride.getRejection(),
-             ride.getLocations(), ride.getStatus());
+             ride.getLocations(), ride.getStatus(), ride.getScheduledTime().toString());
 
     }
 

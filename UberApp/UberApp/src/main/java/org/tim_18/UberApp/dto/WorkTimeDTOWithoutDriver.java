@@ -9,19 +9,19 @@ import java.util.HashSet;
 @Data
 public class WorkTimeDTOWithoutDriver {
     private Integer id;
-    private LocalDateTime start;
-    private LocalDateTime end;
+    private String start;
+    private String end;
 
 
     public WorkTimeDTOWithoutDriver() {}
 
-    public WorkTimeDTOWithoutDriver(Integer id, LocalDateTime start, LocalDateTime end) {
+    public WorkTimeDTOWithoutDriver(Integer id, String start, String  end) {
         this.id         = id;
         this.start      = start;
         this.end        = end;
     }
     public WorkTimeDTOWithoutDriver(WorkTime workTime) {
-        this(workTime.getId(),workTime.getStart(),workTime.getEnd());
+        this(workTime.getId(),workTime.getStart().toString(),workTime.getEnd().toString());
     }
 
     public HashSet<WorkTimeDTOWithoutDriver> makeWorkTimeDTOWithoutDriver(Page<WorkTime> workTimes){
@@ -37,8 +37,8 @@ public class WorkTimeDTOWithoutDriver {
     public String toString() {
         return "WorkTimeDTOWithoutDriver{" +
                 "id=" + id +
-                ", start=" + start.toString() +
-                ", end=" + end.toString() +
+                ", start=" + start +
+                ", end=" + end +
                 '}';
     }
 }

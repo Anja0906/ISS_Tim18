@@ -1,20 +1,20 @@
-package org.tim_18.UberApp.dto;
+package org.tim_18.UberApp.dto.passengerDTOs;
 
 import lombok.Data;
 import org.tim_18.UberApp.model.Passenger;
 
 @Data
-public class PassengerEmailDTO {
+public class PassengerIdEmailDTO {
     private Integer id;
     private String email;
 
-    public PassengerEmailDTO(){}
+    public PassengerIdEmailDTO(){}
 
-    public PassengerEmailDTO(Passenger passenger) {
+    public PassengerIdEmailDTO(Passenger passenger) {
         this(passenger.getId(), passenger.getEmail());
     }
 
-    public PassengerEmailDTO(Integer id, String email) {
+    public PassengerIdEmailDTO(Integer id, String email) {
         this.id     = id;
         this.email  = email;
     }
