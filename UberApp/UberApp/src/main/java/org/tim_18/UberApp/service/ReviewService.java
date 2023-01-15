@@ -42,11 +42,28 @@ public class ReviewService {
     public Page<Review> findByVehicleId(int id, Pageable pageable) {
         return reviewRepository.findByVehicleId(id, pageable);
     }
+
     public Review addReview(Review review) {
         return reviewRepository.save(review);
     }
 
     public HashSet<Review> findByRideIdHash(Integer id) {
         return reviewRepository.findByRideIdHash(id);
+    }
+
+    public Page<Review> findByVehicleAndPassengerId(int vehicleId, int passengerId, Pageable pageable) {
+        return reviewRepository.findByVehicleAndPassengerId(vehicleId, passengerId, pageable);
+    }
+
+    public Page<Review> findByDriverAndPassengerId(int driverId, int passengerId, Pageable pageable) {
+        return reviewRepository.findByDriverAndPassengerId(driverId, passengerId, pageable);
+    }
+
+    public Review findByRideAndPassengerIdForVehicle(int rideId, int passengerId) {
+        return reviewRepository.findByRideAndPassengerIdForVehicle(rideId, passengerId);
+    }
+
+    public Review findByRideAndPassengerIdForDriver(int rideId, int passengerId) {
+        return reviewRepository.findByRideAndPassengerIdForDriver(rideId, passengerId);
     }
 }
