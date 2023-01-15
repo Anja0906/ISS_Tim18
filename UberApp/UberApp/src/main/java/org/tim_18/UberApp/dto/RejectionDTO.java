@@ -17,6 +17,6 @@ public class RejectionDTO {
 
     public RejectionDTO(Rejection rejection){
         this(rejection.getReason(),
-             rejection.getTimeOfRejection().toString());
+             rejection.getTime().toString());
     }
 }

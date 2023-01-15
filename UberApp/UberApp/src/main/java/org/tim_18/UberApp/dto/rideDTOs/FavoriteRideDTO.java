@@ -2,10 +2,16 @@ package org.tim_18.UberApp.dto.rideDTOs;
 
 import lombok.Data;
 import org.tim_18.UberApp.dto.locationDTOs.LocationSetDTO;
-import org.tim_18.UberApp.dto.passengerDTOs.PassengerEmailDTO;
-import org.tim_18.UberApp.model.*;
+import org.tim_18.UberApp.dto.passengerDTOs.PassengerIdEmailDTO;
+import org.tim_18.UberApp.model.FavoriteRide;
+import org.tim_18.UberApp.model.Location;
+import org.tim_18.UberApp.model.Passenger;
+import org.tim_18.UberApp.model.VehicleType;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Data
 public class FavoriteRideDTO {
@@ -13,7 +19,7 @@ public class FavoriteRideDTO {
     private Integer id;
     private String favoriteName;
     private Set<LocationSetDTO> locations;
-    private Set<PassengerEmailDTO> passengers;
+    private Set<PassengerIdEmailDTO> passengers;
     private VehicleType vehicleType;
     private boolean babyTransport;
     private boolean petTransport;
@@ -37,9 +43,9 @@ public class FavoriteRideDTO {
             locationSetDTOSet.add(new LocationSetDTO(loc1, loc2));
         }
         this.locations              = locationSetDTOSet;
-        Set<PassengerEmailDTO> passengerSet = new HashSet<>();
+        Set<PassengerIdEmailDTO> passengerSet = new HashSet<>();
         for (Passenger p:passengers) {
-            passengerSet.add(new PassengerEmailDTO(p));
+            passengerSet.add(new PassengerIdEmailDTO(p));
         }
         this.passengers             = passengerSet;
     }

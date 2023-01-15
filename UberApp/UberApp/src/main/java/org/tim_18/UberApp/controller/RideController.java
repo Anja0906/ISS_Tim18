@@ -1,5 +1,6 @@
 package org.tim_18.UberApp.controller;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -9,14 +10,11 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.tim_18.UberApp.Validation.ErrorMessage;
 import org.tim_18.UberApp.dto.PanicDTO;
-import org.tim_18.UberApp.dto.RejectionDTO;
 import org.tim_18.UberApp.dto.locationDTOs.LocationDTO;
 import org.tim_18.UberApp.dto.locationDTOs.LocationSetDTO;
 import org.tim_18.UberApp.dto.passengerDTOs.PassengerEmailDTO;
-import org.tim_18.UberApp.dto.rideDTOs.FavoriteRideDTO;
-import org.tim_18.UberApp.dto.rideDTOs.FavoriteRideWithTimeDTO;
-import org.tim_18.UberApp.dto.rideDTOs.RideRecDTO;
-import org.tim_18.UberApp.dto.rideDTOs.RideRetDTO;
+import org.tim_18.UberApp.dto.passengerDTOs.PassengerIdEmailDTO;
+import org.tim_18.UberApp.dto.rideDTOs.*;
 import org.tim_18.UberApp.exception.*;
 import org.tim_18.UberApp.mapper.LocationDTOMapper;
 import org.tim_18.UberApp.mapper.rideDTOmappers.FavoriteRideDTOMapper;
@@ -63,7 +61,7 @@ public class RideController {
     public ResponseEntity<?> createARide(Principal principal, @RequestBody RideRecDTO oldDTO){
         User user = userService.findUserByEmail(principal.getName());
         boolean found = false;
-        for (PassengerEmailDTO p:oldDTO.getPassengers()) {
+        for (PassengerIdEmailDTO p:oldDTO.getPassengers()) {
             if (p.getId().equals(user.getId())){
                 found = true;
                 break;
@@ -72,18 +70,27 @@ public class RideController {
         if (!found) {
             return new ResponseEntity<>("Cannot make ride for other people!",HttpStatus.NOT_FOUND);
         }
-        boolean canMakeRide = rideService.checkRide(user.getId());
-        if (canMakeRide) {
-            Passenger p = passengerService.findById(user.getId());
+
+        Ride ride = fromDTOtoRide(oldDTO);
+
+        boolean canMakeRide;
+        for (PassengerIdEmailDTO ped: oldDTO.getPassengers()) {
+            canMakeRide = rideService.checkRide(ped.getId());
+            if (!canMakeRide) {
+                return new ResponseEntity<>(new ErrorMessage("Cannot create a ride while you have one already pending!"),HttpStatus.BAD_REQUEST);
+            }
+        }
+
+        ride = rideService.createRide(ride);
+
+        for (PassengerIdEmailDTO ped: oldDTO.getPassengers()) {
+            Passenger p = passengerService.findById(ped.getId());
             Set<Ride> pr = p.getRides();
-            Ride ride = rideService.createRide(fromDTOtoRide(oldDTO));
             pr.add(ride);
             p.setRides(new HashSet<>(pr));
             passengerService.update(p);
-            return new ResponseEntity<>(new RideRetDTO(ride), HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(new ErrorMessage("Cannot create a ride while you have one already pending!"),HttpStatus.BAD_REQUEST);
         }
+        return new ResponseEntity<>(new RideRetDTO(ride), HttpStatus.OK);
     }
 
     @PreAuthorize("hasRole('DRIVER')")
@@ -253,11 +260,13 @@ public class RideController {
             Ride ride = rideService.findRideById(id);
             checkDriversAuthorities(principal, ride);
             Status status = ride.getStatus();
+            User user = userService.findUserById(ride.getDriver().getId());
             if (status == Status.PENDING || status == Status.ACCEPTED) {
                 ride.setStatus(Status.REJECTED);
-                Rejection rejection = new Rejection(reason, new Date(), ride);
+                Rejection rejection = new Rejection(ride, user, new Date(), reason);
+                rejectionService.addRejection(rejection);
                 ride.setRejection(rejection);
-               // ride = rideService.updateRide(ride);
+                ride = rideService.updateRide(ride);
                 return new ResponseEntity<>(new RideRetDTO(ride), HttpStatus.OK);
             } else {
                 return new ResponseEntity<>(new ErrorMessage("Cannot accept a ride that is not in status PENDING or ACCEPTED!"), HttpStatus.BAD_REQUEST);
@@ -285,9 +294,9 @@ public class RideController {
                 }
             }
             Passenger p = passengerService.findById(user.getId());
-            Set<PassengerEmailDTO> passengersDTOs = oldDTO.getPassengers();
+            Set<PassengerIdEmailDTO> passengersDTOs = oldDTO.getPassengers();
             HashSet<Passenger> passengers = new HashSet<>();
-            for (PassengerEmailDTO passDTO: passengersDTOs) {
+            for (PassengerIdEmailDTO passDTO: passengersDTOs) {
                 passengers.add(passengerService.findById(passDTO.getId()));
             }
             ride.setPassengers(passengers);
@@ -345,7 +354,7 @@ public class RideController {
     @PreAuthorize("hasRole('PASSENGER')")
     @DeleteMapping("/favorites/{id}")
     public ResponseEntity deleteFavRideById (Principal principal,
-            @PathVariable("id") int id) {
+                                             @PathVariable("id") int id) {
         try {
             FavoriteRide ride = favoriteRideService.findById(id);
             checkPassengersAuthorities(principal, ride);
@@ -442,9 +451,9 @@ public class RideController {
         List<Driver> drivers = driverService.findAllDrivers();
         if (drivers.size() == 0) throw new UserNotFoundException("No available driver");
         Driver driver = drivers.get(0);
-        Set<PassengerEmailDTO> passengersDTOs = dto.getPassengers();
+        Set<PassengerIdEmailDTO> passengersDTOs = dto.getPassengers();
         HashSet<Passenger> passengers = new HashSet<>();
-        for (PassengerEmailDTO passDTO: passengersDTOs) {
+        for (PassengerIdEmailDTO passDTO: passengersDTOs) {
             passengers.add(passengerService.findById(passDTO.getId()));
         }
         int estimatedTimeInMinutes = 4;
@@ -472,14 +481,92 @@ public class RideController {
         reviews.add(review);
         Panic panic = new Panic();
         panic = panicService.addPanic(panic);
-        List<Rejection> rejections = rejectionService.findAll();
-        Rejection newRejection;
-        if (rejections.size() == 0) {
-            newRejection = null;
-        }else {
-            newRejection = rejections.get(0);
+        Rejection newRejection = new Rejection();
+        newRejection.setTime(new Date());
+        rejectionService.addRejection(newRejection);
+        Instant instant = Instant.parse(dto.getScheduledTime());
+        Date date = Date.from(instant);
+        return new Ride(startTime, endTime, totalCost, driver, passengers, estimatedTimeInMinutes, dto.getVehicleType(),
+                dto.isBabyTransport(), dto.isPetTransport(), newRejection, locations, status, reviews, panic, date);
+    }
+
+    // --------------------------- ANDROID -------------------------------//
+    @PreAuthorize("hasRole('PASSENGER')")
+    @PostMapping("android")
+    public ResponseEntity<?> createARideAndroid(Principal principal, @RequestBody RideAndroidDTO oldDTO){
+        User user = userService.findUserByEmail(principal.getName());
+        boolean found = false;
+        for (PassengerEmailDTO p:oldDTO.getPassengers()) {
+            if (p.getEmail().equals(user.getEmail())){
+                found = true;
+                break;
+            }
         }
-        RejectionDTO rejectionDTO = new RejectionDTO(newRejection);
+        if (!found) {
+            return new ResponseEntity<>("Cannot make ride for other people!",HttpStatus.NOT_FOUND);
+        }
+
+        Ride ride = fromDTOtoRide(oldDTO);
+
+        boolean canMakeRide;
+        for (PassengerEmailDTO ped: oldDTO.getPassengers()) {
+            Passenger pa = passengerService.findByEmail(ped.getEmail());
+            canMakeRide = rideService.checkRide(pa.getId());
+            if (!canMakeRide) {
+                return new ResponseEntity<>(new ErrorMessage("Cannot create a ride while you have one already pending!"), HttpStatus.BAD_REQUEST);
+            }
+        }
+        ride = rideService.createRide(ride);
+        for (PassengerEmailDTO ped: oldDTO.getPassengers()) {
+            Passenger p = passengerService.findByEmail(ped.getEmail());
+            Set<Ride> pr = p.getRides();
+            pr.add(ride);
+            p.setRides(new HashSet<>(pr));
+            passengerService.update(p);
+        }
+        return new ResponseEntity<>(new RideRetDTO(ride), HttpStatus.OK);
+    }
+
+    private Ride fromDTOtoRide(RideAndroidDTO dto) throws UserNotFoundException {
+        Date startTime = new Date();
+        Date endTime = new Date();
+        long totalCost = 5000;
+        List<Driver> drivers = driverService.findAllDrivers();
+        if (drivers.size() == 0) throw new UserNotFoundException("No available driver");
+        Driver driver = drivers.get(0);
+        Set<PassengerEmailDTO> passengersDTOs = dto.getPassengers();
+        HashSet<Passenger> passengers = new HashSet<>();
+        for (PassengerEmailDTO passDTO: passengersDTOs) {
+            passengers.add(passengerService.findByEmail(passDTO.getEmail()));
+        }
+        int estimatedTimeInMinutes = 4;
+        Set<LocationSetDTO> locationsDTO = dto.getLocations();
+        ArrayList<LocationSetDTO> locationSetDTOArrayList = new ArrayList<>();
+        for (LocationSetDTO locDTO:locationsDTO) {
+            locationSetDTOArrayList.add(locDTO);
+        }
+        HashSet<Location> locations = new HashSet<>();
+        for (int i = 0; i < locationSetDTOArrayList.size(); i++) {
+            LocationSetDTO lsd = locationSetDTOArrayList.get(i);
+            LocationDTO ld = lsd.getDeparture();
+            Location loc = LocationDTOMapper.fromDTOtoLocation(ld);
+            locations.add(loc);
+            if (i == locationSetDTOArrayList.size() - 1 ) {
+                ld = lsd.getDestination();
+                loc = LocationDTOMapper.fromDTOtoLocation(ld);
+                locations.add(loc);
+            }
+        }
+        Status status = Status.PENDING;
+        HashSet<Review> reviews = new HashSet<>();
+        Review review = new Review();
+        review = reviewService.addReview(review);
+        reviews.add(review);
+        Panic panic = new Panic();
+        panic = panicService.addPanic(panic);
+        Rejection newRejection = new Rejection();
+        newRejection.setTime(new Date());
+        rejectionService.addRejection(newRejection);
         Instant instant = Instant.parse(dto.getScheduledTime());
         Date date = Date.from(instant);
         return new Ride(startTime, endTime, totalCost, driver, passengers, estimatedTimeInMinutes, dto.getVehicleType(),
