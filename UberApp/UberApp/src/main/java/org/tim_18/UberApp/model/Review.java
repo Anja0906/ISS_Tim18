@@ -43,6 +43,14 @@ public class Review implements Serializable {
         this.isDriver   = isDriver;
     }
 
+    public Review(Integer rating, String comment, Passenger passenger, Ride ride, Boolean isDriver) {
+        this.rating = rating;
+        this.comment = comment;
+        this.passenger = passenger;
+        this.ride = ride;
+        this.isDriver = isDriver;
+    }
+
     public void setId(Integer id) {
         this.id = id;
     }

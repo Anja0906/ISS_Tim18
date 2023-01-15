@@ -31,7 +31,7 @@ public class ReviewDTO {
         this.id         = review.getId();
         this.rating     = review.getRating();
         this.comment    = review.getComment();
-        this.passenger  = new PassengerEmailDTO(1, "Anja@gmail.com");
+        this.passenger  = new PassengerEmailDTO(review.getPassenger());
     }
 
     public HashSet<ReviewDTO> makeReviewDTOS(Page<Review> reviews){
