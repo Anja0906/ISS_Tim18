@@ -4,7 +4,6 @@ package org.tim_18.UberApp.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.tim_18.UberApp.exception.RideNotFoundException;
-import org.tim_18.UberApp.exception.UserNotFoundException;
 import org.tim_18.UberApp.model.Ride;
 import org.tim_18.UberApp.repository.RideRepository;
 
@@ -12,8 +11,7 @@ import org.tim_18.UberApp.repository.RideRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -73,5 +71,21 @@ public class RideService {
         List<Ride> pendingRides = rideRepository.findPassengersRidesByStatus(passengerId, "PENDING");
         return pendingRides.isEmpty();
         // returns true if there's no pending rides => passenger can make a new ride
+    }
+
+    public Page<Ride> findAll(Pageable pageable) {
+        return rideRepository.findAll(pageable);
+    }
+
+    public List<Ride> findAll() {
+        return rideRepository.findAll();
+    }
+
+    public List<Ride> findRidesByUser(Integer id) {
+        return rideRepository.findRidesForUser(id);
+    }
+
+    public List<Ride> findRidesByUser(Integer id, String from, String to) {
+        return rideRepository.findRidesForUser(id, from, to);
     }
 }

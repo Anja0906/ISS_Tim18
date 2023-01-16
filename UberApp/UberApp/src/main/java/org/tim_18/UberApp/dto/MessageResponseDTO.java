@@ -5,12 +5,13 @@ import org.springframework.data.domain.Page;
 import org.tim_18.UberApp.model.Message;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.HashSet;
 
 @Data
 public class MessageResponseDTO {
     private Integer id;
-    private LocalDateTime timeOfSending;
+    private String timeOfSending;
     private Integer senderId;
     private Integer receiverId;
     private String message;
@@ -20,9 +21,9 @@ public class MessageResponseDTO {
     public MessageResponseDTO() {
     }
 
-    public MessageResponseDTO(Integer id, LocalDateTime timeOfSending, Integer senderId, Integer receiverId, String message, String type, Integer rideId) {
+    public MessageResponseDTO(Integer id, Date timeOfSending, Integer senderId, Integer receiverId, String message, String type, Integer rideId) {
         this.id             = id;
-        this.timeOfSending  = timeOfSending;
+        this.timeOfSending  = timeOfSending.toString();
         this.senderId       = senderId;
         this.receiverId     = receiverId;
         this.message        = message;
@@ -31,7 +32,7 @@ public class MessageResponseDTO {
     }
     public MessageResponseDTO(Message message) {
         this.id             = message.getId();
-        this.timeOfSending  = message.getTime();
+        this.timeOfSending  = message.getTime().toString();
         this.senderId       = message.getSender().getId();
         this.receiverId     = message.getReceiver().getId();
         this.message        = message.getMessage();

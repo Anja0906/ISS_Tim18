@@ -5,24 +5,25 @@ import org.springframework.data.domain.Page;
 import org.tim_18.UberApp.model.Note;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.HashSet;
 
 @Data
 public class NoteResponseDTO {
     private Integer id;
-    private LocalDateTime date;
+    private String date;
     private String message;
 
     public NoteResponseDTO() {}
-    public NoteResponseDTO(Integer id, LocalDateTime date, String message) {
+    public NoteResponseDTO(Integer id, Date date, String message) {
         this.id         = id;
-        this.date       = date;
+        this.date       = date.toString();
         this.message    = message;
     }
 
     public NoteResponseDTO(Note note) {
         this.id         = note.getId();
-        this.date       = LocalDateTime.now();
+        this.date       = new Date().toString();
         this.message    = note.getMessage();
     }
 

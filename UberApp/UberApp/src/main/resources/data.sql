@@ -71,10 +71,8 @@ VALUES (true, '2022-12-11 22:55:00', 5, false, '2022-12-11 20:40:00', 0, 500, 0,
 INSERT INTO rides (baby_transport, end_time, estimated_time_in_minutes, pet_transport, start_time, status, total_cost, vehicle_type, driver_id, panic_id, rejection_id, scheduled_time)
 VALUES (true, '2022-12-7 07:55:00', 15, false, '2022-12-7 07:40:00', 0, 500, 0, '1', '6', '6', '2022-12-10 05:00:00');
 INSERT INTO rides (baby_transport, end_time, estimated_time_in_minutes, pet_transport, start_time, status, total_cost, vehicle_type, driver_id, panic_id, rejection_id, scheduled_time)
-VALUES (true, '2023-12-11 23:59:59', 1, false, '2022-12-10 05:00:00', 0, 500, 0, '2', '1', '1', '2022-12-10 05:00:00');
+VALUES (true, '2023-12-11 23:59:59', 1, false, '2022-12-10 05:00:00', 0, 500, 0, '2', '1', '7', '2022-12-10 05:00:00');
 
-INSERT INTO rides (baby_transport, estimated_time_in_minutes, pet_transport, start_time, status, total_cost, vehicle_type, driver_id, scheduled_time)
-VALUES (true, 5, false, '2022-12-10 05:00:00', 0, 500, 0, '2', '2022-12-10 05:00:00');
 
 # --vehicle--
 INSERT INTO vehicle (id, license_number, vehicle_type, model,  current_location_id, driver_id, passenger_seats, baby_transport, pet_transport)
@@ -99,6 +97,13 @@ INSERT INTO panics (time, reason, user_id) VALUES ('2022-12-07', 'ajskdjsah', '2
 INSERT INTO panics (time, reason, user_id) VALUES ('2022-12-07', 'ajshdjshaj', '3');
 
 # -- rejections --
+INSERT INTO rejections (reason, time_of_rejection, user_id) VALUES ("lalala", "2022-12-07", '2');
+INSERT INTO rejections (reason, time_of_rejection, user_id) VALUES ("lalala", "2022-12-07", '1');
+INSERT INTO rejections (reason, time_of_rejection, user_id) VALUES ("lalala", "2022-12-07", '1');
+INSERT INTO rejections (reason, time_of_rejection, user_id) VALUES ("lalala", "2022-12-07", '3');
+INSERT INTO rejections (reason, time_of_rejection, user_id) VALUES ("lalala", "2022-12-07", '1');
+INSERT INTO rejections (reason, time_of_rejection, user_id) VALUES ("lalala", "2022-12-07", '1');
+INSERT INTO rejections (reason, time_of_rejection, user_id) VALUES ("lalala", "2022-12-07", '2');
 
 # --messages--
 INSERT INTO messages (id, message, message_type, time, receiver_id, ride_id, sender_id)
@@ -176,7 +181,6 @@ INSERT INTO passenger_rides (passenger_id, ride_id) VALUES (5, 6);
 INSERT INTO passenger_rides (passenger_id, ride_id) VALUES (6, 1);
 INSERT INTO passenger_rides (passenger_id, ride_id) VALUES (6, 2);
 INSERT INTO passenger_rides (passenger_id, ride_id) VALUES (6, 3);
-INSERT INTO passenger_rides (passenger_id, ride_id) VALUES (4, 8);
 
 #roles
 INSERT INTO role (name) VALUES ('ROLE_USER');
@@ -231,6 +235,3 @@ INSERT INTO passenger_favorite_rides (passengers_id, favorite_rides_id) VALUES (
 INSERT INTO passenger_favorite_rides (passengers_id, favorite_rides_id) VALUES (4, 2);
 INSERT INTO passenger_favorite_rides (passengers_id, favorite_rides_id) VALUES (4, 3);
 INSERT INTO passenger_favorite_rides (passengers_id, favorite_rides_id) VALUES (4, 4);
-INSERT INTO passenger_favorite_rides (passengers_id, favorite_rides_id) VALUES (4, 8);
-
-

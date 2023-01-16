@@ -40,4 +40,21 @@ public class Role implements GrantedAuthority {
         this.id = id;
     }
 
+    @Override
+    public boolean equals(Object o) {
+//        if (this == o) return true;
+//        if (!(o instanceof Role role)) return false;
+//
+//        if (getId() != null ? !getId().equals(role.getId()) : role.getId() != null) return false;
+//        return getName() != null ? getName().equals(role.getName()) : role.getName() == null;
+        Role r = (Role) o;
+        return (r.getId().equals(getId()) && r.getName().equals(getName()));
+    }
+
+    @Override
+    public int hashCode() {
+        int result = getId() != null ? getId().hashCode() : 0;
+        result = 31 * result + (getName() != null ? getName().hashCode() : 0);
+        return result;
+    }
 }

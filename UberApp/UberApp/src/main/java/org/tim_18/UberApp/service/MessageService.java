@@ -6,7 +6,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.tim_18.UberApp.exception.MessageNotFoundException;
-import org.tim_18.UberApp.exception.UserNotFoundException;
 import org.tim_18.UberApp.model.Message;
 import org.tim_18.UberApp.repository.MessageRepository;
 

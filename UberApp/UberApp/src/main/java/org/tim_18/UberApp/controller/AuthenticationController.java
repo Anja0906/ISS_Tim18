@@ -10,11 +10,13 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.parameters.P;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
+import org.tim_18.UberApp.Validation.ErrorMessage;
 import org.tim_18.UberApp.dto.JwtAuthenticationRequest;
 import org.tim_18.UberApp.dto.UserDTOwithPassword;
 import org.tim_18.UberApp.dto.UserTokenState;
@@ -69,27 +71,31 @@ public class AuthenticationController {
 
 
 	@PostMapping("/login")
-	public ResponseEntity<JwtResponse> createAuthenticationToken(
+	public ResponseEntity<?> createAuthenticationToken(
 			@RequestBody JwtAuthenticationRequest authenticationRequest, HttpServletResponse response) {
-		// Ukoliko kredencijali nisu ispravni, logovanje nece biti uspesno, desice se
-		// AuthenticationException
-		Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-				authenticationRequest.getEmail(), authenticationRequest.getPassword()));
+		try {
+			// Ukoliko kredencijali nisu ispravni, logovanje nece biti uspesno, desice se
+			// AuthenticationException
+			Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
+					authenticationRequest.getEmail(), authenticationRequest.getPassword()));
 
-		// Ukoliko je autentifikacija uspesna, ubaci korisnika u trenutni security
-		// kontekst
-		SecurityContextHolder.getContext().setAuthentication(authentication);
+			// Ukoliko je autentifikacija uspesna, ubaci korisnika u trenutni security
+			// kontekst
+			SecurityContextHolder.getContext().setAuthentication(authentication);
 
-		// Kreiraj token za tog korisnika
-		User user = (User) authentication.getPrincipal();
-		String jwt = tokenUtils.generateToken(user.getEmail());
-		int expiresIn = tokenUtils.getExpiredIn();
-		List<String> rolesStr = new ArrayList<>();
-		for (Role r:user.getRoles()) {
-			rolesStr.add(r.getName());
+			// Kreiraj token za tog korisnika
+			User user = (User) authentication.getPrincipal();
+			String jwt = tokenUtils.generateToken(user.getEmail());
+			int expiresIn = tokenUtils.getExpiredIn();
+			List<String> rolesStr = new ArrayList<>();
+			for (Role r : user.getRoles()) {
+				rolesStr.add(r.getName());
+			}
+			// Vrati token kao odgovor na uspesnu autentifikaciju
+			return ResponseEntity.ok(new JwtResponse(jwt, expiresIn, user.getId(), user.getEmail(), rolesStr, user.getName() + " " + user.getSurname()));
+		} catch (AuthenticationException e) {
+			return new ResponseEntity<>(new ErrorMessage("Wrong username or password!"), HttpStatus.BAD_REQUEST);
 		}
-		// Vrati token kao odgovor na uspesnu autentifikaciju
-		return ResponseEntity.ok(new JwtResponse(jwt, expiresIn, user.getId(), user.getEmail(), rolesStr, user.getName() + " " + user.getSurname()));
 	}
 
 	// Endpoint za registraciju novog korisnika

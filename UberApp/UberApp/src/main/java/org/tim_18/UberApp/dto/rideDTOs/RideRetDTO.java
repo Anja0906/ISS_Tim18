@@ -66,11 +66,11 @@ public class RideRetDTO {
     }
     public RideRetDTO(Ride ride){
         this(ride.getId(), ride.getStartTime().toString(), ride.getEndTime().toString(),
-             ride.getTotalCost(), ride.getDriver(),
-             ride.getPassengers(), ride.getEstimatedTimeInMinutes(),
-             ride.getVehicleType(), ride.isBabyTransport(),
-             ride.isPetTransport(), ride.getRejection(),
-             ride.getLocations(), ride.getStatus(), ride.getScheduledTime().toString());
+                ride.getTotalCost(), ride.getDriver(),
+                ride.getPassengers(), ride.getEstimatedTimeInMinutes(),
+                ride.getVehicleType(), ride.isBabyTransport(),
+                ride.isPetTransport(), ride.getRejection(),
+                ride.getLocations(), ride.getStatus(), ride.getScheduledTime().toString());
 
     }
 
@@ -83,6 +83,14 @@ public class RideRetDTO {
     }
 
     public HashSet<RideRetDTO> makeRideRideDTOS(Page<Ride> rides) {
+        HashSet<RideRetDTO> ridesDTO = new HashSet<>();
+        for (Ride r : rides) {
+            ridesDTO.add(new RideRetDTO(r));
+        }
+        return ridesDTO;
+    }
+
+    public HashSet<RideRetDTO> makeRideRideDTOS(List<Ride> rides) {
         HashSet<RideRetDTO> ridesDTO = new HashSet<>();
         for (Ride r : rides) {
             ridesDTO.add(new RideRetDTO(r));

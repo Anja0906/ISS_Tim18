@@ -18,7 +18,7 @@ public class MessageDTO {
         this.rideId     = rideId;
     }
     public MessageDTO(Message message) {
-        this.receiverId = message.getId();
+        this.receiverId = message.getReceiver().getId();
         this.message    = message.getMessage();
         this.type       = message.getMessageType();
         this.rideId     = message.getRide().getId();
