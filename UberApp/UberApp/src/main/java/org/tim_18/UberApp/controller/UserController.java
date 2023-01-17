@@ -243,6 +243,30 @@ public class UserController {
             return new ResponseEntity<>("User does not exist!", HttpStatus.NOT_FOUND);
         }
     }
+
+
+    @PreAuthorize("hasRole('PASSENGER')")
+    @PutMapping("/{id}/changePassword")
+    public ResponseEntity<?> changePassword(Principal principal, @PathVariable("id") int id, @RequestBody changePasswordDTO password) {
+        try{
+            User userRequest = userService.findUserById(id);
+            User user = userService.findUserByEmail(principal.getName());
+            if (!user.getId().equals(userRequest.getId())){
+                return new ResponseEntity<>("User does not exist!", HttpStatus.NOT_FOUND);
+            }
+            String oldPassword = password.getOldPassword();
+            if (!passwordEncoder.matches(oldPassword, user.getPassword())){
+                return new ResponseEntity<>("Current password is not matching!", HttpStatus.BAD_REQUEST);
+            }
+            userRequest.setPassword(passwordEncoder.encode(password.getNewPassword()));
+            userService.updateUser(userRequest);
+            return new ResponseEntity<>(new ErrorMessage("Password successfully changed!"), HttpStatus.NO_CONTENT);
+        }catch (UserNotFoundException e) {
+            return new ResponseEntity<>("User does not exist!", HttpStatus.NOT_FOUND);
+        }
+    }
+
+
     @GetMapping("/whoami")
     @PreAuthorize("hasRole('ROLE_USER')")
     public User user(Principal user) {

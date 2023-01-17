@@ -105,5 +105,6 @@ public class Passenger extends User {
         setProfilePicture(dto.getProfilePicture());
         setTelephoneNumber(dto.getTelephoneNumber());
         setAddress(dto.getAddress());
+        setEmail(dto.getEmail());
     }
 }
