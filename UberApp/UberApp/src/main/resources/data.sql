@@ -1,6 +1,6 @@
 # users
 INSERT INTO users (active, address, blocked, email, name, profile_picture, surname, password, telephone_number, verification_code)
-VALUES (false, 'Strumicka 6', false, 'anja@gmail.com', 'Anja', 'profile_picture', 'Petkovic', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', '0614843070', 'sdhfkuhsdufhsedh');
+VALUES (false, 'Strumicka 6', false, 'anjapetkovic92@gmail.com', 'Anja', 'profile_picture', 'Petkovic', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', '0614843070', 'sdhfkuhsdufhsedh');
 INSERT INTO users (active, address, blocked, email, name, profile_picture, surname, password, telephone_number, verification_code)
 VALUES (false, 'Strumicka 5', false, 'branislac@gmail.com', 'Branislav', 'profile_picture1', 'Stojkovic', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', '0654315454', 'ashdhasbjzHChsa');
 INSERT INTO users (active, address, blocked, email, name, profile_picture, surname, password, telephone_number, verification_code)
