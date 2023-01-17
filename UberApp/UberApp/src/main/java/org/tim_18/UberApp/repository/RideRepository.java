@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface RideRepository extends JpaRepository<Ride, Integer> {
+    @Query(value = "SELECT * FROM rides r INNER JOIN locations_rides lr ON  r.id=lr.rid_id WHERE r.id=?1", nativeQuery = true)
     public Optional<Ride> findById(Integer id);
 //    @Query(value = "SELECT * FROM rides rid natural join passenger p where rid.driver_id = ?1 OR p.id = ?1", nativeQuery = true)
 //    ArrayList<Ride> findRidesForUser(int id);

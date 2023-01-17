@@ -33,4 +33,8 @@ public class RejectionService {
         return rejectionRepository.findAll();
     }
 
+    public Rejection updateRejection(Rejection rejection) {
+        return rejectionRepository.save(rejection);
+    }
+
 }

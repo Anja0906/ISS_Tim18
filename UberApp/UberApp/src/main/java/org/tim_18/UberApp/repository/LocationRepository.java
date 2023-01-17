@@ -12,5 +12,7 @@ public interface LocationRepository extends JpaRepository<Location, Integer> {
     void deleteLocationById(Integer id);
 
     @Query(value = "SELECT * FROM locations WHERE longitude= ?1 and latitude = ?2 and address = ?3", nativeQuery = true)
-    List<Location> findLocationByAdressLongitudeLatitude(Double longitude, Double latitude, String address);
+    Location findLocationByAdressLongitudeLatitude(Double longitude, Double latitude, String address);
+
+//    Location findLocationByAddress(String address);
 }

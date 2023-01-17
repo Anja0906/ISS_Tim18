@@ -58,6 +58,8 @@ public class RideRetDTO {
         }
         Set<LocationSetDTO> locationSetDTOSet = new HashSet<>();
         for (int i = 1; i < locList.size(); i++) {
+            Location loc1 = locList.get(i);
+            Location loc2 = locList.get(i-1);
             locationSetDTOSet.add(new LocationSetDTO(locList.get(i-1), locList.get(i)));
         }
         this.locations                      = locationSetDTOSet;

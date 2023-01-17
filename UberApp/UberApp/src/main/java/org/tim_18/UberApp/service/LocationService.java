@@ -36,7 +36,7 @@ public class LocationService {
                 .orElseThrow(() -> new LocationNotFoundException("Location by id " + id + " was not found"));
     }
     public Location findLocationByAddressLongitudeLatitude(Double longitude,Double latitude,String address){
-        return locationRepository.findLocationByAdressLongitudeLatitude(longitude,latitude,address).get(0);
+        return locationRepository.findLocationByAdressLongitudeLatitude(longitude,latitude,address);
     }
 
     public void deleteLocation(Integer id) {

@@ -2,6 +2,7 @@ package org.tim_18.UberApp.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import org.tim_18.UberApp.dto.passengerDTOs.PassengerDTOnoPassword;
 
 import javax.persistence.Table;
 import java.util.HashSet;
@@ -96,5 +97,13 @@ public class Passenger extends User {
         return "Passenger{" +
                 "id=" + id +
                 '}';
+    }
+
+    public void passengerUpdate(PassengerDTOnoPassword dto) {
+        setName(dto.getName());
+        setSurname(dto.getSurname());
+        setProfilePicture(dto.getProfilePicture());
+        setTelephoneNumber(dto.getTelephoneNumber());
+        setAddress(dto.getAddress());
     }
 }

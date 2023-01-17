@@ -42,7 +42,7 @@ public class Ride implements Serializable {
     @JoinColumn(name = "panic_id", referencedColumnName = "id")
     private Panic panic;
 
-    @OneToMany(targetEntity = Location.class,cascade = {CascadeType.ALL}, fetch = FetchType.LAZY, mappedBy = "ride")
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL}, mappedBy = "rides")
     private Set<Location> locations = new HashSet<Location>();
     private Status status;
 

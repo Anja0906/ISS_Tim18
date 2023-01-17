@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.tim_18.UberApp.exception.UserNotFoundException;
+import org.tim_18.UberApp.exception.WorkTimeNotFoundException;
 import org.tim_18.UberApp.model.WorkTime;
 import org.tim_18.UberApp.repository.WorkTimeRepository;
 
@@ -42,7 +43,7 @@ public class WorkTimeService {
 
     public WorkTime findWorkTimeById(Integer id) {
         return workTimeRepository.findWorkTimeById(id)
-                .orElseThrow(() -> new UserNotFoundException("User activation by id " + id + " was not found"));
+                .orElseThrow(() -> new WorkTimeNotFoundException("Work time by id " + id + " was not found"));
     }
     public Page<WorkTime> findWorkTimesFromToDate(Integer id, String start, String end, Pageable pageable) { return workTimeRepository.findWorkTimesByDate(id,start,end,pageable);}
 

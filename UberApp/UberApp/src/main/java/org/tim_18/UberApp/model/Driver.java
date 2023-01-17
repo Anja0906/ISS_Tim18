@@ -64,6 +64,5 @@ public class Driver extends User{
         setProfilePicture(driverDTOWithoutId.getProfilePicture());
         setTelephoneNumber(driverDTOWithoutId.getTelephoneNumber());
         setAddress(driverDTOWithoutId.getAddress());
-        setPassword(driverDTOWithoutId.getAddress());
     }
 }

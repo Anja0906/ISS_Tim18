@@ -14,6 +14,6 @@ public interface MessageRepository extends JpaRepository<Message,Integer> {
 
     void deleteMessageById(Integer id);
 
-    @Query(value = "SELECT * FROM messages m where m.sender_id = ?1 OR m.receiver_id = ?1", nativeQuery = true)
+    @Query(value = "SELECT * FROM messages where sender_id = ?1 OR receiver_id = ?1", nativeQuery = true)
     Page<Message> findMessagesByUserId(Integer id, Pageable pageable);
 }

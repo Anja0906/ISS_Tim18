@@ -1,4 +1,3 @@
-#users
 INSERT INTO users (active, address, blocked, email, name, profile_picture, surname, password, telephone_number)
 VALUES (false, 'Strumicka 6', false, 'anja@gmail.com', 'Anja', 'profile_picture', 'Petkovic', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', '0614843070');
 INSERT INTO users (active, address, blocked, email, name, profile_picture, surname, password, telephone_number)
@@ -49,7 +48,7 @@ INSERT INTO drivers (id, vehicle_id) VALUES ('9', '6');
 
 # documents
 INSERT INTO documents (id, document_image, name, driver_id) VALUES ('1', 'hkdhfshdfj', 'hsgdgadg', '1');
-INSERT INTO documents (id, document_image, name, driver_id) VALUES ('2', 'asjhdjhasjcfh', 'ajshdjsahc', '5');
+INSERT INTO documents (id, document_image, name, driver_id) VALUES ('2', 'asjhdjhasjcfh', 'ajshdjsahc', '2');
 INSERT INTO documents (id, document_image, name, driver_id) VALUES ('3', 'ajshdjsh', 'jashjcshjc', '3');
 
 # --work_time--
@@ -71,7 +70,7 @@ VALUES (true, '2022-12-11 22:55:00', 5, false, '2022-12-11 20:40:00', 0, 500, 0,
 INSERT INTO rides (baby_transport, end_time, estimated_time_in_minutes, pet_transport, start_time, status, total_cost, vehicle_type, driver_id, panic_id, rejection_id, scheduled_time)
 VALUES (true, '2022-12-7 07:55:00', 15, false, '2022-12-7 07:40:00', 0, 500, 0, '1', '6', '6', '2022-12-10 05:00:00');
 INSERT INTO rides (baby_transport, end_time, estimated_time_in_minutes, pet_transport, start_time, status, total_cost, vehicle_type, driver_id, panic_id, rejection_id, scheduled_time)
-VALUES (true, '2023-12-11 23:59:59', 1, false, '2022-12-10 05:00:00', 0, 500, 0, '2', '1', '7', '2022-12-10 05:00:00');
+VALUES (true, '2022-12-11 23:59:59', 1, false, '2022-12-10 05:00:00', 0, 500, 0, '2', '7', '7', '2022-12-10 05:00:00');
 
 
 # --vehicle--
@@ -95,6 +94,7 @@ INSERT INTO panics (time, reason, user_id) VALUES ('2022-12-07', 'ajshdjshaj', '
 INSERT INTO panics (time, reason, user_id) VALUES ('2022-12-07', 'jahdjhhefej', '1');
 INSERT INTO panics (time, reason, user_id) VALUES ('2022-12-07', 'ajskdjsah', '2');
 INSERT INTO panics (time, reason, user_id) VALUES ('2022-12-07', 'ajshdjshaj', '3');
+INSERT INTO panics (time, reason, user_id) VALUES ('2022-12-07', 'ajshdjshaj', '4');
 
 # -- rejections --
 INSERT INTO rejections (reason, time_of_rejection, user_id) VALUES ("lalala", "2022-12-07", '2');
@@ -127,31 +127,43 @@ INSERT INTO passenger (id) VALUES ('4');
 INSERT INTO passenger (id) VALUES ('5');
 INSERT INTO passenger (id) VALUES ('6');
 
-# --locations--
-INSERT INTO locations (address, latitude, longitude, ride_id, fav_ride_id)
-VALUES ('bane1', '54478412154', '875154444', '1', '1');
-INSERT INTO locations (address, latitude, longitude, ride_id, fav_ride_id)
-VALUES ('bane', '515555', '897456', '1', '1');
-INSERT INTO locations (address, latitude, longitude, ride_id, fav_ride_id)
-VALUES ('bane3', '54478412154', '875154444', '3', '1');
-INSERT INTO locations (address, latitude, longitude, ride_id, fav_ride_id)
-VALUES ('asbdsabjc', '515555', '897456', '2', '2');
-INSERT INTO locations (address, latitude, longitude, ride_id, fav_ride_id)
-VALUES ('Bulevar oslobodjenja 46', '45.267136', '19.833549', '1', '2');
-INSERT INTO locations (address, latitude, longitude, ride_id, fav_ride_id)
-VALUES ('asbdsabjc', '515555', '897456', '3', '2');
-INSERT INTO locations (address, latitude, longitude, ride_id, fav_ride_id)
-VALUES ('asbdsabjc', '515555', '897456', '4', '3');
-INSERT INTO locations (address, latitude, longitude, ride_id, fav_ride_id)
-VALUES ('Bulevar oslobodjenja 46', '45.267136', '19.833549', '4', '3');
-INSERT INTO locations (address, latitude, longitude, ride_id, fav_ride_id)
-VALUES ('asbdsabjc', '515555', '897456', '5', '3');
-INSERT INTO locations (address, latitude, longitude, ride_id, fav_ride_id)
-VALUES ('Bulevar oslobodjenja 46', '45.267136', '19.833549', '5', '4');
-INSERT INTO locations (address, latitude, longitude, ride_id, fav_ride_id)
-VALUES ('asbdsabjc', '515555', '897456', '6', '4');
-INSERT INTO locations (address, latitude, longitude, ride_id, fav_ride_id)
-VALUES ('Bulevar oslobodjenja 46', '45.267136', '19.833549', '6', '4');
+-- # --locations--
+INSERT INTO locations (address, latitude, longitude)
+VALUES ('bane1', '54478412154', '875154444');
+INSERT INTO locations (address, latitude, longitude)
+VALUES ('bane', '515555', '897456');
+INSERT INTO locations (address, latitude, longitude)
+VALUES ('bane3', '4', '8');
+INSERT INTO locations (address, latitude, longitude)
+VALUES ('asbdsabjc', '515555', '8974546');
+INSERT INTO locations (address, latitude, longitude)
+VALUES ('Bulevar oslobodjenja 46', '45.267136', '19.833549');
+
+INSERT INTO locations_favorite_rides(location_id, fav_ride_id) VALUES ('1', '1');
+INSERT INTO locations_favorite_rides(location_id, fav_ride_id) VALUES ('2', '2');
+INSERT INTO locations_favorite_rides(location_id, fav_ride_id) VALUES ('3', '3');
+INSERT INTO locations_favorite_rides(location_id, fav_ride_id) VALUES ('4', '4');
+
+INSERT INTO locations_favorite_rides(location_id, fav_ride_id) VALUES ('4', '1');
+INSERT INTO locations_favorite_rides(location_id, fav_ride_id) VALUES ('3', '2');
+INSERT INTO locations_favorite_rides(location_id, fav_ride_id) VALUES ('2', '3');
+INSERT INTO locations_favorite_rides(location_id, fav_ride_id) VALUES ('1', '4');
+
+INSERT INTO locations_rides(location_id, ride_id) VALUES ('1', '1');
+INSERT INTO locations_rides(location_id, ride_id) VALUES ('2', '2');
+INSERT INTO locations_rides(location_id, ride_id) VALUES ('3', '3');
+INSERT INTO locations_rides(location_id, ride_id) VALUES ('4', '4');
+INSERT INTO locations_rides(location_id, ride_id) VALUES ('5', '5');
+INSERT INTO locations_rides(location_id, ride_id) VALUES ('6', '6');
+INSERT INTO locations_rides(location_id, ride_id) VALUES ('7', '7');
+
+INSERT INTO locations_rides(location_id, ride_id) VALUES ('3', '1');
+INSERT INTO locations_rides(location_id, ride_id) VALUES ('6', '2');
+INSERT INTO locations_rides(location_id, ride_id) VALUES ('5', '3');
+INSERT INTO locations_rides(location_id, ride_id) VALUES ('3', '4');
+INSERT INTO locations_rides(location_id, ride_id) VALUES ('4', '5');
+INSERT INTO locations_rides(location_id, ride_id) VALUES ('2', '6');
+INSERT INTO locations_rides(location_id, ride_id) VALUES ('1', '7');
 
 # --reviews--
 INSERT INTO reviews (comment, rating, ride_id,passenger_id, is_driver) VALUES ('jashjfhasfhjsa', 1, '1',4,0);

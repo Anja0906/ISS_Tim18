@@ -149,6 +149,10 @@ public class UserController {
         try {
             userService.findUserById(id); //throws 404
             rideService.findRideById(messageDTO.getRideId()); //throws 404
+            User sender = userService.findUserByEmail(principal.getName());
+            if (sender.getId().equals(id)) {
+                return new ResponseEntity<>("Cannot send message to yourself!", HttpStatus.BAD_REQUEST);
+            }
             messageDTO.setReceiverId(id);
             Message message = messageFromMessageDTO(principal, messageDTO);
             messageService.saveMessage(message);

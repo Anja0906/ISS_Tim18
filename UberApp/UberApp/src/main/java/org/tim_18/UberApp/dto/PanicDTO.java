@@ -16,7 +16,7 @@ public class PanicDTO {
     private Integer id;
     private UserSimpleDTO user;
     private RideRetDTO ride;
-    private Date time;
+    private String time;
     private String reason;
     public PanicDTO(){}
 
@@ -24,7 +24,7 @@ public class PanicDTO {
         this.id     = id;
         this.user   = new UserSimpleDTO(user);
         this.ride   = new RideRetDTO(ride);
-        this.time   = time;
+        this.time   = time.toString();
         this.reason = reason;
     }
 

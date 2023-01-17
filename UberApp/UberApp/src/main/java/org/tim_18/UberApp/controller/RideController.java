@@ -1,6 +1,5 @@
 package org.tim_18.UberApp.controller;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -10,6 +9,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.tim_18.UberApp.Validation.ErrorMessage;
 import org.tim_18.UberApp.dto.PanicDTO;
+import org.tim_18.UberApp.dto.ReasonDTO;
 import org.tim_18.UberApp.dto.locationDTOs.LocationDTO;
 import org.tim_18.UberApp.dto.locationDTOs.LocationSetDTO;
 import org.tim_18.UberApp.dto.passengerDTOs.PassengerEmailDTO;
@@ -37,15 +37,16 @@ public class RideController {
     private final PanicService panicService;
     private final PassengerService passengerService;
     private final UserService userService;
-
     private final FavoriteRideService favoriteRideService;
+
+    private final LocationService locationService;
 
 
     private LocationDTOMapper locationDTOMapper = new LocationDTOMapper(new ModelMapper());
     private FavoriteRideDTOMapper favoriteRideDTOMapper = new FavoriteRideDTOMapper(new ModelMapper());
 
 
-    public RideController(RideService rideService, DriverService driverService, RejectionService rejectionService, ReviewService reviewService, PanicService panicService, PassengerService passengerService, UserService userService, FavoriteRideService favoriteRideService) {
+    public RideController(RideService rideService, DriverService driverService, RejectionService rejectionService, ReviewService reviewService, PanicService panicService, PassengerService passengerService, UserService userService, FavoriteRideService favoriteRideService, LocationService locationService) {
         this.rideService        = rideService;
         this.driverService      = driverService;
         this.rejectionService   = rejectionService;
@@ -54,6 +55,7 @@ public class RideController {
         this.passengerService   = passengerService;
         this.userService        = userService;
         this.favoriteRideService = favoriteRideService;
+        this.locationService = locationService;
     }
 
     @PreAuthorize("hasRole('PASSENGER')")
@@ -62,9 +64,14 @@ public class RideController {
         User user = userService.findUserByEmail(principal.getName());
         boolean found = false;
         for (PassengerIdEmailDTO p:oldDTO.getPassengers()) {
-            if (p.getId().equals(user.getId())){
-                found = true;
-                break;
+            try {
+                passengerService.findById(p.getId());
+                if (p.getId().equals(user.getId())){
+                    found = true;
+                    break;
+                }
+            } catch (PassengerNotFoundException e) {
+                return new ResponseEntity<>("Passenger not found!",HttpStatus.NOT_FOUND);
             }
         }
         if (!found) {
@@ -82,6 +89,35 @@ public class RideController {
         }
 
         ride = rideService.createRide(ride);
+
+        Set<Ride> rides = new HashSet<>();
+        rides.add(ride);
+
+        Set<LocationSetDTO> locs = oldDTO.getLocations();
+        Set<Location> ridesLocations = new HashSet<>();
+        for (LocationSetDTO locationSetDTO : locs) {
+            LocationDTO departureDTO = locationSetDTO.getDeparture();
+            Location departure = locationService.findLocationByAddressLongitudeLatitude(departureDTO.getLongitude(), departureDTO.getLatitude(), departureDTO.getAddress());
+            if (departure==null) {
+                departure = locationService.addLocation(new Location(departureDTO.getLongitude(), departureDTO.getLatitude(), departureDTO.getAddress()));
+            }
+            ridesLocations.add(departure);
+            departure.setRides(rides);
+            locationService.updateLocation(departure);
+
+            LocationDTO destinationDTO = locationSetDTO.getDestination();
+            Location destination = locationService.findLocationByAddressLongitudeLatitude(destinationDTO.getLongitude(), destinationDTO.getLatitude(), destinationDTO.getAddress());
+            if (destination==null) {
+                destination = locationService.addLocation(new Location(destinationDTO.getLongitude(), destinationDTO.getLatitude(), destinationDTO.getAddress()));
+            }
+            ridesLocations.add(destination);
+            destination.setRides(rides);
+            locationService.updateLocation(destination);
+        }
+
+        ride.setLocations(new HashSet<>(ridesLocations));
+        ride = rideService.updateRide(ride);
+
 
         for (PassengerIdEmailDTO ped: oldDTO.getPassengers()) {
             Passenger p = passengerService.findById(ped.getId());
@@ -158,13 +194,18 @@ public class RideController {
 
     @PreAuthorize("hasRole('PASSENGER')")
     @PutMapping("/{id}/withdraw")
-    public ResponseEntity<?> cancelRide(Principal principal, @PathVariable("id") Integer id) {
+    public ResponseEntity<?> withdrawRide(Principal principal, @PathVariable("id") Integer id) {
         try {
             Ride ride = rideService.findRideById(id);
             checkPassengersAuthorities(principal, ride);
             Status status = ride.getStatus();
             if (status == Status.PENDING || status == Status.STARTED) {
                 ride.setStatus(Status.CANCELLED);
+                Rejection rejection = ride.getRejection();
+                rejection.setTime(new Date());
+                rejection.setReason("");
+                rejectionService.updateRejection(rejection);
+                ride.setRejection(rejection);
                 ride = rideService.updateRide(ride);
                 return new ResponseEntity<>(new RideRetDTO(ride), HttpStatus.OK);
             } else {
@@ -177,7 +218,7 @@ public class RideController {
 
     @PreAuthorize("hasAnyRole('DRIVER', 'PASSENGER')")
     @PutMapping("/{id}/panic")
-    public ResponseEntity<?> activatePanic(Principal principal, @PathVariable("id") Integer id, @RequestBody String reason){
+    public ResponseEntity<?> activatePanic(Principal principal, @PathVariable("id") Integer id, @RequestBody ReasonDTO reason){
         try {
             Ride ride = rideService.findRideById(id);
             int role = checkRole(principal);
@@ -186,11 +227,16 @@ public class RideController {
             } else {
                 checkPassengersAuthorities(principal, ride);
             }
-            User user = userService.findUserByEmail(principal.getName());
-            Panic panic = new Panic(ride, user, new Date(), reason);
-            panic = panicService.addPanic(panic);
-            ride.setPanic(panic);
-            return new ResponseEntity<>(new PanicDTO(panic), HttpStatus.OK);
+            Status status = ride.getStatus();
+            if (status == Status.STARTED) {
+                User user = userService.findUserByEmail(principal.getName());
+                Panic panic = new Panic(ride, user, new Date(), reason.getReason());
+                panic = panicService.addPanic(panic);
+                ride.setPanic(panic);
+                return new ResponseEntity<>(new PanicDTO(panic), HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(new ErrorMessage("Cannot panic in ride that is not in status STARTED!"), HttpStatus.BAD_REQUEST);
+            }
         } catch(RideNotFoundException e){
             return new ResponseEntity<>("Ride does not exist!",HttpStatus.NOT_FOUND);
         }
@@ -255,7 +301,7 @@ public class RideController {
 
     @PreAuthorize("hasRole('DRIVER')")
     @PutMapping("/{id}/cancel")
-    public ResponseEntity<?> cancelRide(Principal principal, @PathVariable("id") Integer id,  @RequestBody String reason){
+    public ResponseEntity<?> cancelRide(Principal principal, @PathVariable("id") Integer id,  @RequestBody ReasonDTO reason){
         try {
             Ride ride = rideService.findRideById(id);
             checkDriversAuthorities(principal, ride);
@@ -263,7 +309,7 @@ public class RideController {
             User user = userService.findUserById(ride.getDriver().getId());
             if (status == Status.PENDING || status == Status.ACCEPTED) {
                 ride.setStatus(Status.REJECTED);
-                Rejection rejection = new Rejection(ride, user, new Date(), reason);
+                Rejection rejection = new Rejection(ride, user, new Date(), reason.getReason());
                 rejectionService.addRejection(rejection);
                 ride.setRejection(rejection);
                 ride = rideService.updateRide(ride);
@@ -294,39 +340,53 @@ public class RideController {
                 }
             }
             Passenger p = passengerService.findById(user.getId());
+            Set<FavoriteRide> pFavRides = p.getFavoriteRides();
+            if (pFavRides.size() > 10) {
+                return new ResponseEntity<>("Number of favorite rides cannot exceed 10!",HttpStatus.BAD_REQUEST);
+            }
             Set<PassengerIdEmailDTO> passengersDTOs = oldDTO.getPassengers();
             HashSet<Passenger> passengers = new HashSet<>();
             for (PassengerIdEmailDTO passDTO: passengersDTOs) {
                 passengers.add(passengerService.findById(passDTO.getId()));
             }
             ride.setPassengers(passengers);
-            Set<LocationSetDTO> locationsDTO = oldDTO.getLocations();
-            ArrayList<LocationSetDTO> locationSetDTOArrayList = new ArrayList<>();
-            for (LocationSetDTO locDTO:locationsDTO) {
-                locationSetDTOArrayList.add(locDTO);
-            }
-            HashSet<Location> locations = new HashSet<>();
-            for (int i = 0; i < locationSetDTOArrayList.size(); i++) {
-                LocationSetDTO lsd = locationSetDTOArrayList.get(i);
-                LocationDTO ld = lsd.getDeparture();
-                Location loc = LocationDTOMapper.fromDTOtoLocation(ld);
-                locations.add(loc);
-                if (i == locationSetDTOArrayList.size() - 1 ) {
-                    ld = lsd.getDestination();
-                    loc = LocationDTOMapper.fromDTOtoLocation(ld);
-                    locations.add(loc);
-                }
-            }
-            ride.setLocations(locations);
+
             ride = favoriteRideService.createFavRide(ride);
+
+            Set<FavoriteRide> rides = new HashSet<>();
+            rides.add(ride);
+
+            Set<LocationSetDTO> locs = oldDTO.getLocations();
+            Set<Location> ridesLocations = new HashSet<>();
+            for (LocationSetDTO locationSetDTO : locs) {
+                LocationDTO departureDTO = locationSetDTO.getDeparture();
+                Location departure = locationService.findLocationByAddressLongitudeLatitude(departureDTO.getLongitude(), departureDTO.getLatitude(), departureDTO.getAddress());
+                if (departure==null) {
+                    departure = locationService.addLocation(new Location(departureDTO.getLongitude(), departureDTO.getLatitude(), departureDTO.getAddress()));
+                }
+                ridesLocations.add(departure);
+                departure.setFavoriteRides(rides);
+                locationService.updateLocation(departure);
+
+                LocationDTO destinationDTO = locationSetDTO.getDestination();
+                Location destination = locationService.findLocationByAddressLongitudeLatitude(destinationDTO.getLongitude(), destinationDTO.getLatitude(), destinationDTO.getAddress());
+                if (destination==null) {
+                    destination = locationService.addLocation(new Location(destinationDTO.getLongitude(), destinationDTO.getLatitude(), destinationDTO.getAddress()));
+                }
+                ridesLocations.add(destination);
+                destination.setFavoriteRides(rides);
+                locationService.updateLocation(destination);
+            }
+//            ride = favoriteRideService.updateRide(ride);
             Set<FavoriteRide> pr = p.getFavoriteRides();
             pr.add(ride);
             p.setFavoriteRides(new HashSet<>(pr));
             passengerService.update(p);
 
-            // osiguravamo da u dto objektu vrati samo passengera koji je poslao zahtev
+            // osiguravamo da u dto objektu vrati samo passengera koji je poslao zahtev ali ne sacuva tako u bazi!
             // paranoicno
             ride.setPassengers(passengerSet);
+            ride.setLocations(new HashSet<>(ridesLocations));
             return new ResponseEntity<>(new FavoriteRideWithTimeDTO(ride, new Date()), HttpStatus.OK);
         } catch (FavoriteRideNotFoundException e) {
             return new ResponseEntity<>("Cannot make favorite ride for other people!",HttpStatus.NOT_FOUND);
@@ -334,8 +394,6 @@ public class RideController {
     }
 
 
-    // @TODO return only rides for specific passenger
-    // return DTO in which they are the only passenger
     @PreAuthorize("hasRole('PASSENGER')")
     @GetMapping("/favorites")
     public ResponseEntity<?> findAllFavs(Principal principal) {
@@ -463,17 +521,17 @@ public class RideController {
             locationSetDTOArrayList.add(locDTO);
         }
         HashSet<Location> locations = new HashSet<>();
-        for (int i = 0; i < locationSetDTOArrayList.size(); i++) {
-            LocationSetDTO lsd = locationSetDTOArrayList.get(i);
-            LocationDTO ld = lsd.getDeparture();
-            Location loc = LocationDTOMapper.fromDTOtoLocation(ld);
-            locations.add(loc);
-            if (i == locationSetDTOArrayList.size() - 1 ) {
-                ld = lsd.getDestination();
-                loc = LocationDTOMapper.fromDTOtoLocation(ld);
-                locations.add(loc);
-            }
-        }
+//        for (int i = 0; i < locationSetDTOArrayList.size(); i++) {
+//            LocationSetDTO lsd = locationSetDTOArrayList.get(i);
+//            LocationDTO ld = lsd.getDeparture();
+//            Location loc = LocationDTOMapper.fromDTOtoLocation(ld);
+//            locations.add(loc);
+//            if (i == locationSetDTOArrayList.size() - 1 ) {
+//                ld = lsd.getDestination();
+//                loc = LocationDTOMapper.fromDTOtoLocation(ld);
+//                locations.add(loc);
+//            }
+//        }
         Status status = Status.PENDING;
         HashSet<Review> reviews = new HashSet<>();
         Review review = new Review();
@@ -483,6 +541,7 @@ public class RideController {
         panic = panicService.addPanic(panic);
         Rejection newRejection = new Rejection();
         newRejection.setTime(new Date());
+        newRejection.setReason("lalala");
         rejectionService.addRejection(newRejection);
         Instant instant = Instant.parse(dto.getScheduledTime());
         Date date = Date.from(instant);
@@ -530,6 +589,7 @@ public class RideController {
     private Ride fromDTOtoRide(RideAndroidDTO dto) throws UserNotFoundException {
         Date startTime = new Date();
         Date endTime = new Date();
+        endTime.setYear(2025);
         long totalCost = 5000;
         List<Driver> drivers = driverService.findAllDrivers();
         if (drivers.size() == 0) throw new UserNotFoundException("No available driver");
@@ -546,17 +606,17 @@ public class RideController {
             locationSetDTOArrayList.add(locDTO);
         }
         HashSet<Location> locations = new HashSet<>();
-        for (int i = 0; i < locationSetDTOArrayList.size(); i++) {
-            LocationSetDTO lsd = locationSetDTOArrayList.get(i);
-            LocationDTO ld = lsd.getDeparture();
-            Location loc = LocationDTOMapper.fromDTOtoLocation(ld);
-            locations.add(loc);
-            if (i == locationSetDTOArrayList.size() - 1 ) {
-                ld = lsd.getDestination();
-                loc = LocationDTOMapper.fromDTOtoLocation(ld);
-                locations.add(loc);
-            }
-        }
+//        for (int i = 0; i < locationSetDTOArrayList.size(); i++) {
+//            LocationSetDTO lsd = locationSetDTOArrayList.get(i);
+//            LocationDTO ld = lsd.getDeparture();
+//            Location loc = LocationDTOMapper.fromDTOtoLocation(ld);
+//            locations.add(loc);
+//            if (i == locationSetDTOArrayList.size() - 1 ) {
+//                ld = lsd.getDestination();
+//                loc = LocationDTOMapper.fromDTOtoLocation(ld);
+//                locations.add(loc);
+//            }
+//        }
         Status status = Status.PENDING;
         HashSet<Review> reviews = new HashSet<>();
         Review review = new Review();
@@ -566,6 +626,7 @@ public class RideController {
         panic = panicService.addPanic(panic);
         Rejection newRejection = new Rejection();
         newRejection.setTime(new Date());
+        newRejection.setReason("lalala");
         rejectionService.addRejection(newRejection);
         Instant instant = Instant.parse(dto.getScheduledTime());
         Date date = Date.from(instant);
