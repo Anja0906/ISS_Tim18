@@ -1,8 +1,13 @@
 package org.tim_18.UberApp.service;
 
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
+import net.bytebuddy.utility.RandomString;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -15,6 +20,7 @@ import org.tim_18.UberApp.model.Role;
 import org.tim_18.UberApp.model.User;
 import org.tim_18.UberApp.repository.UserRepository;
 
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 @Service("userService")
@@ -25,16 +31,75 @@ public class UserService {
     private final RoleService roleService;
     @Autowired
     private final PasswordEncoder passwordEncoder;
+    @Autowired
+    private JavaMailSender mailSender;
 
-    public UserService(UserRepository userRepository, RoleService roleService, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, RoleService roleService, PasswordEncoder passwordEncoder, JavaMailSender javaMailSender) {
         this.userRepository = userRepository;
         this.roleService = roleService;
         this.passwordEncoder = passwordEncoder;
+        this.mailSender = javaMailSender;
     }
 
-    public User addUser(User user) {
-        return userRepository.save(user);
+    public void register(User user, String siteURL)
+            throws UnsupportedEncodingException, MessagingException {
+        String encodedPassword = passwordEncoder.encode(user.getPassword());
+        user.setPassword(encodedPassword);
+
+        String randomCode = RandomString.make(64);
+        user.setVerificationCode(randomCode);
+        user.setActive(false);
+
+        userRepository.save(user);
+
+        sendVerificationEmail(user, siteURL);
     }
+
+    private void sendVerificationEmail(User user, String siteURL)
+            throws MessagingException, UnsupportedEncodingException {
+        String toAddress = user.getEmail();
+        String fromAddress = "Your email address";
+        String senderName = "Your company name";
+        String subject = "Please verify your registration";
+        String content = "Dear [[name]],<br>"
+                + "Please click the link below to verify your registration:<br>"
+                + "<h3><a href=\"[[URL]]\" target=\"_self\">VERIFY</a></h3>"
+                + "Thank you,<br>"
+                + "Your company name.";
+
+        MimeMessage message = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message);
+
+        helper.setFrom(fromAddress, senderName);
+        helper.setTo(toAddress);
+        helper.setSubject(subject);
+
+        content = content.replace("[[name]]", user.getName() + " " + user.getSurname());
+        String verifyURL = siteURL + "/verify?code=" + user.getVerificationCode();
+
+        content = content.replace("[[URL]]", verifyURL);
+
+        helper.setText(content, true);
+
+        mailSender.send(message);
+
+    }
+
+    public boolean verify(String verificationCode) {
+        User user = userRepository.findByVerificationCode(verificationCode);
+
+        if (user == null || user.isActive()) {
+            return false;
+        } else {
+            user.setVerificationCode(null);
+            user.setActive(true);
+            userRepository.save(user);
+
+            return true;
+        }
+
+    }
+
     public User updateUserFromDto(Integer id, UserDTO userDTO){
         User user = this.findUserById(id);
         user.setName(userDTO.getName());

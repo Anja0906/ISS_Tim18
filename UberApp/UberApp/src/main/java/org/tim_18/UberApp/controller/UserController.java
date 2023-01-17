@@ -1,10 +1,13 @@
 package org.tim_18.UberApp.controller;
+import jakarta.mail.MessagingException;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -26,6 +29,8 @@ import org.tim_18.UberApp.exception.UserNotFoundException;
 import org.tim_18.UberApp.model.*;
 import org.tim_18.UberApp.security.TokenUtils;
 import org.tim_18.UberApp.service.*;
+
+import java.io.UnsupportedEncodingException;
 import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -71,7 +76,47 @@ public class UserController {
         map.put("totalCount",usersDTO.size());
         map.put("results",usersDTO);
         return new ResponseEntity<>(map, HttpStatus.OK);
+    }
 
+    @PostMapping("/process_register")
+    public String processRegister(User user, HttpServletRequest request)
+            throws UnsupportedEncodingException, MessagingException {
+        userService.register(user, getSiteURL(request));
+        return "register_success";
+    }
+
+    //odraditi ovo u frontu
+    //<div class="container text-center">
+    //    <h3>You have signed up successfully!</h3>
+    //    <p>Please check your email to verify your account.</p>
+    //    <h4><a th:href="/@{/login}">Click here to Login</a></h4>
+    //</div>
+
+    @GetMapping("/verify")
+    public String verifyUser(@Param("code") String code) {
+        if (userService.verify(code)) {
+            return "verify_success";
+        } else {
+            return "verify_fail";
+        }
+    }
+
+    //uraditi ovo u frontu za uspesan verify
+    //<div class="container text-center">
+    //    <h3>Congratulations, your account has been verified.</h3>
+    //    <h4><a th:href="/@{/login}">Click here to Login</a></h4>
+    //</div>
+
+    //uraditi ovo u frontu za neuspesan verify
+    //<div class="container text-center">
+    //    <h3>Sorry, we could not verify account. It maybe already verified,
+    //        or verification code is incorrect.</h3>
+    //</div>
+
+
+    private String getSiteURL(HttpServletRequest request) {
+        String siteURL = request.getRequestURL().toString();
+        return siteURL.replace(request.getServletPath(), "");
     }
 
     @GetMapping("/{id}")

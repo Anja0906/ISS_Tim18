@@ -30,6 +30,9 @@ public class User extends ImplementsSerializable implements UserDetails {
     private String password;
     private boolean blocked;
     private boolean active;
+
+    @Column(name = "verification_code", length = 64)
+    private String verificationCode;
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "user_role",
             joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
@@ -141,6 +144,15 @@ public class User extends ImplementsSerializable implements UserDetails {
     public boolean isActive() {
         return active;
     }
+
+    public String getVerificationCode() {
+        return verificationCode;
+    }
+
+    public void setVerificationCode(String verificationCode) {
+        this.verificationCode = verificationCode;
+    }
+
     public void setActive(boolean active) {
         this.active = active;
     }
