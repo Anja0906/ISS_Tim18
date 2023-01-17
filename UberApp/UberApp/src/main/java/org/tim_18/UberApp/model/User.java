@@ -9,6 +9,7 @@ import java.io.Serializable;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -33,6 +34,12 @@ public class User extends ImplementsSerializable implements UserDetails {
 
     @Column(name = "verification_code", length = 64)
     private String verificationCode;
+
+    @Column(name = "reset_password_token")
+    private String resetPasswordToken;
+
+    @Column(name = "time_of_reset_password_token")
+    private Date timeOfResetPasswordToken;
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "user_role",
             joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
@@ -153,8 +160,24 @@ public class User extends ImplementsSerializable implements UserDetails {
         this.verificationCode = verificationCode;
     }
 
+    public String getResetPasswordToken() {
+        return resetPasswordToken;
+    }
+
+    public void setResetPasswordToken(String resetPasswordToken) {
+        this.resetPasswordToken = resetPasswordToken;
+    }
+
     public void setActive(boolean active) {
         this.active = active;
+    }
+
+    public Date getTimeOfResetPasswordToken() {
+        return timeOfResetPasswordToken;
+    }
+
+    public void setTimeOfResetPasswordToken(Date timeOfResetPasswordToken) {
+        this.timeOfResetPasswordToken = timeOfResetPasswordToken;
     }
 
     public void setRoles(List<Role> roles) {

@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.tim_18.UberApp.dto.UserDTO;
@@ -21,7 +22,10 @@ import org.tim_18.UberApp.model.User;
 import org.tim_18.UberApp.repository.UserRepository;
 
 import java.io.UnsupportedEncodingException;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Random;
 
 @Service("userService")
 public class UserService {
@@ -84,6 +88,26 @@ public class UserService {
         mailSender.send(message);
 
     }
+
+    public void sendEmail(String recipientEmail, String token)
+            throws MessagingException, UnsupportedEncodingException {
+        MimeMessage message = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message);
+
+        helper.setFrom("contact@shopme.com", "Shopme Support");
+        helper.setTo(recipientEmail);
+
+        String subject = "Here's the link to reset your password";
+
+        String content = "<p>"+token+"</p>";
+
+        helper.setSubject(subject);
+
+        helper.setText(content, true);
+
+        mailSender.send(message);
+    }
+
 
     public boolean verify(String verificationCode) {
         User user = userRepository.findByVerificationCode(verificationCode);
@@ -157,6 +181,50 @@ public class UserService {
         u.setRoles(roles);
 
         return this.userRepository.save(u);
+    }
+
+    public void updateResetPasswordToken(String token, String email) throws UserNotFoundException {
+        User user = userRepository.findByEmail(email);
+        if (user != null) {
+            user.setResetPasswordToken(token);
+            user.setTimeOfResetPasswordToken(new Date());
+            userRepository.save(user);
+        } else {
+            throw new UserNotFoundException("Could not find any user with the email " + email);
+        }
+    }
+
+    public int generateRandomInt(){
+        int min = 100000;
+        int max = 999999;
+        Random rand = new Random();
+        int randomNum = rand.nextInt((max - min) + 1) + min;
+        return randomNum;
+    }
+    public boolean compareIfCodeIsExpired(Date expiresIn){
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(expiresIn);
+        cal.add(Calendar.MINUTE, 15); // adding 30 minutes
+        expiresIn = cal.getTime();
+        Date date = new Date(); // current date
+        if(date.after(expiresIn)){
+            return true;
+        }else {
+            return false;
+        }
+    }
+
+    public User getByResetPasswordToken(String token) {
+        return userRepository.findByResetPasswordToken(token);
+    }
+
+    public void updatePassword(User user, String newPassword) {
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        String encodedPassword = passwordEncoder.encode(newPassword);
+        user.setPassword(encodedPassword);
+
+        user.setResetPasswordToken(null);
+        userRepository.save(user);
     }
     public User save(User u) {
         return this.userRepository.save(u);

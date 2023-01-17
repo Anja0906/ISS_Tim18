@@ -2,6 +2,7 @@ package org.tim_18.UberApp.controller;
 import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import net.bytebuddy.utility.RandomString;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -17,6 +18,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.tim_18.UberApp.Validation.ErrorMessage;
 import org.tim_18.UberApp.dto.*;
@@ -311,6 +313,42 @@ public class UserController {
         }
     }
 
+    @GetMapping("{id}/resetPassword")
+    public ResponseEntity<?> changePasswordRequest(@PathVariable("id") int id) {
+        try{
+            User user = userService.findUserById(id);
+            String email = user.getEmail();
+            String token = String.valueOf(userService.generateRandomInt());
+            userService.updateResetPasswordToken(token, email);
+            userService.sendEmail(email, token);
+            return new ResponseEntity<>("Email with reset code has been sent!", HttpStatus.NO_CONTENT);
+        }catch (UserNotFoundException e){
+            return new ResponseEntity<>("User does not exist!", HttpStatus.NOT_FOUND);
+        } catch (UnsupportedEncodingException | MessagingException e) {
+            return new ResponseEntity<>("Error while sending email", HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @PutMapping("{id}/resetPassword")
+    public ResponseEntity<?> changePassword(@PathVariable("id") int id, @RequestBody ResetPasswordDTO resetPasswordDTO) {
+        try{
+            User user = userService.findUserById(id);
+            String token = user.getResetPasswordToken();
+            Date expiresIn = user.getTimeOfResetPasswordToken();
+            boolean isExpired = userService.compareIfCodeIsExpired(expiresIn);
+            if(token.equals(resetPasswordDTO.getCode()) && !isExpired){
+                userService.updatePassword(user, resetPasswordDTO.getNewPassword());
+                return new ResponseEntity<>("Password successfully changed!", HttpStatus.NO_CONTENT);
+            }
+            else {
+                return new ResponseEntity<>(new ErrorMessage("Code is expired or not correct!"), HttpStatus.BAD_REQUEST);
+            }
+        }catch (UserNotFoundException e){
+            return new ResponseEntity<>("User does not exist!", HttpStatus.NOT_FOUND);
+        }catch (NullPointerException e){
+            return new ResponseEntity<>("Code is not sent to the email!", HttpStatus.NOT_FOUND);
+        }
+    }
 
     @GetMapping("/whoami")
     @PreAuthorize("hasRole('ROLE_USER')")
