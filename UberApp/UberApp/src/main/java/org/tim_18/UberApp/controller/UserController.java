@@ -81,10 +81,10 @@ public class UserController {
     }
 
     @PostMapping("/process_register")
-    public String processRegister(User user, HttpServletRequest request)
+    public ResponseEntity<?> processRegister(User user)
             throws UnsupportedEncodingException, MessagingException {
-        userService.register(user, getSiteURL(request));
-        return "register_success";
+        userService.register(user, "http://localhost:8080");
+        return new ResponseEntity<>("Successful account activation!", HttpStatus.OK);
     }
 
     //odraditi ovo u frontu
