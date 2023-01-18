@@ -7,7 +7,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 import org.tim_18.UberApp.Validation.ErrorMessage;
+import org.tim_18.UberApp.dto.Distance.DriverTime;
+import org.tim_18.UberApp.dto.Distance.DurationDistance;
+import org.tim_18.UberApp.dto.Distance.OsrmResponse;
 import org.tim_18.UberApp.dto.PanicDTO;
 import org.tim_18.UberApp.dto.ReasonDTO;
 import org.tim_18.UberApp.dto.locationDTOs.LocationDTO;
@@ -23,6 +27,9 @@ import org.tim_18.UberApp.service.*;
 
 import java.security.Principal;
 import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.*;
 
 @RestController
@@ -45,8 +52,9 @@ public class RideController {
     private LocationDTOMapper locationDTOMapper = new LocationDTOMapper(new ModelMapper());
     private FavoriteRideDTOMapper favoriteRideDTOMapper = new FavoriteRideDTOMapper(new ModelMapper());
 
+    private final WorkTimeService workTimeService;
 
-    public RideController(RideService rideService, DriverService driverService, RejectionService rejectionService, ReviewService reviewService, PanicService panicService, PassengerService passengerService, UserService userService, FavoriteRideService favoriteRideService, LocationService locationService) {
+    public RideController(RideService rideService, DriverService driverService, RejectionService rejectionService, ReviewService reviewService, PanicService panicService, PassengerService passengerService, UserService userService, FavoriteRideService favoriteRideService, LocationService locationService, WorkTimeService workTimeService) {
         this.rideService        = rideService;
         this.driverService      = driverService;
         this.rejectionService   = rejectionService;
@@ -56,6 +64,7 @@ public class RideController {
         this.userService        = userService;
         this.favoriteRideService = favoriteRideService;
         this.locationService = locationService;
+        this.workTimeService = workTimeService;
     }
 
     @PreAuthorize("hasRole('PASSENGER')")
@@ -65,7 +74,10 @@ public class RideController {
         boolean found = false;
         for (PassengerIdEmailDTO p:oldDTO.getPassengers()) {
             try {
-                passengerService.findById(p.getId());
+                Passenger passenger = passengerService.findById(p.getId());
+                if (passenger.isBlocked()) {
+                    return new ResponseEntity<>("Passenger with id " + passenger.getId() + " is blocked and cannot order ride!",HttpStatus.NOT_FOUND);
+                }
                 if (p.getId().equals(user.getId())){
                     found = true;
                     break;
@@ -78,6 +90,18 @@ public class RideController {
             return new ResponseEntity<>("Cannot make ride for other people!",HttpStatus.NOT_FOUND);
         }
 
+        String scheduledTime = oldDTO.getScheduledTime();
+        Instant instant = Instant.parse(scheduledTime);
+        Date scheduledTimeDate = Date.from(instant);
+        Date now = new Date();
+        long diff = scheduledTimeDate.getTime() - now.getTime();
+        if (diff <= 0) {
+            return new ResponseEntity<>(new ErrorMessage("Scheduled time should be in the future!"),HttpStatus.BAD_REQUEST);
+        }
+        long diffHours = diff / (60 * 60 * 1000) % 24;
+        if (diffHours > 5) {
+            return new ResponseEntity<>(new ErrorMessage("You can schedule only in next 5 hours!"),HttpStatus.BAD_REQUEST);
+        }
         Ride ride = fromDTOtoRide(oldDTO);
 
         boolean canMakeRide;
@@ -502,7 +526,7 @@ public class RideController {
         }
     }
 
-    private Ride fromDTOtoRide(RideRecDTO dto) throws UserNotFoundException {
+    private Ride fromDTOtoRide(RideRecDTO dto) throws UserNotFoundException, DriverNotFoundException {
         Date startTime = new Date();
         Date endTime = new Date();
         long totalCost = 5000;
@@ -521,17 +545,6 @@ public class RideController {
             locationSetDTOArrayList.add(locDTO);
         }
         HashSet<Location> locations = new HashSet<>();
-//        for (int i = 0; i < locationSetDTOArrayList.size(); i++) {
-//            LocationSetDTO lsd = locationSetDTOArrayList.get(i);
-//            LocationDTO ld = lsd.getDeparture();
-//            Location loc = LocationDTOMapper.fromDTOtoLocation(ld);
-//            locations.add(loc);
-//            if (i == locationSetDTOArrayList.size() - 1 ) {
-//                ld = lsd.getDestination();
-//                loc = LocationDTOMapper.fromDTOtoLocation(ld);
-//                locations.add(loc);
-//            }
-//        }
         Status status = Status.PENDING;
         HashSet<Review> reviews = new HashSet<>();
         Review review = new Review();
@@ -545,8 +558,125 @@ public class RideController {
         rejectionService.addRejection(newRejection);
         Instant instant = Instant.parse(dto.getScheduledTime());
         Date date = Date.from(instant);
-        return new Ride(startTime, endTime, totalCost, driver, passengers, estimatedTimeInMinutes, dto.getVehicleType(),
+        DriverTime driverTime = generateDriver(dto);
+
+        return new Ride(startTime, endTime, totalCost, driverTime.getDriver(), passengers, driverTime.getTime(), dto.getVehicleType(),
                 dto.isBabyTransport(), dto.isPetTransport(), newRejection, locations, status, reviews, panic, date);
+    }
+
+    private DriverTime generateDriver(RideRecDTO ride) throws DriverNotFoundException {
+        List<Driver> allDrivers = driverService.findAllDrivers();
+        if (allDrivers.isEmpty()) {
+            throw new DriverNotFoundException("");
+        }
+        List<Driver> potentialDriversCarEdition = new ArrayList<>();
+        for (Driver driver : allDrivers) {
+            Vehicle vehicle = driver.getVehicle();
+            if (!(vehicle.getVehicleType().equals(ride.getVehicleType()))) {
+                continue;
+            }
+            if (vehicle.getPassengerSeats() < ride.getPassengers().size()) {
+                continue;
+            }
+            if (ride.isBabyTransport() && !vehicle.getBabyTransport()) {
+                continue;
+            }
+            if (ride.isPetTransport() && !vehicle.getPetTransport()) {
+                continue;
+            }
+
+            //drivers car has the capacity for the requested ride
+            potentialDriversCarEdition.add(driver);
+        }
+
+        Set<LocationSetDTO> setDTOS = ride.getLocations();
+        LocationDTO departure = null, destination = null;
+        for (LocationSetDTO loc : setDTOS) {
+            departure = loc.getDeparture();
+        }
+
+        HashMap<Driver, Integer> durations = new HashMap<>();
+
+        for (Driver driver : potentialDriversCarEdition) {
+            Vehicle vehicle = driver.getVehicle();
+            Location location = vehicle.getCurrentLocation();
+            DurationDistance depdis = getDurationDistance(location.getLatitude(), location.getLongitude(), departure.getLatitude(), departure.getLongitude());
+            durations.put(driver, (int)depdis.getDistance()/60);
+        }
+//        List<Driver> potentialDriversWorkingHoursEdition = new ArrayList<>();
+//        for (Driver driver : potentialDriversCarEdition) {
+//            List<WorkTime> workTimes = workTimeService.findByDriversId(driver.getId());
+//            if (workTimes.isEmpty()) {
+//                continue;
+//            }
+//            for (WorkTime workTime : workTimes) {
+//                // work time did not start today
+//                if (workTime.getStart().compareTo(atStartOfDay(new Date())) < 0) {
+//                    workTimes.remove(workTime);
+//                }
+//                //work time does not end today
+//                if (workTime.getEnd().compareTo(atEndOfDay(new Date())) > 0) {
+//                    workTimes.remove(workTime);
+//                }
+//            }
+//            // driver does not want to wotk today ;(
+//            if (workTimes.isEmpty()) {
+//                continue;
+//            }
+//
+//        }
+
+//        for (Driver driver : potentialDriversCarEdition) {
+//            List<Ride> pendingRides = rideService.findRidesForDriverByStatus(driver.getId(), "PENDING", new Date().toString());
+//            List<Ride> acceptedRides = rideService.findRidesForDriverByStatus(driver.getId(), "ACCEPTED", new Date().toString());
+//            Ride startedRide = rideService.getDriverActiveRide(driver.getId());
+//        }
+        Driver bestDriver = null;
+        int minutes = 2147483645;
+        for (Map.Entry<Driver, Integer> map : durations.entrySet()) {
+            if (map.getValue() < minutes) {
+                bestDriver = map.getKey();
+                minutes = map.getValue();
+            }
+        }
+
+        if (bestDriver==null) {
+            throw new DriverNotFoundException("");
+        }
+        return new DriverTime(bestDriver, minutes);
+    }
+
+
+    private DurationDistance getDurationDistance(double startLat, double startLng, double endLat, double endLng) {
+
+        RestTemplate restTemplate = new RestTemplate();
+        String url = String.format("http://router.project-osrm.org/route/v1/driving/%s,%s;%s,%s", startLng, startLat, endLng, endLat);
+        OsrmResponse response = restTemplate.getForObject(url, OsrmResponse.class);
+
+        double duration = response.getRoutes().get(0).getDuration();
+        double distance = response.getRoutes().get(0).getDistance();
+
+        return new DurationDistance(duration, distance);
+    }
+
+    private static Date atStartOfDay(Date date) {
+        LocalDateTime localDateTime = dateToLocalDateTime(date);
+        LocalDateTime startOfDay = localDateTime.with(LocalTime.MIN);
+        return localDateTimeToDate(startOfDay);
+    }
+
+    private static Date atEndOfDay(Date date) {
+        LocalDateTime localDateTime = dateToLocalDateTime(date);
+        LocalDateTime endOfDay = localDateTime.with(LocalTime.MAX);
+        return localDateTimeToDate(endOfDay);
+    }
+
+    private static LocalDateTime dateToLocalDateTime(Date date) {
+        return LocalDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault());
+    }
+
+    private static Date localDateTimeToDate(LocalDateTime localDateTime) {
+        return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
     }
 
     // --------------------------- ANDROID -------------------------------//
@@ -606,17 +736,6 @@ public class RideController {
             locationSetDTOArrayList.add(locDTO);
         }
         HashSet<Location> locations = new HashSet<>();
-//        for (int i = 0; i < locationSetDTOArrayList.size(); i++) {
-//            LocationSetDTO lsd = locationSetDTOArrayList.get(i);
-//            LocationDTO ld = lsd.getDeparture();
-//            Location loc = LocationDTOMapper.fromDTOtoLocation(ld);
-//            locations.add(loc);
-//            if (i == locationSetDTOArrayList.size() - 1 ) {
-//                ld = lsd.getDestination();
-//                loc = LocationDTOMapper.fromDTOtoLocation(ld);
-//                locations.add(loc);
-//            }
-//        }
         Status status = Status.PENDING;
         HashSet<Review> reviews = new HashSet<>();
         Review review = new Review();

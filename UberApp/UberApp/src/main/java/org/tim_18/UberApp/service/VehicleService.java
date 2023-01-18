@@ -2,9 +2,10 @@ package org.tim_18.UberApp.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.tim_18.UberApp.exception.UserNotFoundException;
+import org.tim_18.UberApp.exception.VehicleNotFoundException;
 import org.tim_18.UberApp.model.Vehicle;
 import org.tim_18.UberApp.repository.VehicleRepository;
+
 import java.util.List;
 
 @Service("vehicleService")
@@ -33,7 +34,7 @@ public class VehicleService {
     }
     public Vehicle findVehicleById(Integer id) {
         return vehicleRepository.findVehicleById(id)
-                .orElseThrow(() -> new UserNotFoundException("Vehicle by id " + id + " was not found"));
+                .orElseThrow(() -> new VehicleNotFoundException("Vehicle by id " + id + " was not found"));
     }
 
     public void deleteVehicle(Integer id) {

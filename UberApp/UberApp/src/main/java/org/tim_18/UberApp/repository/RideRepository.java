@@ -6,9 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.tim_18.UberApp.model.Ride;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -48,4 +46,7 @@ public interface RideRepository extends JpaRepository<Ride, Integer> {
 
     @Query(value = "SELECT * FROM rides r INNER JOIN passenger_rides pr on r.id=pr.ride_id WHERE pr.passenger_id = ?1 and r.status = ?2", nativeQuery = true)
     ArrayList<Ride> findPassengersRidesByStatus(Integer id, String status);
+
+    @Query(value = "SELECT * FROM rides WHERE rides.driver_id = ?1 and DATE(rides.start_time)>?3 and rides.status=?2", nativeQuery = true)
+    List<Ride> findRidesForDriverByStatus(Integer id, String status, String now);
 }

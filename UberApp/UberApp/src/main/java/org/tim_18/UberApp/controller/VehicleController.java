@@ -4,12 +4,8 @@ package org.tim_18.UberApp.controller;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.tim_18.UberApp.dto.VehicleDTOWithoutIds;
-import org.tim_18.UberApp.dto.driverDTOs.DriverDTO;
-import org.tim_18.UberApp.dto.driverDTOs.DriverDTOWithoutId;
 import org.tim_18.UberApp.dto.locationDTOs.LocationDTO;
-import org.tim_18.UberApp.exception.UserNotFoundException;
-import org.tim_18.UberApp.model.Driver;
+import org.tim_18.UberApp.exception.VehicleNotFoundException;
 import org.tim_18.UberApp.model.Vehicle;
 import org.tim_18.UberApp.service.VehicleService;
 
@@ -25,7 +21,7 @@ public class VehicleController {
     }
 
     @PutMapping("/{id}/location")
-    public ResponseEntity<DriverDTO> updateVehicleById(
+    public ResponseEntity<?> updateVehicleById(
             @PathVariable("id") int id,
             @RequestBody LocationDTO locationDTO) {
         try {
@@ -34,9 +30,9 @@ public class VehicleController {
             vehicle.getCurrentLocation().setLatitude(locationDTO.getLongitude());
             vehicle.getCurrentLocation().setLongitude(locationDTO.getLongitude());
             Vehicle updateVehicle = vehicleService.updateVehicle(vehicle);
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        } catch (UserNotFoundException userNotFoundException) {
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Coordinates successfully updated", HttpStatus.NO_CONTENT);
+        } catch (VehicleNotFoundException e) {
+            return new ResponseEntity<>("Vehicle does not exist!", HttpStatus.NOT_FOUND);
         }
     }
 

@@ -14,22 +14,17 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.tim_18.UberApp.Validation.ErrorMessage;
 import org.tim_18.UberApp.dto.*;
-
 import org.tim_18.UberApp.dto.driverDTOs.DriverDTO;
 import org.tim_18.UberApp.dto.driverDTOs.DriverDTOWithoutId;
 import org.tim_18.UberApp.dto.locationDTOs.LocationDTO;
 import org.tim_18.UberApp.dto.rideDTOs.RideRetDTO;
-import org.tim_18.UberApp.exception.*;
-import org.tim_18.UberApp.model.Document;
-import org.tim_18.UberApp.model.Driver;
-import org.tim_18.UberApp.model.Vehicle;
-import org.tim_18.UberApp.service.DocumentService;
-import org.tim_18.UberApp.service.DriverService;
-import org.tim_18.UberApp.service.VehicleService;
+import org.tim_18.UberApp.exception.DocumentNotFoundException;
+import org.tim_18.UberApp.exception.DriverNotFoundException;
+import org.tim_18.UberApp.exception.VehicleNotFoundException;
+import org.tim_18.UberApp.exception.WorkTimeNotFoundException;
 import org.tim_18.UberApp.model.*;
 import org.tim_18.UberApp.service.*;
 
-import javax.persistence.criteria.CriteriaBuilder;
 import java.security.Principal;
 import java.time.Instant;
 import java.util.*;
@@ -289,13 +284,12 @@ public class DriverController {
     @PostMapping("/{id}/working-hour")
     public ResponseEntity<?> addWorkingHourForDriver(Principal principal,
                                                      @PathVariable("id") int id,
-                                                     @RequestBody WorkTimeDTOWithoutDriver workTimeDTOWithoutDriver) {
+                                                     @RequestBody StartTimeDTO date) {
         try{
             checkAuthorities(principal, id);
             Driver driver = driverService.findDriverById(id);
-            Instant instantStart = Instant.parse(workTimeDTOWithoutDriver.getStart());
-            Instant instantEnd = Instant.parse(workTimeDTOWithoutDriver.getEnd());
-            WorkTime workTime = new WorkTime(Date.from(instantStart), Date.from(instantEnd), driver);
+            Instant instantStart = Instant.parse(date.getStart());
+            WorkTime workTime = new WorkTime(Date.from(instantStart), Date.from(instantStart), driver);
             workTime = workTimeService.addWorkTime(workTime);
             return new ResponseEntity<>(new WorkTimeDTOWithoutDriver(workTime), HttpStatus.OK);
         }catch (DriverNotFoundException driverNotFoundException){
@@ -304,28 +298,43 @@ public class DriverController {
     }
 
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('DRIVER')")
     @GetMapping("/working-hour/{working-hour-id}")
     public ResponseEntity<?> getWorkingHourById (
+            Principal principal,
             @PathVariable("working-hour-id") int id) {
         try {
+            User user = userService.findUserByEmail(principal.getName());
+            Integer userId = user.getId();
             WorkTime workTime = workTimeService.findWorkTimeById(id);
-            return new ResponseEntity<>(new WorkTimeDTOWithoutDriver(workTime),HttpStatus.OK);
+            Driver driver = workTime.getDriver();
+            if (userId.equals(driver.getId())) {
+                return new ResponseEntity<>(new WorkTimeDTOWithoutDriver(workTime),HttpStatus.OK);
+            }
+            return new ResponseEntity<>("Working hour does not exist!",HttpStatus.NOT_FOUND);
         }catch(WorkTimeNotFoundException workTimeNotFoundException){
             return new ResponseEntity<>("Working hour does not exist!",HttpStatus.NOT_FOUND);
         }
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('DRIVER')")
     @PutMapping("/working-hour/{working-hour-id}")
     public ResponseEntity<?> updateWorkingHourById (
+            Principal principal,
             @PathVariable("working-hour-id") int id,
-            @RequestBody WorkTimeDTOWithoutDriver workTimeDTOWithoutDriver) {
+            @RequestBody EndTimeDTO date) {
         try {
+            User user = userService.findUserByEmail(principal.getName());
+            Integer userId = user.getId();
             WorkTime workTime = workTimeService.findWorkTimeById(id);
-            workTime.updateWorkTime(workTimeDTOWithoutDriver);
-            workTime = workTimeService.updateWorkTime(workTime);
-            return new ResponseEntity<>(new WorkTimeDTOWithoutDriver(workTime),HttpStatus.OK);
+            Driver driver = workTime.getDriver();
+            if (userId.equals(driver.getId())) {
+                Instant instant = Instant.parse(date.getEnd());
+                workTime.setEnd(Date.from(instant));
+                workTime = workTimeService.updateWorkTime(workTime);
+                return new ResponseEntity<>(new WorkTimeDTOWithoutDriver(workTime),HttpStatus.OK);
+            }
+            return new ResponseEntity<>("Working hour does not exist!",HttpStatus.NOT_FOUND);
         }catch(WorkTimeNotFoundException workTimeNotFoundException){
             return new ResponseEntity<>("Working hour does not exist!",HttpStatus.NOT_FOUND);
         }

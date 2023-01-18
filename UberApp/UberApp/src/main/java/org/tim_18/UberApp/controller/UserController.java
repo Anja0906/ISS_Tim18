@@ -261,6 +261,9 @@ public class UserController {
         try{
             User user =userService.findUserById(id);
             Note note = new Note(user,notePostDTO.getMessage());
+            if (notePostDTO.getMessage().length() > 200) {
+                return new ResponseEntity<>("Message too long!", HttpStatus.BAD_REQUEST);
+            }
             noteService.saveNote(note);
             NoteResponseDTO noteResponseDTO = new NoteResponseDTO(note);
             return new ResponseEntity<>(noteResponseDTO, HttpStatus.OK);

@@ -2,16 +2,13 @@ package org.tim_18.UberApp.service;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.tim_18.UberApp.exception.RideNotFoundException;
 import org.tim_18.UberApp.model.Ride;
 import org.tim_18.UberApp.repository.RideRepository;
 
-
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-
-import java.util.Date;
 import java.util.List;
 
 @Service
@@ -87,5 +84,9 @@ public class RideService {
 
     public List<Ride> findRidesByUser(Integer id, String from, String to) {
         return rideRepository.findRidesForUser(id, from, to);
+    }
+
+    public List<Ride> findRidesForDriverByStatus(Integer id, String status, String now) {
+        return rideRepository.findRidesForDriverByStatus(id, status, now);
     }
 }
