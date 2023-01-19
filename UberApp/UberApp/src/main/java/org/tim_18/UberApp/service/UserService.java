@@ -62,8 +62,8 @@ public class UserService {
     private void sendVerificationEmail(User user, String siteURL)
             throws MessagingException, UnsupportedEncodingException {
         String toAddress = user.getEmail();
-        String fromAddress = "Your email address";
-        String senderName = "Your company name";
+        String fromAddress = "uberapptim18@gmail.com";
+        String senderName = "UberAppTim18";
         String subject = "Please verify your registration";
         String content = "Dear [[name]],<br>"
                 + "Please click the link below to verify your registration:<br>"
@@ -94,7 +94,7 @@ public class UserService {
         MimeMessage message = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message);
 
-        helper.setFrom("contact@shopme.com", "Shopme Support");
+        helper.setFrom("uberapptim18@gmail.com", "UberAppTim18 Support");
         helper.setTo(recipientEmail);
 
         String subject = "Here's the link to reset your password";
