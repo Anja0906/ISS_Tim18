@@ -80,10 +80,10 @@ public class UserController {
         return new ResponseEntity<>(map, HttpStatus.OK);
     }
 
-    @PostMapping("/process_register")
-    public ResponseEntity<?> processRegister(User user)
+    @PostMapping("/register")
+    public ResponseEntity<?> processRegister(@RequestBody User user)
             throws UnsupportedEncodingException, MessagingException {
-        userService.register(user, "http://localhost:8080");
+        userService.register(user, "http://localhost:8080/api/user");
         return new ResponseEntity<>("Successful account activation!", HttpStatus.OK);
     }
 
@@ -115,11 +115,6 @@ public class UserController {
     //        or verification code is incorrect.</h3>
     //</div>
 
-
-    private String getSiteURL(HttpServletRequest request) {
-        String siteURL = request.getRequestURL().toString();
-        return siteURL.replace(request.getServletPath(), "");
-    }
 
     @GetMapping("/{id}")
     public ResponseEntity<UserDTO> getUser (
