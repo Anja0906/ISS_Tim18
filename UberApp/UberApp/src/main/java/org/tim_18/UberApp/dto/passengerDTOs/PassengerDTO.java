@@ -1,15 +1,30 @@
-package org.tim_18.UberApp.dto;
+package org.tim_18.UberApp.dto.passengerDTOs;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+import org.hibernate.validator.constraints.Length;
 import org.tim_18.UberApp.model.Passenger;
 @Data
 public class PassengerDTO {
+    @NotNull
     private String name;
+
+    @NotNull
     private String surname;
+
+    @NotNull
     private String profilePicture;
+
+    @Length(min = 9, message = "Bad phone number format")
     private String telephoneNumber;
+    @Email(regexp = "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$", message = "Bad email format")
     private String email;
+
+    @NotNull
     private String address;
+
+    @Length(min = 2, message = "Bad password format")
     private String password;
 
     public PassengerDTO() {}

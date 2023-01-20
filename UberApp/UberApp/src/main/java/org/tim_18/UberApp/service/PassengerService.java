@@ -49,11 +49,6 @@ public class PassengerService {
                 .orElseThrow(() -> new PassengerNotFoundException("Passenger by email " + email + " was not found"));
     }
 
-    public PassengerDTOwithPassword save(PassengerDTOwithPassword dto) {
-        Passenger passenger = dtoMapper.fromDTOtoPassenger(dto);
-        passenger = passengerRepository.save(passenger);
-        return dtoMapper.fromPassengerToDTO(passenger);
-    }
 
     public Passenger save(Passenger passenger) {
         return passengerRepository.save(passenger);
