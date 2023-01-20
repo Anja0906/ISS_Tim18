@@ -6,7 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.tim_18.UberApp.dto.passengerDTOs.PassengerDTOwithPassword;
-import org.tim_18.UberApp.exception.UserNotFoundException;
+import org.tim_18.UberApp.exception.PassengerNotFoundException;
 import org.tim_18.UberApp.mapper.passengerDTOmappers.PassengerDTOwithPasswordMapper;
 import org.tim_18.UberApp.model.Passenger;
 import org.tim_18.UberApp.repository.PassengerRepository;
@@ -29,36 +29,28 @@ public class PassengerService {
     public Passenger addPassenger(Passenger passenger) {
         return passengerRepository.save(passenger);
     }
+    public Passenger update(Passenger passenger) {
+        return passengerRepository.save(passenger);
+    }
 
     public List<Passenger> findAll() {
         return passengerRepository.findAll();
     }
-    public List<Passenger> findAll(Pageable page) {
-        return (List<Passenger>) passengerRepository.findAll(page);
-    }
+    public Page<Passenger> findAll(Pageable page){return passengerRepository.findAll(page);}
 
-    public Page<Passenger> findPassengerById(String title, Pageable pageable) {
-        return passengerRepository.findPassengerById(title, pageable);
-    }
-
-//    public PassengerDTOwithPassword updatePassenger(PassengerDTOwithPassword passenger) {
-//        return passengerRepository.save(passenger);
-//    }
-
-    ;
 
     public Passenger findById(Integer id) {
-        return passengerRepository.findPassengerById(id).orElseThrow(() -> new UserNotFoundException("Passenger by id " + id + " was not found"));
+        return passengerRepository.findPassengerById(id)
+                .orElseThrow(() -> new PassengerNotFoundException("Passenger by id " + id + " was not found"));
     }
 
-    public PassengerDTOwithPassword save(PassengerDTOwithPassword dto) {
-        Passenger passenger = dtoMapper.fromDTOtoPassenger(dto);
-        passenger = passengerRepository.save(passenger);
-        return dtoMapper.fromPassengerToDTO(passenger);
+    public Passenger findByEmail(String email) {
+        return passengerRepository.findPassengerByEmail(email)
+                .orElseThrow(() -> new PassengerNotFoundException("Passenger by email " + email + " was not found"));
     }
-<<<<<<< Updated upstream
-=======
 
 
->>>>>>> Stashed changes
+    public Passenger save(Passenger passenger) {
+        return passengerRepository.save(passenger);
+    }
 }

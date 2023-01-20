@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
+import java.util.Set;
 
 @Entity
 @Table(name = "locations")
@@ -12,20 +13,41 @@ public class Location implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Integer id;
-
     private Double longitude;
     private Double latitude;
     private String address;
 
-    @JsonIgnore
-    @ManyToOne
-    private Ride ride;
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {
+            CascadeType.PERSIST,
+            CascadeType.MERGE,
+            CascadeType.ALL
+    })
+    @JoinTable(name = "locations_favorite_rides",
+            joinColumns = @JoinColumn(name = "location_id"),
+            inverseJoinColumns = @JoinColumn(name = "fav_ride_id"))
+    private Set<FavoriteRide> favoriteRides;
 
-    public Location() {
-    }
+
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {
+            CascadeType.PERSIST,
+            CascadeType.MERGE,
+            CascadeType.ALL
+    })
+    @JoinTable(name = "locations_rides",
+            joinColumns = @JoinColumn(name = "location_id"),
+            inverseJoinColumns = @JoinColumn(name = "ride_id"))
+    private Set<Ride> rides;
+
+    public Location() {}
 
     public Location(Integer id, Double longitude, Double latitude, String address) {
         this.id         = id;
+        this.longitude  = longitude;
+        this.latitude   = latitude;
+        this.address    = address;
+    }
+
+    public Location(Double longitude, Double latitude, String address) {
         this.longitude  = longitude;
         this.latitude   = latitude;
         this.address    = address;
@@ -63,4 +85,19 @@ public class Location implements Serializable {
         this.id = id;
     }
 
+    public Set<FavoriteRide> getFavoriteRides() {
+        return favoriteRides;
+    }
+
+    public void setFavoriteRides(Set<FavoriteRide> favoriteRides) {
+        this.favoriteRides = favoriteRides;
+    }
+
+    public Set<Ride> getRides() {
+        return rides;
+    }
+
+    public void setRides(Set<Ride> rides) {
+        this.rides = rides;
+    }
 }

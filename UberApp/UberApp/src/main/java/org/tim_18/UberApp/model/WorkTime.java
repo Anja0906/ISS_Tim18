@@ -3,7 +3,9 @@ package org.tim_18.UberApp.model;
 import jakarta.persistence.*;
 import org.tim_18.UberApp.dto.WorkTimeDTOWithoutDriver;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.util.Date;
 
 @Entity
 @Table(name = "work_time")
@@ -12,36 +14,38 @@ public class WorkTime {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Integer id;
-    private LocalDateTime start;
-    private LocalDateTime end;
+    private Date start;
+    private Date end;
     @OneToOne (cascade = {CascadeType.ALL})
     private Driver driver;
 
 
     public WorkTime() {}
 
-    public WorkTime(Integer id, LocalDateTime start, LocalDateTime end, Driver driver) {
+    public WorkTime(Integer id, Date start, Date end, Driver driver) {
         this.id         = id;
         this.start      = start;
         this.end        = end;
         this.driver     = driver;
     }
 
-    public WorkTime(LocalDateTime start, LocalDateTime end, Driver driver) {
+    public WorkTime(Date start, Date end, Driver driver) {
         this.start      = start;
         this.end        = end;
         this.driver     = driver;
     }
     public void updateWorkTime(WorkTimeDTOWithoutDriver workTimeDTOWithoutDriver){
-        setStart(workTimeDTOWithoutDriver.getStart());
-        setEnd(workTimeDTOWithoutDriver.getEnd());
+        Instant instant = Instant.parse(workTimeDTOWithoutDriver.getStart());
+        setStart(Date.from(instant));
+        instant = Instant.parse(workTimeDTOWithoutDriver.getEnd());
+        setEnd(Date.from(instant));
     }
 
-    public LocalDateTime getStart() {return start;}
-    public void setStart(LocalDateTime start) {this.start = start;}
+    public Date getStart() {return start;}
+    public void setStart(Date start) {this.start = start;}
 
-    public LocalDateTime getEnd() {return end;}
-    public void setEnd(LocalDateTime end) {this.end = end;}
+    public Date getEnd() {return end;}
+    public void setEnd(Date end) {this.end = end;}
 
     public Driver getDriver() {return driver;}
     public void setDriver(Driver driver) {this.driver = driver;}

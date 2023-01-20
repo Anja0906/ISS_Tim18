@@ -1,6 +1,8 @@
 package org.tim_18.UberApp.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.tim_18.UberApp.model.Review;
 import org.tim_18.UberApp.model.Ride;
@@ -9,45 +11,59 @@ import org.tim_18.UberApp.repository.ReviewRepository;
 import org.tim_18.UberApp.repository.RideRepository;
 import org.tim_18.UberApp.repository.VehicleRepository;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 
 @Service("reviewService")
 public class ReviewService {
     @Autowired
     private final ReviewRepository reviewRepository;
-    @Autowired
-    private final RideRepository rideRepository;
-
-    @Autowired
-    private final VehicleRepository vehicleRepository;
 
     public ReviewService(ReviewRepository reviewRepository, RideRepository rideRepository, VehicleRepository vehicleRepository) {
         this.reviewRepository = reviewRepository;
-        this.rideRepository = rideRepository;
-        this.vehicleRepository = vehicleRepository;
     }
 
-    public Ride getRideById(Integer id){
-        return rideRepository.findById(id).get();
-    }
 
     public void save(Review review) {
         reviewRepository.save(review);
     }
-
-    public Vehicle getVehicleById(Integer id){
-        return vehicleRepository.findById(id).get();
+    public Page<Review> findAll(Pageable page){
+        return reviewRepository.findAll(page);
     }
 
-    public HashSet<Review> findByVehicleId(int id) {
-        return reviewRepository.findByVehicleId(id);
+    public Page<Review> findByRideId(int id, Pageable pageable) {
+        return reviewRepository.findByRideId(id, pageable);
     }
 
-    public HashSet<Review> findByRideId(int id) {
-        return reviewRepository.findByRideId(id);
+    public Page<Review> findByDriverId(int id, Pageable pageable) {
+        return reviewRepository.findByDriverId(id, pageable);
     }
 
-    public HashSet<Review> findByDriverId(int id) {
-        return reviewRepository.findByDriverId(id);
+    public Page<Review> findByVehicleId(int id, Pageable pageable) {
+        return reviewRepository.findByVehicleId(id, pageable);
+    }
+
+    public Review addReview(Review review) {
+        return reviewRepository.save(review);
+    }
+
+    public HashSet<Review> findByRideIdHash(Integer id) {
+        return reviewRepository.findByRideIdHash(id);
+    }
+
+    public Page<Review> findByVehicleAndPassengerId(int vehicleId, int passengerId, Pageable pageable) {
+        return reviewRepository.findByVehicleAndPassengerId(vehicleId, passengerId, pageable);
+    }
+
+    public Page<Review> findByDriverAndPassengerId(int driverId, int passengerId, Pageable pageable) {
+        return reviewRepository.findByDriverAndPassengerId(driverId, passengerId, pageable);
+    }
+
+    public Review findByRideAndPassengerIdForVehicle(int rideId, int passengerId) {
+        return reviewRepository.findByRideAndPassengerIdForVehicle(rideId, passengerId);
+    }
+
+    public Review findByRideAndPassengerIdForDriver(int rideId, int passengerId) {
+        return reviewRepository.findByRideAndPassengerIdForDriver(rideId, passengerId);
     }
 }

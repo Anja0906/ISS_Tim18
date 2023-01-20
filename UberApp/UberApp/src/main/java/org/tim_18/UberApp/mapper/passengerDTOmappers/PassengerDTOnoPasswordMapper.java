@@ -3,7 +3,6 @@ package org.tim_18.UberApp.mapper.passengerDTOmappers;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 import org.tim_18.UberApp.dto.passengerDTOs.PassengerDTOnoPassword;
-import org.tim_18.UberApp.dto.passengerDTOs.PassengerDTOwithPassword;
 import org.tim_18.UberApp.model.Passenger;
 
 @Component
@@ -21,5 +20,10 @@ public class PassengerDTOnoPasswordMapper {
 
     public PassengerDTOnoPassword fromPassengerToDTO(Passenger passenger) {
         return modelMapper.map(passenger, PassengerDTOnoPassword.class);
+    }
+
+    public Passenger fromDTOtoPassenger(PassengerDTOnoPassword dto, Integer id) {
+        dto.setId(id);
+        return modelMapper.map(dto, Passenger.class);
     }
 }

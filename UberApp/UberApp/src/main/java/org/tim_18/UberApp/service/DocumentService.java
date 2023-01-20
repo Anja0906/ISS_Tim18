@@ -3,6 +3,7 @@ package org.tim_18.UberApp.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.tim_18.UberApp.exception.DocumentNotFoundException;
 import org.tim_18.UberApp.exception.UserNotFoundException;
 import org.tim_18.UberApp.model.Document;
 import org.tim_18.UberApp.repository.DocumentRepository;
@@ -23,8 +24,9 @@ public class DocumentService {
     public Document addDocument(Document document) {
         return documentRepository.save(document);
     }
+    public void deleteDocument(Document document){ documentRepository.delete(document);}
 
-    public void remove(Integer id) {documentRepository.deleteById(id);}
+    public void deleteDocumentById(Integer id) {documentRepository.deleteById(id);}
 
     public List<Document> findAllDocuments() {
         return documentRepository.findAll();
@@ -39,7 +41,7 @@ public class DocumentService {
 
     public Document findDocumentById(Integer id) {
         return documentRepository.findDocumentById(id)
-                .orElseThrow(() -> new UserNotFoundException("Driver by id " + id + " was not found"));
+                .orElseThrow(() -> new DocumentNotFoundException("Document by id " + id + " was not found"));
     }
 
 }

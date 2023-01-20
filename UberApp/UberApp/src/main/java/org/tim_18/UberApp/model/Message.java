@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.Date;
 
 @Entity
 @Table(name = "messages")
@@ -17,7 +18,7 @@ public class Message implements Serializable {
     @ManyToOne(cascade = {CascadeType.ALL})
     private User receiver;
     private String message;
-    private LocalDateTime time;
+    private Date time;
     private String messageType;
     @ManyToOne(cascade = {CascadeType.ALL})
     private Ride ride;
@@ -25,8 +26,17 @@ public class Message implements Serializable {
 
     public Message() {}
 
-    public Message(Integer id, User sender, User receiver, String message, LocalDateTime time, String messageType, Ride ride) {
+    public Message(Integer id, User sender, User receiver, String message, Date time, String messageType, Ride ride) {
         this.id          = id;
+        this.sender      = sender;
+        this.receiver    = receiver;
+        this.message     = message;
+        this.time        = time;
+        this.messageType = messageType;
+        this.ride        = ride;
+    }
+
+    public Message(User sender, User receiver, String message, Date time, String messageType, Ride ride) {
         this.sender      = sender;
         this.receiver    = receiver;
         this.message     = message;
@@ -67,11 +77,11 @@ public class Message implements Serializable {
         this.message = message;
     }
 
-    public LocalDateTime getTime() {
+    public Date getTime() {
         return time;
     }
 
-    public void setTime(LocalDateTime time) {
+    public void setTime(Date time) {
         this.time = time;
     }
 

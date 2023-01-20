@@ -20,27 +20,23 @@ public class Document implements Serializable {
     @JoinColumn(name = "driver_id", nullable=false)
     private Driver driver;
 
-    public Document() {
-    }
+    public Document() {}
 
     public Document(Integer id, String name, String documentImage, Driver driver) {
-        this.id     = id;
-        this.name   = name;
+        this.id             = id;
+        this.name           = name;
         this.documentImage  = documentImage;
-        this.driver = driver;
+        this.driver         = driver;
     }
-
     public Document makeDocumentFromDTO(DocumentDTO documentDTO,Driver driver){
         setName(documentDTO.getName());
         setDocumentImage(documentDTO.getDocumentImage());
         setDriver(driver);
         return this;
     }
-
     public Integer getId() {
         return id;
     }
-
     public void setId(Integer id) {
         this.id = id;
     }
@@ -48,7 +44,6 @@ public class Document implements Serializable {
     public String getName() {
         return name;
     }
-
     public void setName(String name) {
         this.name = name;
     }
@@ -56,7 +51,6 @@ public class Document implements Serializable {
     public String getDocumentImage() {
         return documentImage;
     }
-
     public void setDocumentImage(String documentImage) {
         this.documentImage = documentImage;
     }
@@ -64,7 +58,6 @@ public class Document implements Serializable {
     public Driver getDriver() {
         return driver;
     }
-
     public void setDriver(Driver driver) {
         this.driver = driver;
     }

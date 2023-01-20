@@ -14,6 +14,7 @@ public class AssumptionService {
     }
 
     public Ride calculatePrice(Ride ride){
+
         return ride;
     }
 }
