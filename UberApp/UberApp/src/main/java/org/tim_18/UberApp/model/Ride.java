@@ -195,7 +195,6 @@ public class Ride implements Serializable {
                 ", vehicleType=" + vehicleType +
                 ", babyTransport=" + babyTransport +
                 ", petTransport=" + petTransport +
-                ", rejection=" + rejection +
                 ", locations=" + locations +
                 ", status=" + status +
                 '}';
