@@ -139,23 +139,19 @@ public class PassengerController {
     public ResponseEntity<?> findPassengersRides(Principal principal,
                                                                    @PathVariable("id") Integer id,
                                                                    @RequestParam(defaultValue = "0") Integer page,
-                                                                   @RequestParam(defaultValue = "4") Integer size,
+                                                                   @RequestParam(defaultValue = "15") Integer size,
                                                                    @RequestParam(defaultValue = "id") String sort,
-                                                                   @RequestParam (defaultValue = "2021-10-10T10:00")String from,
-                                                                   @RequestParam (defaultValue = "2023-10-10T10:00")String to) {
+                                                                   @RequestParam (defaultValue = "2021-10-10")String from,
+                                                                   @RequestParam (defaultValue = "2023-10-10")String to) {
         try {
             checkAuthoritiesAdmin(principal, id);
             Passenger passenger = passengerService.findById(id);
-            Pageable paging = PageRequest.of(page, size, Sort.by(sort));
-            List<Ride> rides = rideService.findRidesByPassengersId(id, from, to);
-//            Page<Ride> pagedResult = rideService.findRidesByPassengersId(id, from, to, paging);
-            List<RideRetDTO> ridesDTO = new ArrayList<>();
-            for (Ride r : rides) {
-                ridesDTO.add(new RideRetDTO(r));
-            }
+            Pageable paging = PageRequest.of(page, size);
+//            List<Ride> rides = rideService.findRidesByPassengersId(id, from, to);
+            Page<Ride> rides = rideService.findRidesByPassengersId(id, from, to, paging);
+            HashSet<RideRetDTO> ridesDTO = new RideRetDTO().makeRideRideDTOS(rides);
             Map<String, Object> response = new HashMap<>();
             response.put("totalCount", ridesDTO.size());
-//            response.put("totalCount", pagedResult.getTotalElements());
             response.put("results", ridesDTO);
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch(PassengerNotFoundException e){
