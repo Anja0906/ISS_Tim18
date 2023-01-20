@@ -3,7 +3,6 @@ package org.tim_18.UberApp.mapper.passengerDTOmappers;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 import org.tim_18.UberApp.dto.passengerDTOs.PassengerDTOnoPassword;
-import org.tim_18.UberApp.dto.passengerDTOs.PassengerDTOwithPassword;
 import org.tim_18.UberApp.model.Passenger;
 
 @Component

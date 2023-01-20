@@ -1,6 +1,7 @@
 package org.tim_18.UberApp.dto;
 
 import lombok.Data;
+import org.tim_18.UberApp.dto.passengerDTOs.PassengerIdEmailDTO;
 import org.tim_18.UberApp.model.Review;
 
 @Data

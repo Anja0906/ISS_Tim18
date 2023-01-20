@@ -2,7 +2,7 @@ package org.tim_18.UberApp.dto;
 
 import lombok.Data;
 import org.springframework.data.domain.Page;
-import org.tim_18.UberApp.model.Passenger;
+import org.tim_18.UberApp.dto.passengerDTOs.PassengerIdEmailDTO;
 import org.tim_18.UberApp.model.Review;
 
 import java.util.HashSet;
