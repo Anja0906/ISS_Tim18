@@ -48,9 +48,12 @@ INSERT INTO drivers (id, vehicle_id) VALUES ('8', '5');
 INSERT INTO drivers (id, vehicle_id) VALUES ('9', '6');
 
 # documents
-INSERT INTO documents (id, document_image, name, driver_id) VALUES ('1', 'hkdhfshdfj', 'hsgdgadg', '1');
-INSERT INTO documents (id, document_image, name, driver_id) VALUES ('2', 'asjhdjhasjcfh', 'ajshdjsahc', '2');
-INSERT INTO documents (id, document_image, name, driver_id) VALUES ('3', 'ajshdjsh', 'jashjcshjc', '3');
+INSERT INTO documents (document_image, name, driver_id) VALUES ('hkdhfshdfj', 'hsgdgadg', '1');
+INSERT INTO documents (document_image, name, driver_id) VALUES ('hkdhfshdfj', 'hsgdgadg', '1');
+INSERT INTO documents (document_image, name, driver_id) VALUES ('hkdhfshdfj', 'hsgdgadg', '1');
+INSERT INTO documents (document_image, name, driver_id) VALUES ('hkdhfshdfj', 'hsgdgadg', '1');
+INSERT INTO documents (document_image, name, driver_id) VALUES ('asjhdjhasjcfh', 'ajshdjsahc', '2');
+INSERT INTO documents (document_image, name, driver_id) VALUES ('ajshdjsh', 'jashjcshjc', '3');
 
 # --work_time--
 INSERT INTO work_time (end, start, driver_id) VALUES ('2022-12-7 01:55:00', '2022-12-7 01:10:00', '1');

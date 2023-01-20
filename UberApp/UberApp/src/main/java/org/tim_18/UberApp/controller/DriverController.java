@@ -153,11 +153,12 @@ public class DriverController {
     }
     @PreAuthorize("hasAnyRole('DRIVER', 'ADMIN')")
     @PostMapping("/{id}/documents")
-    public ResponseEntity<?> addDocument(Principal principal,
-                                         @PathVariable("id") int id,
+//    public ResponseEntity<?> addDocument(Principal principal, @PathVariable("id") int id,
+//                                         @RequestBody DocumentDTO documentDTO) {
+    public ResponseEntity<?> addDocument(@PathVariable("id") int id,
                                          @RequestBody DocumentDTO documentDTO) {
         try{
-            checkAuthorities(principal, id);
+//            checkAuthorities(principal, id);
             Driver driver = driverService.findDriverById(id);
             Document document = new Document().makeDocumentFromDTO(documentDTO,driver);
             document = documentService.addDocument(document);
@@ -212,11 +213,14 @@ public class DriverController {
 
     @PreAuthorize("hasAnyRole('DRIVER', 'ADMIN')")
     @PostMapping("/{id}/vehicle")
-    public ResponseEntity<?> addVehicle(Principal principal,
-                                        @PathVariable("id") int id,
-                                        @RequestBody VehicleDTOWithoutIds vehicleDTOWithoutIds) {
+//    public ResponseEntity<?> addVehicle(Principal principal,
+//                                        @PathVariable("id") int id,
+//                                        @RequestBody VehicleDTOWithoutIds vehicleDTOWithoutIds) {
+    public ResponseEntity<?> addVehicle(
+            @PathVariable("id") int id,
+            @RequestBody VehicleDTOWithoutIds vehicleDTOWithoutIds) {
         try{
-            checkAuthorities(principal, id);
+//            checkAuthorities(principal, id);
             Driver driver = driverService.findDriverById(id);
             if (!(driver.getVehicle() == null)) {
                 return new ResponseEntity<>(new ErrorMessage("Vehicle already assigned"), HttpStatus.NOT_FOUND);
@@ -224,6 +228,11 @@ public class DriverController {
             Location location = locationService.findLocationByAddressLongitudeLatitude(vehicleDTOWithoutIds.getCurrentLocation().getLongitude(),
                     vehicleDTOWithoutIds.getCurrentLocation().getLatitude(),
                     vehicleDTOWithoutIds.getCurrentLocation().getAddress());
+            if (location == null) {
+                location = locationService.addLocation(new Location(vehicleDTOWithoutIds.getCurrentLocation().getLongitude(),
+                        vehicleDTOWithoutIds.getCurrentLocation().getLatitude(),
+                        vehicleDTOWithoutIds.getCurrentLocation().getAddress()));
+            }
             Vehicle vehicle = new Vehicle(driver,vehicleDTOWithoutIds.getVehicleType(),
                     vehicleDTOWithoutIds.getModel(),vehicleDTOWithoutIds.getLicenseNumber(),
                     location,vehicleDTOWithoutIds.getPassengerSeats(),
