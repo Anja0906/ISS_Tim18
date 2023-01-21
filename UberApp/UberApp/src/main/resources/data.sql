@@ -98,13 +98,13 @@ INSERT INTO panics (time, reason, user_id) VALUES ('2022-12-07', 'ajshdjshaj', '
 INSERT INTO panics (time, reason, user_id) VALUES ('2022-12-07', 'ajshdjshaj', '4');
 
 # -- rejections --
-INSERT INTO rejections (reason, time_of_rejection, user_id) VALUES ("lalala", "2022-12-07", '2');
-INSERT INTO rejections (reason, time_of_rejection, user_id) VALUES ("lalala", "2022-12-07", '1');
-INSERT INTO rejections (reason, time_of_rejection, user_id) VALUES ("lalala", "2022-12-07", '1');
-INSERT INTO rejections (reason, time_of_rejection, user_id) VALUES ("lalala", "2022-12-07", '3');
-INSERT INTO rejections (reason, time_of_rejection, user_id) VALUES ("lalala", "2022-12-07", '1');
-INSERT INTO rejections (reason, time_of_rejection, user_id) VALUES ("lalala", "2022-12-07", '1');
-INSERT INTO rejections (reason, time_of_rejection, user_id) VALUES ("lalala", "2022-12-07", '2');
+INSERT INTO rejections (reason, time_of_rejection, user_id) VALUES ('lalala', '2022-12-07', '2');
+INSERT INTO rejections (reason, time_of_rejection, user_id) VALUES ('lalala', '2022-12-07', '1');
+INSERT INTO rejections (reason, time_of_rejection, user_id) VALUES ('lalala', '2022-12-07', '1');
+INSERT INTO rejections (reason, time_of_rejection, user_id) VALUES ('lalala', '2022-12-07', '3');
+INSERT INTO rejections (reason, time_of_rejection, user_id) VALUES ('lalala', '2022-12-07', '1');
+INSERT INTO rejections (reason, time_of_rejection, user_id) VALUES ('lalala', '2022-12-07', '1');
+INSERT INTO rejections (reason, time_of_rejection, user_id) VALUES ('lalala', '2022-12-07', '2');
 
 # --messages--
 INSERT INTO messages (id, message, message_type, time, receiver_id, ride_id, sender_id)
