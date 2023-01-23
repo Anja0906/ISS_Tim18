@@ -14,22 +14,10 @@ public class PanicService {
     @Autowired
     private final PanicRepository repo;
 
-    public PanicService(PanicRepository repo) {
-        this.repo = repo;
-    }
-
-    public List<Panic> findAllPanics() {
-        return repo.findAll();
-    }
-
+    public PanicService(PanicRepository repo) {this.repo = repo;}
+    public List<Panic> findAllPanics() {return repo.findAll();}
     public Page<Panic> findAll(Pageable page){return repo.findAll(page);}
-
-    public Panic addPanic(Panic panic) {
-        return repo.save(panic);
-    }
-
-    public Panic findById(int id) {
-        return repo.findPanicById(id).get();
-    }
+    public Panic addPanic(Panic panic) {return repo.save(panic);}
+    public Panic findById(int id) {return repo.findPanicById(id).get();}
 
 }

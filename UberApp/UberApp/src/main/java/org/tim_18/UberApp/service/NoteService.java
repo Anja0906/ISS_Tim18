@@ -17,37 +17,16 @@ import java.util.List;
 public class NoteService {
     private NoteRepository noteRepository;
 
-    public NoteService(NoteRepository noteRepository){
-        this.noteRepository = noteRepository;
-    }
-
-    public Page<Note> findNotesByUserId(Integer id, Pageable pageable) {
-        return noteRepository.findByUserId(id, pageable);
-    }
-
-
-    public Note addNote(Note note) {
-        return noteRepository.save(note);
-    }
-
-    public List<Note> findAllDrivers() {
-        return noteRepository.findAll();
-    }
-
-    public List<Note> findAll(){return noteRepository.findAll();
-    }
+    public NoteService(NoteRepository noteRepository){this.noteRepository = noteRepository;}
+    public Page<Note> findNotesByUserId(Integer id, Pageable pageable) {return noteRepository.findByUserId(id, pageable);}
+    public Note addNote(Note note) {return noteRepository.save(note);}
+    public List<Note> findAllDrivers() {return noteRepository.findAll();}
+    public List<Note> findAll(){return noteRepository.findAll();}
     public void saveNote(Note note){noteRepository.save(note);}
-
-    public Note updateNote(Note note) {
-        return noteRepository.save(note);
-    }
-
+    public Note updateNote(Note note) {return noteRepository.save(note);}
     public Note findNoteById(Integer id) {
         return noteRepository.findNoteById(id)
                 .orElseThrow(() -> new NoteNotFoundException("Driver by id " + id + " was not found"));
     }
-
-    public void deletNote(Integer id) {
-        noteRepository.deleteNoteById(id);
-    }
+    public void deleteNote(Integer id) {noteRepository.deleteNoteById(id);}
 }

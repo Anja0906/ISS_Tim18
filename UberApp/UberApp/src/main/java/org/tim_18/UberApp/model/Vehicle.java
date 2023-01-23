@@ -18,7 +18,6 @@ public class Vehicle implements Serializable {
     private Driver driver;
     private VehicleType vehicleType;
     private String model;
-
     private String licenseNumber;
 
     @ManyToOne(cascade={CascadeType.ALL})
@@ -28,8 +27,6 @@ public class Vehicle implements Serializable {
     private Integer passengerSeats;
     private Boolean babyTransport;
     private Boolean petTransport;
-
-
 
     public Vehicle() {}
 

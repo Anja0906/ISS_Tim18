@@ -13,28 +13,13 @@ public class AdministratorService {
     @Autowired
     private final AdministratorRepository administratorRepository;
 
-    public AdministratorService(AdministratorRepository administratorRepository) {
-        this.administratorRepository = administratorRepository;
-    }
-
-    public Administrator addAdministrator(Administrator administrator) {
-        return administratorRepository.save(administrator);
-    }
-
-    public List<Administrator> findAllAdministrators() {
-        return administratorRepository.findAll();
-    }
-
-    public Administrator updateAdministrator(Administrator administrator) {
-        return administratorRepository.save(administrator);
-    }
-
+    public AdministratorService(AdministratorRepository administratorRepository) {this.administratorRepository = administratorRepository;}
+    public Administrator addAdministrator(Administrator administrator) {return administratorRepository.save(administrator);}
+    public List<Administrator> findAllAdministrators() {return administratorRepository.findAll();}
+    public Administrator updateAdministrator(Administrator administrator) {return administratorRepository.save(administrator);}
     public Administrator findAdministratorById(Integer id) {
         return administratorRepository.findAdministratorById(id)
                 .orElseThrow(() -> new AdministratorNotFoundException("Administrator by id " + id + " was not found"));
     }
-
-    public void deleteAdministrator(Integer id) {
-        administratorRepository.deleteAdministratorById(id);
-    }
+    public void deleteAdministrator(Integer id) {administratorRepository.deleteAdministratorById(id);}
 }

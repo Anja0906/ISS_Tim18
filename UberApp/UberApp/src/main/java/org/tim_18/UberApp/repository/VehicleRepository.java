@@ -9,8 +9,6 @@ import java.util.Optional;
 
 public interface VehicleRepository extends JpaRepository<Vehicle,Integer> {
      Optional<Vehicle> findVehicleById(Integer id) ;
-
-
      @Query(value = "SELECT * FROM vehicle WHERE driver_id = ?1", nativeQuery = true)
      Vehicle findVehicleByDriverId(Integer id);
 }

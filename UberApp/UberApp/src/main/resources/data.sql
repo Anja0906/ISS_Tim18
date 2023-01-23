@@ -266,3 +266,4 @@ INSERT INTO passenger_favorite_rides (passengers_id, favorite_rides_id) VALUES (
 INSERT INTO vehicle_price (price, vehicle_type) VALUES (500, 'STANDARD');
 INSERT INTO vehicle_price (price, vehicle_type) VALUES (600, 'LUKSUZNO');
 INSERT INTO vehicle_price (price, vehicle_type) VALUES (700, 'KOMBI');
+

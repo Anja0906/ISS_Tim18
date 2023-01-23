@@ -18,35 +18,15 @@ public class DriverService {
     @Autowired
     private final DriverRepository driverRepository;
 
-    public DriverService(DriverRepository driverRepository) {
-        this.driverRepository = driverRepository;
-    }
-
-    public Driver addDriver(Driver driver) {
-        return driverRepository.save(driver);
-    }
-
-    public Driver save(Driver driver) {
-        return driverRepository.save(driver);
-    }
-
-    public List<Driver> findAllDrivers() {
-        return driverRepository.findAll();
-    }
-    public Page<Driver> findAll(Pageable page){
-        return driverRepository.findAll(page);
-    }
-
-    public Driver updateDriver(Driver driver) {
-        return driverRepository.save(driver);
-    }
-
+    public DriverService(DriverRepository driverRepository) {this.driverRepository = driverRepository;}
+    public Driver addDriver(Driver driver) {return driverRepository.save(driver);}
+    public Driver save(Driver driver) {return driverRepository.save(driver);}
+    public List<Driver> findAllDrivers() {return driverRepository.findAll();}
+    public Page<Driver> findAll(Pageable page){return driverRepository.findAll(page);}
+    public Driver updateDriver(Driver driver) {return driverRepository.save(driver);}
     public Driver findDriverById(Integer id) {
         return driverRepository.findDriverById(id)
                 .orElseThrow(() -> new DriverNotFoundException("Driver by id " + id + " was not found"));
     }
-
-    public void deleteDriver(Integer id) {
-        driverRepository.deleteDriverById(id);
-    }
+    public void deleteDriver(Integer id) {driverRepository.deleteDriverById(id);}
 }

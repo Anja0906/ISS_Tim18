@@ -19,16 +19,13 @@ public class WorkTime {
     @OneToOne (cascade = {CascadeType.ALL})
     private Driver driver;
 
-
     public WorkTime() {}
-
     public WorkTime(Integer id, Date start, Date end, Driver driver) {
         this.id         = id;
         this.start      = start;
         this.end        = end;
         this.driver     = driver;
     }
-
     public WorkTime(Date start, Date end, Driver driver) {
         this.start      = start;
         this.end        = end;
