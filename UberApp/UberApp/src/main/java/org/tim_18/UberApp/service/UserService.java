@@ -204,7 +204,7 @@ public class UserService {
     public boolean compareIfCodeIsExpired(Date expiresIn){
         Calendar cal = Calendar.getInstance();
         cal.setTime(expiresIn);
-        cal.add(Calendar.MINUTE, 15); // adding 30 minutes
+        cal.add(Calendar.MINUTE, 10000); // adding 30 minutes
         expiresIn = cal.getTime();
         Date date = new Date(); // current date
         if(date.after(expiresIn)){

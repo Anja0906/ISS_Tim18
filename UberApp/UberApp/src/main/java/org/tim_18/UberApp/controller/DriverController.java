@@ -18,10 +18,7 @@ import org.tim_18.UberApp.dto.driverDTOs.DriverDTO;
 import org.tim_18.UberApp.dto.driverDTOs.DriverDTOWithoutId;
 import org.tim_18.UberApp.dto.locationDTOs.LocationDTO;
 import org.tim_18.UberApp.dto.rideDTOs.RideRetDTO;
-import org.tim_18.UberApp.exception.DocumentNotFoundException;
-import org.tim_18.UberApp.exception.DriverNotFoundException;
-import org.tim_18.UberApp.exception.VehicleNotFoundException;
-import org.tim_18.UberApp.exception.WorkTimeNotFoundException;
+import org.tim_18.UberApp.exception.*;
 import org.tim_18.UberApp.model.*;
 import org.tim_18.UberApp.service.*;
 
@@ -97,7 +94,7 @@ public class DriverController {
             Driver driver = new Driver(driverDTOWithoutId.getName(), driverDTOWithoutId.getSurname(),
                     driverDTOWithoutId.getProfilePicture(), driverDTOWithoutId.getTelephoneNumber(),
                     driverDTOWithoutId.getEmail(), driverDTOWithoutId.getAddress(),
-                    driverDTOWithoutId.getPassword(),false,false) ;
+                    driverDTOWithoutId.getPassword(),false,false,false) ;
             driver.setRoles(this.getRoles());
             driver.setPassword(passwordEncoder.encode(driver.getPassword()));
             driverService.save(driver);
@@ -134,12 +131,6 @@ public class DriverController {
         try {
             checkAuthorities(principal, id);
             HashSet<Document> documents = documentService.findByDriverId(id);
-//            if(documents.isEmpty()) {
-//
-//            }else{
-//                HashSet<DocumentDTO> documentDTOS = new DocumentDTO().makeDocumentsDTO(documents);
-//                return new ResponseEntity<>(documentDTOS, HttpStatus.OK);
-//            }
             HashSet<DocumentDTO> documentDTOS = new DocumentDTO().makeDocumentsDTO(documents);
             return new ResponseEntity<>(documentDTOS, HttpStatus.OK);
         } catch (DriverNotFoundException e) {
@@ -339,6 +330,47 @@ public class DriverController {
             return new ResponseEntity<>("Working hour does not exist!",HttpStatus.NOT_FOUND);
         }
     }
+
+    @PreAuthorize("hasRole('USER')")
+    @GetMapping("/online/{id}")
+    public ResponseEntity<?> onlineDriver (
+            Principal principal,
+            @PathVariable("id") int id) {
+        try {
+            User user = userService.findUserByEmail(principal.getName());
+            Driver driver = driverService.findDriverById(id);
+            if (user.getId().equals(driver.getId()))
+                if(!driver.getIsOnline()) {
+                    driver.setIsOnline(true);
+                    driverService.updateDriver(driver);
+                    return new ResponseEntity<>(HttpStatus.OK);
+                }
+        }catch(DriverNotFoundException driverNotFoundException){
+            return new ResponseEntity<>(new DriverNotFoundException("Driver not found").getMessage(),HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasRole('USER')")
+    @GetMapping("/offline/{id}")
+    public ResponseEntity<?> offlineDriver (
+            Principal principal,
+            @PathVariable("id") int id) {
+        try {
+            User user = userService.findUserByEmail(principal.getName());
+            Driver driver = driverService.findDriverById(id);
+            if (user.getId().equals(driver.getId()))
+                if (driver.getIsOnline() == true) {
+                    driver.setIsOnline(false);
+                    driverService.updateDriver(driver);
+                    return new ResponseEntity<>(HttpStatus.OK);
+                }
+        }catch(DriverNotFoundException driverNotFoundException){
+            return new ResponseEntity<>(new DriverNotFoundException("Driver not found").getMessage(),HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
 
     @PreAuthorize("hasRole('DRIVER')")
     @GetMapping("/{id}/ride")
