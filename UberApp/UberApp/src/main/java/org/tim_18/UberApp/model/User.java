@@ -57,7 +57,7 @@ public class User extends ImplementsSerializable implements UserDetails {
         this.password        = password;
         this.blocked         = blocked;
         this.active          = active;
-        this.roles = roles;
+        this.roles           = roles;
     }
     public User() {}
 

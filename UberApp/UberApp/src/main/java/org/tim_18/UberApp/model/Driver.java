@@ -26,31 +26,37 @@ public class Driver extends User{
     @OneToOne
     private Vehicle vehicle;
 
+    private Boolean isOnline;
+
     public Driver() {
         this.documents  = new HashSet<Document>();
         this.rides      = new HashSet<Ride>();
         this.vehicle    = null;
+        this.isOnline   = false;
     }
-    public Driver(String name, String surname, String profilePicture, String telephoneNumber, String email, String address, String password, boolean blocked, boolean active, Integer id, Set<Document> documents, Set<Ride> rides, Vehicle vehicle) {
+    public Driver(String name, String surname, String profilePicture, String telephoneNumber, String email, String address, String password, boolean blocked, boolean active, Integer id, Set<Document> documents, Set<Ride> rides, Vehicle vehicle, Boolean isOnline) {
         super(name, surname, profilePicture, telephoneNumber, email, address, password, blocked, active);
         this.id         = id;
         this.documents  = documents;
         this.rides      = rides;
         this.vehicle    = vehicle;
+        this.isOnline   = isOnline;
     }
 
-    public Driver(String name, String surname, String profilePicture, String telephoneNumber, String email, String address, String password, boolean blocked, boolean active, Integer id, Vehicle vehicle) {
+    public Driver(String name, String surname, String profilePicture, String telephoneNumber, String email, String address, String password, boolean blocked, boolean active, Integer id, Vehicle vehicle, Boolean isOnline) {
         super(name, surname, profilePicture, telephoneNumber, email, address, password, blocked, active);
         this.id         = id;
         this.documents  = new HashSet<Document>();
         this.rides      = new HashSet<Ride>();
         this.vehicle    = vehicle;
+        this.isOnline   = isOnline;
     }
-    public Driver(String name, String surname, String profilePicture, String telephoneNumber, String email, String address, String password, boolean blocked, boolean active) {
+    public Driver(String name, String surname, String profilePicture, String telephoneNumber, String email, String address, String password, boolean blocked, boolean active, Boolean isOnline) {
         super(name, surname, profilePicture, telephoneNumber, email, address, password, blocked, active);
         this.documents  = new HashSet<Document>();
         this.rides      = new HashSet<Ride>();
         this.vehicle    = null;
+        this.isOnline   = isOnline;
     }
 
     public Driver(User user) {
@@ -66,4 +72,5 @@ public class Driver extends User{
         setAddress(driverDTOWithoutId.getAddress());
         setEmail(driverDTOWithoutId.getEmail());
     }
+
 }
