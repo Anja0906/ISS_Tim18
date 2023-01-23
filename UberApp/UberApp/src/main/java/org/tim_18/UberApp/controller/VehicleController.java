@@ -26,9 +26,7 @@ public class VehicleController {
             @RequestBody LocationDTO locationDTO) {
         try {
             Vehicle vehicle = vehicleService.findVehicleById(id);
-            vehicle.getCurrentLocation().setAddress(locationDTO.getAddress());
-            vehicle.getCurrentLocation().setLatitude(locationDTO.getLongitude());
-            vehicle.getCurrentLocation().setLongitude(locationDTO.getLongitude());
+            vehicle.updateLocation(locationDTO);
             Vehicle updateVehicle = vehicleService.updateVehicle(vehicle);
             return new ResponseEntity<>("Coordinates successfully updated", HttpStatus.NO_CONTENT);
         } catch (VehicleNotFoundException e) {
