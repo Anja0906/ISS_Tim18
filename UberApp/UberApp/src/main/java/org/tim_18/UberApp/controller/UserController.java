@@ -1,8 +1,6 @@
 package org.tim_18.UberApp.controller;
 import jakarta.mail.MessagingException;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import net.bytebuddy.utility.RandomString;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -18,14 +16,12 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.tim_18.UberApp.Validation.ErrorMessage;
 import org.tim_18.UberApp.dto.*;
 import org.tim_18.UberApp.dto.noteDTOs.NotePostDTO;
 import org.tim_18.UberApp.dto.noteDTOs.NoteResponseDTO;
 import org.tim_18.UberApp.dto.rideDTOs.RideRetDTO;
-import org.tim_18.UberApp.exception.PassengerNotFoundException;
 import org.tim_18.UberApp.exception.RideNotFoundException;
 import org.tim_18.UberApp.exception.UserNotFoundException;
 import org.tim_18.UberApp.model.*;
@@ -34,7 +30,6 @@ import org.tim_18.UberApp.service.*;
 
 import java.io.UnsupportedEncodingException;
 import java.security.Principal;
-import java.time.LocalDateTime;
 import java.util.*;
 
 @RestController
@@ -55,14 +50,17 @@ public class UserController {
     private final ReviewService reviewService;
 
     private final RoleService roleService;
+    @Autowired
+    private final RequestService requestService;
 
-    public UserController(UserService userService, MessageService messageService, RideService rideService, NoteService noteService, ReviewService reviewService, RoleService roleService) {
+    public UserController(UserService userService, MessageService messageService, RideService rideService, NoteService noteService, ReviewService reviewService, RoleService roleService, RequestService requestService) {
         this.userService    = userService;
         this.messageService = messageService;
         this.rideService    = rideService;
         this.noteService    = noteService;
         this.reviewService  = reviewService;
         this.roleService = roleService;
+        this.requestService = requestService;
     }
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("")
@@ -130,6 +128,7 @@ public class UserController {
     public void updateUser(@PathVariable("id") int id, @RequestBody UserDTO userDTO) {
         try{
             userService.updateUserFromDto(id, userDTO);
+            requestService.deleteByUserId(userDTO.getId());
         }catch (UserNotFoundException e){
             System.out.println("User not found");
         }
