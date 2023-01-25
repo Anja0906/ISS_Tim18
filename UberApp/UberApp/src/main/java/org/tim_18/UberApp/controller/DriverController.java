@@ -215,6 +215,10 @@ public class DriverController {
                     vehicleDTOWithoutIds.getCurrentLocation().getLatitude(),
                     vehicleDTOWithoutIds.getCurrentLocation().getAddress()
             );
+            if(location == null)
+                location = locationService.addLocation(new Location(vehicleDTOWithoutIds.getCurrentLocation().getLongitude(),
+                        vehicleDTOWithoutIds.getCurrentLocation().getLatitude(),
+                        vehicleDTOWithoutIds.getCurrentLocation().getAddress()));
             Vehicle vehicle = new Vehicle(
                     driver,vehicleDTOWithoutIds.getVehicleType(), vehicleDTOWithoutIds.getModel(),vehicleDTOWithoutIds.getLicenseNumber(),
                     location                                    ,vehicleDTOWithoutIds.getPassengerSeats(),
