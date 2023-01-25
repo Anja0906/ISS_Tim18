@@ -79,7 +79,6 @@ public class Rejection implements Serializable {
         return "Rejection{" +
                 "id=" + id +
                 ", user=" + user +
-                ", ride=" + ride +
                 ", timeOfRejection=" + timeOfRejection +
                 ", reason='" + reason + '\'' +
                 '}';
