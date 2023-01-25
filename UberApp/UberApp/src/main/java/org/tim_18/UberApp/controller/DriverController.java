@@ -31,13 +31,21 @@ import java.util.*;
 @RequestMapping("api/driver")
 @CrossOrigin(origins = "http://localhost:4200")
 public class DriverController {
+    @Autowired
     private final DriverService driverService;
+    @Autowired
     private final DocumentService documentService;
+    @Autowired
     private final VehicleService vehicleService;
+    @Autowired
     private final LocationService locationService;
+    @Autowired
     private final WorkTimeService workTimeService;
+    @Autowired
     private final RideService rideService;
+    @Autowired
     private final UserService userService;
+    @Autowired
     private final RoleService roleService;
     @Autowired
     PasswordEncoder passwordEncoder;
