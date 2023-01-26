@@ -24,7 +24,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("api/panic")
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin( value = "*")
 public class PanicController {
 
     @Autowired

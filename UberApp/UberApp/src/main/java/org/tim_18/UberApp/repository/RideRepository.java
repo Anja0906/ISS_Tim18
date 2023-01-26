@@ -23,7 +23,7 @@ public interface RideRepository extends JpaRepository<Ride, Integer> {
     @Query(value = "SELECT * FROM rides INNER JOIN passenger_rides on rides.id=passenger_rides.ride_id WHERE passenger_id = ?1 and date(start_time) > ?2 and date(start_time) < ?3 and date(end_time) > ?2 and date(end_time) < ?3", nativeQuery = true)
     Page<Ride> findRidesByPassengersId(Integer passenger_id, String from, String to, Pageable pageable);
 
-    @Query(value = "SELECT * FROM rides r WHERE driver_id=?1 and now() between r.start_time and r.end_time", nativeQuery = true)
+    @Query(value = "SELECT * FROM rides r WHERE r.driver_id=?1 and now() between r.start_time and r.end_time", nativeQuery = true)
     Optional<Ride> findDriverActiveRide(Integer driver_id);
     @Query(value = "SELECT * FROM rides r INNER JOIN passenger_rides pr on r.id=pr.ride_id WHERE pr.passenger_id = ?1 and now() between r.start_time and r.end_time", nativeQuery = true)
     Optional<Ride> findPassengerActiveRide(Integer passenger_id);
@@ -34,7 +34,7 @@ public interface RideRepository extends JpaRepository<Ride, Integer> {
     @Query(value = "SELECT * FROM rides r INNER JOIN passenger_rides pr on r.id=pr.ride_id WHERE pr.passenger_id = ?1 or r.driver_id = ?1", nativeQuery = true)
     List<Ride> findRidesForUser(Integer id);
 
-    @Query(value = "SELECT * FROM rides r INNER JOIN passenger_rides pr on r.id=pr.ride_id WHERE pr.passenger_id = ?1 or r.driver_id = ?1 and date(r.start_time) > ?2 and date(r.start_time) < ?3 and date(r.end_time) >?2 and date(r.end_time) < ?3", nativeQuery = true)
+    @Query(value = "SELECT * FROM rides r LEFT JOIN passenger_rides pr on r.id=pr.ride_id WHERE pr.passenger_id = ?1 or r.driver_id = ?1 and date(r.start_time) > ?2 and date(r.start_time) < ?3 and date(r.end_time) >?2 and date(r.end_time) < ?3", nativeQuery = true)
     List<Ride> findRidesForUser(Integer id, String from, String to);
 
     @Query(value = "SELECT * FROM rides WHERE rides.driver_id = ?1 and DATE(rides.start_time)>?2 and DATE(rides.end_time)<?3", nativeQuery = true)

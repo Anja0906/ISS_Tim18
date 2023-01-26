@@ -34,7 +34,7 @@ import java.util.*;
 
 @RestController
 @RequestMapping("/api/ride")
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(value = "*")
 public class RideController {
 
     private final RideService rideService;
@@ -153,14 +153,10 @@ public class RideController {
         return new ResponseEntity<>(new RideRetDTO(ride), HttpStatus.OK);
     }
 
-    @PreAuthorize("hasRole('DRIVER')")
+    @PreAuthorize("hasAnyRole('DRIVER', 'ADMIN')")
     @GetMapping("/driver/{driverId}/active")
     public ResponseEntity<?> getDriverActiveRide(Principal principal, @PathVariable("driverId") Integer driverId) {
         try {
-            User user = userService.findUserByEmail(principal.getName());
-            if (!user.getId().equals(driverId)){
-                throw new RideNotFoundException("Active ride does not exist!");
-            }
             Ride ride = rideService.getDriverActiveRide(driverId);
             return new ResponseEntity<>(new RideRetDTO(ride), HttpStatus.OK);
         } catch(RideNotFoundException e){
