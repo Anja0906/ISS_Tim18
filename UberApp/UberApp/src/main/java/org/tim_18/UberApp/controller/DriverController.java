@@ -215,6 +215,11 @@ public class DriverController {
                     vehicleDTOWithoutIds.getCurrentLocation().getLatitude(),
                     vehicleDTOWithoutIds.getCurrentLocation().getAddress()
             );
+            if(location == null)
+                locationService.addLocation(new Location(vehicleDTOWithoutIds.getCurrentLocation().getLongitude(),
+                        vehicleDTOWithoutIds.getCurrentLocation().getLatitude(),
+                        vehicleDTOWithoutIds.getCurrentLocation().getAddress()));
+
             Vehicle vehicle = new Vehicle(
                     driver,vehicleDTOWithoutIds.getVehicleType(), vehicleDTOWithoutIds.getModel(),vehicleDTOWithoutIds.getLicenseNumber(),
                     location                                    ,vehicleDTOWithoutIds.getPassengerSeats(),
@@ -433,8 +438,7 @@ public class DriverController {
         }
     }
     private void checkAuthorities(Principal principal, Integer id) throws DriverNotFoundException {
-        int role = checkRole(principal);
-        if (role == 1){
+        if (checkRole(principal) == 1){
             checkDriversAuthorities(principal, id);
         }
     }

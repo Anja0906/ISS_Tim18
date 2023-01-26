@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface RideRepository extends JpaRepository<Ride, Integer> {
-    @Query(value = "SELECT * FROM rides r INNER JOIN locations_rides lr ON  r.id=lr.rid_id WHERE r.id=?1", nativeQuery = true)
+    @Query(value = "SELECT * FROM rides r INNER JOIN locations_rides lr ON  r.id=lr.ride_id WHERE r.id=?1", nativeQuery = true)
     public Optional<Ride> findById(Integer id);
 //    @Query(value = "SELECT * FROM rides rid natural join passenger p where rid.driver_id = ?1 OR p.id = ?1", nativeQuery = true)
 //    ArrayList<Ride> findRidesForUser(int id);
@@ -23,7 +23,7 @@ public interface RideRepository extends JpaRepository<Ride, Integer> {
     @Query(value = "SELECT * FROM rides INNER JOIN passenger_rides on rides.id=passenger_rides.ride_id WHERE passenger_id = ?1 and date(start_time) > ?2 and date(start_time) < ?3 and date(end_time) > ?2 and date(end_time) < ?3", nativeQuery = true)
     Page<Ride> findRidesByPassengersId(Integer passenger_id, String from, String to, Pageable pageable);
 
-    @Query(value = "SELECT * FROM rides r WHERE driver_id=?1 and now() between r.start_time and r.end_time", nativeQuery = true)
+    @Query(value = "SELECT * FROM rides r WHERE driver_id=?1 and now() between r.start_time and r.end_time and r.status=2", nativeQuery = true)
     Optional<Ride> findDriverActiveRide(Integer driver_id);
     @Query(value = "SELECT * FROM rides r INNER JOIN passenger_rides pr on r.id=pr.ride_id WHERE pr.passenger_id = ?1 and now() between r.start_time and r.end_time", nativeQuery = true)
     Optional<Ride> findPassengerActiveRide(Integer passenger_id);
