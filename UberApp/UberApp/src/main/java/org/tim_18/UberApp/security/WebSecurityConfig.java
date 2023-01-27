@@ -72,7 +72,7 @@ public class WebSecurityConfig {
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 //        http.csrf().disable();
         // sve neautentifikovane zahteve obradi uniformno i posalji 401 gresku
-        http.authorizeHttpRequests().requestMatchers("/api/**").permitAll()		// /auth/**
+        http.authorizeHttpRequests().requestMatchers("/api/**", "/socket/**").permitAll()		// /auth/**
 //			.requestMatchers("/h2-console/**").permitAll()	// /h2-console/** ako se koristi H2 baza)
 //			.requestMatchers("/api/foo").permitAll()		// /api/foo
 			// ukoliko ne zelimo da koristimo @PreAuthorize anotacije nad metodama kontrolera, moze se iskoristiti hasRole() metoda da se ogranici
@@ -101,9 +101,9 @@ public class WebSecurityConfig {
     	// Autentifikacija ce biti ignorisana ispod navedenih putanja (kako bismo ubrzali pristup resursima)
     	// Zahtevi koji se mecuju za web.ignoring().antMatchers() nemaju pristup SecurityContext-u
     	// Dozvoljena POST metoda na ruti /auth/login, za svaki drugi tip HTTP metode greska je 401 Unauthorized
-    	return (web) -> web.ignoring().requestMatchers(HttpMethod.POST, "/api/auth/**")
+    	return (web) -> web.ignoring().requestMatchers(HttpMethod.POST, "/api/auth/**", "/socket/**")
 				// Ovim smo dozvolili pristup statickim resursima aplikacije
     			.requestMatchers(HttpMethod.GET, "/", "/webjars/**", "/*.html", "favicon.ico",
-    			"/*/*.html", "/*/*.css", "/*/*.js");
+    			"/*/*.html", "/*/*.css", "/*/*.js", "/socket/**");
 	}
 }
