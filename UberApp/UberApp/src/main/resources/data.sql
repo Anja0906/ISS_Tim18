@@ -59,7 +59,7 @@ INSERT INTO work_time (end, start, driver_id) VALUES ('2022-12-9 01:55:00', '202
 
 # --rides--
 INSERT INTO rides (baby_transport, end_time, estimated_time_in_minutes, pet_transport, start_time, status, total_cost, vehicle_type, driver_id, panic_id, rejection_id, scheduled_time)
-VALUES (true, '2023-12-11 23:59:59', 1, false, '2022-12-10 05:00:00', 5, 500, 0, '2', '1', '1', '2022-12-10 05:00:00');
+VALUES (true, '2023-12-11 23:59:59', 1, false, '2022-12-10 05:00:00', 2, 500, 0, '2', 1, 1, '2022-12-10 05:00:00');
 INSERT INTO rides (baby_transport, end_time, estimated_time_in_minutes, pet_transport, start_time, status, total_cost, vehicle_type, driver_id, panic_id, rejection_id, scheduled_time)
 VALUES (true, '2022-12-7 07:55:00', 5, false, '2022-12-7 07:40:00', 3, 500, 0, '1', '2', '2', '2022-12-10 05:00:00');
 INSERT INTO rides (baby_transport, end_time, estimated_time_in_minutes, pet_transport, start_time, status, total_cost, vehicle_type, driver_id, panic_id, rejection_id, scheduled_time)

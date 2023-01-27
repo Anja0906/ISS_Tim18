@@ -3,6 +3,7 @@ package org.tim_18.UberApp.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
+import org.tim_18.UberApp.dto.ReasonDTO;
 import org.tim_18.UberApp.exception.UserNotFoundException;
 
 import java.io.Serializable;
@@ -74,6 +75,13 @@ public class Panic implements Serializable {
 
     public void setReason(String reason) {
         this.reason = reason;
+    }
+
+    public void updatePanic(User user, ReasonDTO reasonDTO, Ride ride){
+        setUser(user);
+        setTime(new Date());
+        setReason(reasonDTO.getReason());
+        setRide(ride);
     }
 
     @Override
