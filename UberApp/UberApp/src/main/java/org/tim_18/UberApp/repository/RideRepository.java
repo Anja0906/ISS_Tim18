@@ -40,6 +40,15 @@ public interface RideRepository extends JpaRepository<Ride, Integer> {
     @Query(value = "SELECT * FROM rides WHERE rides.driver_id = ?1 and DATE(rides.start_time)>?2 and DATE(rides.end_time)<?3", nativeQuery = true)
     Page<Ride> findRidesForDriver(Integer id, String start, String end, Pageable pageable);
 
+    @Query(value = "SELECT * FROM rides r LEFT JOIN passenger_rides pr on r.id=pr.ride_id WHERE pr.passenger_id = ?1 and DATE(r.start_time)>?2 and DATE(r.end_time)<?3", nativeQuery = true)
+    Page<Ride> findRidesForPassenger(Integer id, String start, String end, Pageable pageable);
+
+    @Query(value = "SELECT * FROM rides r LEFT JOIN passenger_rides pr on r.id=pr.ride_id WHERE pr.passenger_id = ?1 or r.driver_id = ?1 and DATE(r.start_time)>?2 and DATE(r.end_time)<?3", nativeQuery = true)
+    Page<Ride> findRidesForUser(Integer id, String start, String end, Pageable pageable);
+
+    @Query(value = "SELECT * FROM rides r WHERE DATE(r.start_time)>?1 and DATE(r.end_time)<?2", nativeQuery = true)
+    Page<Ride> findRidesInDateRange(String start, String end, Pageable pageable);
+
     @Query(value = "SELECT * FROM rides WHERE rides.status = ?1 ", nativeQuery = true)
     Page<Ride> findPendingRidesByStatus(String status,Pageable pageable);
 
