@@ -289,7 +289,7 @@ public class UserController {
     }
 
 
-    @PreAuthorize("hasRole('PASSENGER')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'DRIVER', 'PASSENGER')")
     @PutMapping("/{id}/changePassword")
     public ResponseEntity<?> changePassword(Principal principal, @PathVariable("id") int id, @RequestBody changePasswordDTO password) {
         try{
