@@ -81,6 +81,13 @@ public class Panic implements Serializable {
         this.reason = reason;
     }
 
+    public void updatePanic(User user, ReasonDTO reasonDTO, Ride ride){
+        setUser(user);
+        setTime(new Date());
+        setReason(reasonDTO.getReason());
+        setRide(ride);
+    }
+
     @Override
     public String toString() {
         return "Panic{" +
