@@ -43,6 +43,8 @@ public class RideService {
     public Ride updateRide(Ride ride) {return rideRepository.save(ride);}
 
     public Page<Ride> findRidesForDriver(Integer id, String start, String end, Pageable pageable){return rideRepository.findRidesForDriver(id,start,end,pageable);}
+    public Page<Ride> findRidesForPassenger(Integer id, String start, String end, Pageable pageable){return rideRepository.findRidesForPassenger(id,start,end,pageable);}
+    public Page<Ride> findRidesForUser(Integer id, String start, String end, Pageable pageable){return rideRepository.findRidesForUser(id,start,end,pageable);}
     public boolean checkRide(Integer passengerId) {
         List<Ride> pendingRides = rideRepository.findPassengersRidesByStatus(passengerId, "PENDING");
         return pendingRides.isEmpty();
@@ -52,7 +54,7 @@ public class RideService {
         return rideRepository.findAll(pageable);
     }
     public List<Ride> findAll() {return rideRepository.findAll();}
-    public List<Ride> findRidesByUser(Integer id) {return rideRepository.findRidesForUser(id);}
+    public Page<Ride> findRidesInDateRange(String start, String end, Pageable pageable) {return rideRepository.findRidesInDateRange(start,end,pageable);}
     public List<Ride> findRidesByUser(Integer id, String from, String to) {return rideRepository.findRidesForUser(id, from, to);}
     public List<Ride> findRidesForDriverByStatus(Integer id, String status, String now) {
         return rideRepository.findRidesForDriverByStatus(id, status, now);
