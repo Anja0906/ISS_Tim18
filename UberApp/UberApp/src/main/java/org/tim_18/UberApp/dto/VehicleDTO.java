@@ -43,6 +43,14 @@ public class VehicleDTO {
              vehicle.getPetTransport());
     }
 
+    public VehicleDTO(Vehicle vehicle){
+        this(vehicle.getId(), vehicle.getDriver().getId(),
+                vehicle.getVehicleType(), vehicle.getModel(),
+                vehicle.getLicenseNumber(), new LocationDTO(vehicle.getCurrentLocation()),
+                vehicle.getPassengerSeats(),vehicle.getBabyTransport(),
+                vehicle.getPetTransport());
+    }
+
     @Override
     public String toString() {
         return "VehicleDTO{" +

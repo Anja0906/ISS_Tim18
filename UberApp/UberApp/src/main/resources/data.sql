@@ -94,11 +94,11 @@ VALUES ('2', 'NS45678',  0, 'sjfcdsjfjewfja', 3, 2, 3, true, true);
 INSERT INTO vehicle (id, license_number, vehicle_type, model,  current_location_id, driver_id, passenger_seats, baby_transport, pet_transport)
 VALUES ('3', 'NS 567 ad', 2,'asnfklsdfvksdj', 1, 3, 4, true, true);
 INSERT INTO vehicle (id, license_number, vehicle_type, model,  current_location_id, driver_id, passenger_seats, baby_transport, pet_transport)
-VALUES ('4', 'NS11111', 1, 'sjbcjbejehcvewj',  2, 7, 4, true, true);
+VALUES ('4', 'NS11111', 1, 'sjbcjbejehcvewj',  5, 7, 4, true, true);
 INSERT INTO vehicle (id, license_number, vehicle_type, model,  current_location_id, driver_id, passenger_seats, baby_transport, pet_transport)
-VALUES ('5', 'NS45678',  0, 'Reno megan', 3, 8, 4, true, true);
+VALUES ('5', 'NS45678',  0, 'Reno megan', 4, 8, 4, true, true);
 INSERT INTO vehicle (id, license_number, vehicle_type, model,  current_location_id, driver_id, passenger_seats, baby_transport, pet_transport)
-VALUES ('6', 'NS 567 ad', 2,'ksncejfewfls', 1, 9, 2, true, true);
+VALUES ('6', 'NS 567 ad', 2,'ksncejfewfls', 6, 9, 2, true, true);
 
 # --panics--
 INSERT INTO panics (time, reason, user_id) VALUES ('2022-12-07', 'jahdjhhefej', '1');
@@ -142,15 +142,17 @@ INSERT INTO passenger (id) VALUES ('6');
 
 -- # --locations--
 INSERT INTO locations (address, latitude, longitude)
-VALUES ('bane1', '54478412154', '875154444');
+VALUES ('bane1', '45.267146', '19.834549');
 INSERT INTO locations (address, latitude, longitude)
-VALUES ('bane', '515555', '897456');
+VALUES ('bane', '45.267536', '19.833549');
 INSERT INTO locations (address, latitude, longitude)
-VALUES ('bane3', '4', '8');
+VALUES ('bane3', '45.267236', '19.832549');
 INSERT INTO locations (address, latitude, longitude)
-VALUES ('asbdsabjc', '515555', '8974546');
+VALUES ('asbdsabjc', '45.268136', '19.833559');
 INSERT INTO locations (address, latitude, longitude)
-VALUES ('Bulevar oslobodjenja 46', '45.267136', '19.833549');
+VALUES ('Bulevar oslobodjenja 46', '45.267137', '19.833548');
+INSERT INTO locations (address, latitude, longitude)
+VALUES ('Bulevar oslobodjenja 46', '45.268137', '19.843548');
 
 
 INSERT INTO locations_favorite_rides(location_id, fav_ride_id) VALUES ('1', '1');
