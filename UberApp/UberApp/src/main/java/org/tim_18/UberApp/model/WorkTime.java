@@ -1,6 +1,7 @@
 package org.tim_18.UberApp.model;
 
 import jakarta.persistence.*;
+import org.tim_18.UberApp.dto.EndTimeDTO;
 import org.tim_18.UberApp.dto.WorkTimeDTOWithoutDriver;
 
 import java.time.Instant;
@@ -15,27 +16,61 @@ public class WorkTime {
     @Column(name = "id", nullable = false)
     private Integer id;
     private Date start;
+    private Date flagStart;
     private Date end;
+    private Integer workedTimeInMinutes;
     @OneToOne (cascade = {CascadeType.ALL})
     private Driver driver;
 
     public WorkTime() {}
-    public WorkTime(Integer id, Date start, Date end, Driver driver) {
-        this.id         = id;
-        this.start      = start;
-        this.end        = end;
-        this.driver     = driver;
+    public WorkTime(Integer id, Date start, Date end, Driver driver,Date flagStart,Integer workedTimeInMinutes) {
+        this.id                  = id;
+        this.start               = start;
+        this.flagStart           = flagStart;
+        this.end                 = end;
+        this.driver              = driver;
+        this.workedTimeInMinutes = workedTimeInMinutes;
     }
-    public WorkTime(Date start, Date end, Driver driver) {
-        this.start      = start;
-        this.end        = end;
-        this.driver     = driver;
+    public WorkTime(Date start, Date end, Driver driver,Date flagStart,Integer workedTimeInMinutes) {
+        this.start               = start;
+        this.flagStart           = flagStart;
+        this.end                 = end;
+        this.driver              = driver;
+        this.workedTimeInMinutes = workedTimeInMinutes;
     }
     public void updateWorkTime(WorkTimeDTOWithoutDriver workTimeDTOWithoutDriver){
         Instant instant = Instant.parse(workTimeDTOWithoutDriver.getStart());
         setStart(Date.from(instant));
+        setFlagStart(Date.from(instant));
         instant = Instant.parse(workTimeDTOWithoutDriver.getEnd());
         setEnd(Date.from(instant));
+    }
+
+    public Date getFlagStart() {
+        return flagStart;
+    }
+
+    public void setFlagStart(Date flagStart) {
+        this.flagStart = flagStart;
+    }
+
+    public Integer getWorkedTimeInMinutes() {
+        return workedTimeInMinutes;
+    }
+
+    public void updateWorkingHour(EndTimeDTO date){
+        setWorkedTimeInMinutes(getWorkedTimeInMinutes()+((int) Date.from(Instant.parse(date.getEnd())).getTime() - (int) getFlagStart().getTime()));
+        setEnd(Date.from(Instant.parse(date.getEnd())));
+        setFlagStart(Date.from(Instant.parse(date.getEnd())));
+    }
+
+    public void updateWorkingHourLogin(EndTimeDTO date){
+        setEnd(Date.from(Instant.parse(date.getEnd())));
+        setFlagStart(Date.from(Instant.parse(date.getEnd())));
+    }
+
+    public void setWorkedTimeInMinutes(Integer workedTimeInMinutes) {
+        this.workedTimeInMinutes = workedTimeInMinutes;
     }
 
     public Date getStart() {return start;}
@@ -59,7 +94,9 @@ public class WorkTime {
         return "WorkTime{" +
                 "id=" + id +
                 ", start=" + start +
+                ", flagStart=" + flagStart +
                 ", end=" + end +
+                ", workedTimeInMinutes=" + workedTimeInMinutes +
                 ", driver=" + driver +
                 '}';
     }

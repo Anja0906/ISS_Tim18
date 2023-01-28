@@ -289,12 +289,13 @@ public class DriverController {
     public ResponseEntity<?> addWorkingHourForDriver(
             Principal principal,
             @PathVariable("id") int id,
-
             @RequestBody StartTimeDTO date) {
         try{
             checkAuthorities(principal, id);
+
             Driver driver = driverService.findDriverById(id);
-            WorkTime workTime = new WorkTime(Date.from(Instant.parse(date.getStart())), Date.from(Instant.parse(date.getStart())), driver);
+            WorkTime workTime = new WorkTime(Date.from(Instant.parse(date.getStart())), Date.from(Instant.parse(date.getStart())),
+                                             driver,Date.from(Instant.parse(date.getStart())),0);
             workTime = workTimeService.addWorkTime(workTime);
             return new ResponseEntity<>(new WorkTimeDTOWithoutDriver(workTime), HttpStatus.OK);
         }catch (DriverNotFoundException driverNotFoundException){
@@ -319,21 +320,73 @@ public class DriverController {
         }
     }
 
+    //ovo ide na logout
     @PreAuthorize("hasRole('DRIVER')")
     @PutMapping("/working-hour/{working-hour-id}")
     public ResponseEntity<?> updateWorkingHourById (
+            Principal principal,
+            @PathVariable("working-hour-id") int id,
+            @RequestBody EndTimeDTO date,
+            int flag) {
+        try {
+            User user = userService.findUserByEmail(principal.getName());
+            WorkTime workTime = workTimeService.findWorkTimeById(id);
+            if (user.getId().equals(workTime.getDriver().getId())) {
+                if(flag == 1){
+                    workTime.updateWorkingHour(date);
+                    workTime = workTimeService.updateWorkTime(workTime);
+                    return new ResponseEntity<>(new WorkTimeDTOWithoutDriver(workTime),HttpStatus.OK);
+                }else{
+                    workTime.updateWorkingHourLogin(date);
+                    workTime = workTimeService.updateWorkTime(workTime);
+                    return new ResponseEntity<>(new WorkTimeDTOWithoutDriver(workTime),HttpStatus.OK);
+                }
+            }
+            return new ResponseEntity<>("Working hour does not exist!",HttpStatus.NOT_FOUND);
+        }catch(WorkTimeNotFoundException workTimeNotFoundException){
+            return new ResponseEntity<>("Working hour does not exist!",HttpStatus.NOT_FOUND);
+        }
+    }
+
+
+    @PreAuthorize("hasRole('DRIVER')")
+    @PutMapping("/working-hour/{working-hour-id}/login")
+    public ResponseEntity<?> checkDriver (
             Principal principal,
             @PathVariable("working-hour-id") int id,
             @RequestBody EndTimeDTO date) {
         try {
             User user = userService.findUserByEmail(principal.getName());
             WorkTime workTime = workTimeService.findWorkTimeById(id);
-            if (user.getId().equals(workTime.getDriver().getId())) {
-                workTime.setEnd(Date.from(Instant.parse(date.getEnd())));
-                workTime = workTimeService.updateWorkTime(workTime);
-                return new ResponseEntity<>(new WorkTimeDTOWithoutDriver(workTime),HttpStatus.OK);
-            }
+            if (user.getId().equals(workTime.getDriver().getId()))
+                if(workTime.getWorkedTimeInMinutes()+((int) Date.from(Instant.parse(date.getEnd())).getTime() - (int) workTime.getFlagStart().getTime())>480)
+                    return new ResponseEntity<>(-1,HttpStatus.OK);
+            return new ResponseEntity<>(0,HttpStatus.OK);
+        }catch(WorkTimeNotFoundException workTimeNotFoundException){
             return new ResponseEntity<>("Working hour does not exist!",HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @PreAuthorize("hasRole('DRIVER')")
+    @PutMapping("/working-hour/driver/{driverId}/login")
+    public ResponseEntity<?> workingHourValidation (
+            Principal principal,
+            @PathVariable("driverId") int id,
+            @RequestBody EndTimeDTO date) {
+        try {
+            User user = userService.findUserByEmail(principal.getName());
+            Calendar start = Calendar.getInstance();
+            start.setTime(Date.from(Instant.parse(date.getEnd())));
+            start.add(Calendar.HOUR_OF_DAY, -24);;
+            ArrayList<WorkTime> workTime = workTimeService.findWorkTimesFromToDateHash(id,start.toString(),date.getEnd());
+            if(workTime.size() == 1)
+                if (user.getId().equals(workTime.get(0).getDriver().getId()))
+                    if(workTime.get(0).getWorkedTimeInMinutes()+((int) Date.from(Instant.parse(date.getEnd())).getTime() - (int) workTime.get(0).getFlagStart().getTime())>480){
+                        return new ResponseEntity<>(-1,HttpStatus.OK);
+                    }else{
+                        return new ResponseEntity<>(new WorkTimeDTOWithoutDriver(workTime.get(0)),HttpStatus.OK);
+                    }
+            return new ResponseEntity<>(0,HttpStatus.OK);
         }catch(WorkTimeNotFoundException workTimeNotFoundException){
             return new ResponseEntity<>("Working hour does not exist!",HttpStatus.NOT_FOUND);
         }

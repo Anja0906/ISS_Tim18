@@ -250,9 +250,9 @@ public class RideController {
             Status status = ride.getStatus();
             if (status == Status.STARTED) {
                 User user = userService.findUserByEmail(principal.getName());
-                Panic panic = new Panic(ride, user, new Date(), reason.getReason());
+                Panic panic = panicService.findById(ride.getPanic().getId());
+                panic.updatePanic(user,reason,ride);
                 panic = panicService.addPanic(panic);
-                ride.setPanic(panic);
                 return new ResponseEntity<>(new PanicDTO(panic), HttpStatus.OK);
             } else {
                 return new ResponseEntity<>(new ErrorMessage("Cannot panic in ride that is not in status STARTED!"), HttpStatus.BAD_REQUEST);

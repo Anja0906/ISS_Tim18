@@ -20,4 +20,7 @@ public interface WorkTimeRepository extends JpaRepository<WorkTime,Integer> {
     @Query(value = "SELECT * FROM work_time WHERE driver_id = ?1 and DATE(work_time.start)>?2 and DATE(work_time.end)<?3", nativeQuery = true)
     Page<WorkTime> findWorkTimesByDate(Integer id, String start, String end, Pageable pageable);
 
+    @Query(value = "SELECT * FROM work_time WHERE driver_id = ?1 and DATE(work_time.start)>?2 and DATE(work_time.end)<?3", nativeQuery = true)
+    ArrayList<WorkTime> findWorkTimesByDateHash(Integer id, String start, String end);
+
 }
