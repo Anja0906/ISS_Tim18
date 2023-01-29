@@ -285,8 +285,6 @@ public class DriverController {
             return new ResponseEntity<>("Driver does not exist!", HttpStatus.NOT_FOUND);
         }
     }
-
-    //OVO MU DODAJE NOVO RADNO VREME JEBEM MU MATER
     @PreAuthorize("hasAnyRole('DRIVER', 'ADMIN')")
     @PostMapping("/{id}/working-hour")
     public ResponseEntity<?> addWorkingHourForDriver(
@@ -304,7 +302,6 @@ public class DriverController {
         }
     }
 
-    //OVO SAMO DOBAVLJA RADNO VREME PO IDU JEBEM TI RADNO VREME I KURAC I SVE
     @PreAuthorize("hasRole('DRIVER')")
     @GetMapping("/working-hour/{working-hour-id}")
     public ResponseEntity<?> getWorkingHourById (
@@ -324,7 +321,6 @@ public class DriverController {
         }
     }
 
-    //OVO KAD SE LOGUJE I ODLOGUJE DA MU UPDATUJE STA RADI JEBEM MU MATER U GLAVU
     @PreAuthorize("hasRole('DRIVER')")
     @PutMapping("/working-hour/{working-hour-id}")
     public ResponseEntity<?> updateWorkingHourById (
@@ -353,7 +349,6 @@ public class DriverController {
     }
 
 
-    //OVO DOK JE ULOGOVANA MENTOLCINA PROVERAVA DAL JE PREKORACIO 8H DA MU JEBEMO NANU NANINU SA 1500 sa 800 U BUBREG
     @PreAuthorize("hasRole('DRIVER')")
     @GetMapping("/working-hour/{driverId}/logged")
     public ResponseEntity<?> checkDriver (
@@ -378,7 +373,6 @@ public class DriverController {
         }
     }
 
-    //OVO RADI KAD SE LOGUJE MENTOLCINA
     @PreAuthorize("hasRole('DRIVER')")
     @GetMapping("/working-hour/{driverId}/login")
     public ResponseEntity<?> workingHourValidation (
@@ -392,6 +386,7 @@ public class DriverController {
             start.add(Calendar.HOUR_OF_DAY, -24);
             DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             ArrayList<WorkTime> workTime = workTimeService.findWorkTimesFromToDateHash(id,dateFormat.format(start.getTime()),dateFormat.format(startTime));
+            System.out.println(workTime.size());
             if(workTime.size() == 1)
                 if (user.getId().equals(workTime.get(0).getDriver().getId()))
                     if(workTime.get(0).getWorkedTimeInMinutes()>=480){
@@ -406,8 +401,30 @@ public class DriverController {
             return new ResponseEntity<>("Working hour does not exist!",HttpStatus.NOT_FOUND);
         }
     }
-//workTime.get(0).getWorkedTimeInMinutes()+(int)(startTime.getTime()/60000-workTime.get(0).getFlagStart().getTime()/60000)>=480
-    //ovo samo menja drivera u online iz offline
+
+    @PreAuthorize("hasRole('DRIVER')")
+    @GetMapping("/working-hour/{driverId}/logout")
+    public ResponseEntity<?> workingHourValidationLogout (
+            Principal principal,
+            @PathVariable("driverId") int id) {
+        try {
+            User user = userService.findUserByEmail(principal.getName());
+            Date startTime = new Date();
+            Calendar start = Calendar.getInstance();
+            start.setTime(startTime);
+            start.add(Calendar.HOUR_OF_DAY, -24);
+            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            ArrayList<WorkTime> workTime = workTimeService.findWorkTimesFromToDateHash(id,dateFormat.format(start.getTime()),dateFormat.format(startTime));
+            if(workTime.size() == 1)
+                if (user.getId().equals(workTime.get(0).getDriver().getId())){
+                    workTime.get(0).updateWorkingHour(startTime);
+                    workTimeService.updateWorkTime(workTime.get(0));
+                }
+            return new ResponseEntity<>(0,HttpStatus.OK);
+        }catch(WorkTimeNotFoundException workTimeNotFoundException){
+            return new ResponseEntity<>("Working hour does not exist!",HttpStatus.NOT_FOUND);
+        }
+    }
     @PreAuthorize("hasRole('USER')")
     @GetMapping("/online/{id}")
     public ResponseEntity<?> onlineDriver (

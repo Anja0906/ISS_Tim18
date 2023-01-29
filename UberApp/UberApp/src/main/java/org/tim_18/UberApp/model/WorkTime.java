@@ -62,10 +62,10 @@ public class WorkTime {
     }
 
     public void updateWorkingHour(Date date){
-        if(getWorkedTimeInMinutes()+((int) date.getTime() - (int) getFlagStart().getTime())>480){
+        if(getWorkedTimeInMinutes()+(int)( date.getTime()/60000 -  getFlagStart().getTime()/60000)>480){
             setWorkedTimeInMinutes(480);
         }else{
-            setWorkedTimeInMinutes(getWorkedTimeInMinutes()+((int) date.getTime() - (int) getFlagStart().getTime()));
+            setWorkedTimeInMinutes(getWorkedTimeInMinutes()+(int)( date.getTime()/60000 -  getFlagStart().getTime()/60000));
         }
         setEnd(date);
         setFlagStart(date);
