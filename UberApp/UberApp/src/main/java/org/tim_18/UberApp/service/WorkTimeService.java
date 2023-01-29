@@ -31,6 +31,7 @@ public class WorkTimeService {
     }
     public Page<WorkTime> findWorkTimesFromToDate(Integer id, String start, String end, Pageable pageable) {
         return workTimeRepository.findWorkTimesByDate(id,start,end,pageable);}
+
     public ArrayList<WorkTime> findWorkTimesFromToDateHash(Integer id, String start, String end) {
         return workTimeRepository.findWorkTimesByDateHash(id,start,end);}
     public void deleteWorkTime(Integer id) {workTimeRepository.deleteWorkTimeById(id);}

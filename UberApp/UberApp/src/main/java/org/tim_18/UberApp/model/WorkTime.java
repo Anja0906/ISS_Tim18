@@ -2,8 +2,11 @@ package org.tim_18.UberApp.model;
 
 import jakarta.persistence.*;
 import org.tim_18.UberApp.dto.EndTimeDTO;
+import org.tim_18.UberApp.dto.StartTimeDTO;
 import org.tim_18.UberApp.dto.WorkTimeDTOWithoutDriver;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Date;
@@ -58,15 +61,19 @@ public class WorkTime {
         return workedTimeInMinutes;
     }
 
-    public void updateWorkingHour(EndTimeDTO date){
-        setWorkedTimeInMinutes(getWorkedTimeInMinutes()+((int) Date.from(Instant.parse(date.getEnd())).getTime() - (int) getFlagStart().getTime()));
-        setEnd(Date.from(Instant.parse(date.getEnd())));
-        setFlagStart(Date.from(Instant.parse(date.getEnd())));
+    public void updateWorkingHour(Date date){
+        if(getWorkedTimeInMinutes()+((int) date.getTime() - (int) getFlagStart().getTime())>480){
+            setWorkedTimeInMinutes(480);
+        }else{
+            setWorkedTimeInMinutes(getWorkedTimeInMinutes()+((int) date.getTime() - (int) getFlagStart().getTime()));
+        }
+        setEnd(date);
+        setFlagStart(date);
     }
 
-    public void updateWorkingHourLogin(EndTimeDTO date){
-        setEnd(Date.from(Instant.parse(date.getEnd())));
-        setFlagStart(Date.from(Instant.parse(date.getEnd())));
+    public void updateWorkingHourLogin(Date date){
+        setEnd(date);
+        setFlagStart(date);
     }
 
     public void setWorkedTimeInMinutes(Integer workedTimeInMinutes) {

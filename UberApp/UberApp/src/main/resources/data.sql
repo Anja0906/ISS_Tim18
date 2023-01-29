@@ -54,8 +54,10 @@ INSERT INTO documents (id, document_image, name, driver_id) VALUES ('3', 'ajshdj
 
 # --work_time--
 INSERT INTO work_time (end, flag_start, start, worked_time_in_minutes, driver_id) VALUES ('2022-12-7 01:55:00','2022-12-7 01:10:00', '2022-12-7 01:10:00',45, '1');
-INSERT INTO work_time (end, flag_start, start, worked_time_in_minutes, driver_id) VALUES ('2022-12-8 01:55:00','2022-12-8 01:10:00', '2022-12-8 01:10:00',45, '2');
+INSERT INTO work_time (end, flag_start, start, worked_time_in_minutes, driver_id) VALUES ('2023-1-29 19:10:00','2023-1-29 19:10:00', '2023-1-29 01:10:00',45, '2');
 INSERT INTO work_time (end, flag_start, start, worked_time_in_minutes, driver_id) VALUES ('2022-12-9 01:55:00','2022-12-9 01:10:00', '2022-12-9 01:10:00',45, '3');
+INSERT INTO work_time (end, flag_start, start, worked_time_in_minutes, driver_id) VALUES ('2023-01-28 22:00:00','2023-01-28 20:10:00', '2023-01-28 20:10:00',480, '1');
+
 
 # --rides--
 INSERT INTO rides (baby_transport, end_time, estimated_time_in_minutes, pet_transport, start_time, status, total_cost, vehicle_type, driver_id, panic_id, rejection_id, scheduled_time)
@@ -267,3 +269,4 @@ INSERT INTO vehicle_price (price, vehicle_type) VALUES (600, 'LUKSUZNO');
 INSERT INTO vehicle_price (price, vehicle_type) VALUES (700, 'KOMBI');
 
 insert into requests (address, email, id, name, profile_picture, surname, telephone_number) VALUES ("address", "skdjhfjsd@gmail.com", 2, "name", "profile_picture", "surname", "telephone_number");
+
