@@ -262,6 +262,7 @@ public class RideController {
                 panic.updatePanic(user,reason,ride);
                 panic = panicService.addPanic(panic);
                 this.simpMessagingTemplate.convertAndSend("/socket-topic/newPanic", new PanicSocketDTO(panic));
+
                 return new ResponseEntity<>(new PanicDTO(panic), HttpStatus.OK);
             } else {
                 return new ResponseEntity<>(new ErrorMessage("Cannot panic in ride that is not in status STARTED!"), HttpStatus.BAD_REQUEST);

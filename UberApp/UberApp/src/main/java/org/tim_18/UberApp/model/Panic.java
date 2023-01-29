@@ -20,7 +20,6 @@ public class Panic implements Serializable {
     @JsonIgnore
     @ManyToOne
     private User user;
-    @JsonIgnore
     @OneToOne(mappedBy = "panic")
     private Ride ride;
     private Date time;
@@ -36,7 +35,12 @@ public class Panic implements Serializable {
 
     public Panic() {}
 
-
+    public void updatePanic(User user, ReasonDTO reasonDTO,Ride ride){
+        setUser(user);
+        setTime(new Date());
+        setReason(reasonDTO.getReason());
+        setRide(ride);
+    }
     public Integer getId() {
         return id;
     }
@@ -75,13 +79,6 @@ public class Panic implements Serializable {
 
     public void setReason(String reason) {
         this.reason = reason;
-    }
-
-    public void updatePanic(User user, ReasonDTO reasonDTO, Ride ride){
-        setUser(user);
-        setTime(new Date());
-        setReason(reasonDTO.getReason());
-        setRide(ride);
     }
 
     @Override
