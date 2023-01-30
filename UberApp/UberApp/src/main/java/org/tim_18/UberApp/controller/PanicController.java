@@ -8,19 +8,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import org.tim_18.UberApp.dto.FindAllDTO;
 import org.tim_18.UberApp.dto.PanicDTO;
-import org.tim_18.UberApp.dto.UserDTO;
 import org.tim_18.UberApp.exception.PanicNotFoundException;
-import org.tim_18.UberApp.exception.UserNotFoundException;
+import org.tim_18.UberApp.model.LocationsForRide;
 import org.tim_18.UberApp.model.Panic;
-import org.tim_18.UberApp.model.User;
+import org.tim_18.UberApp.service.LocationsForRideService;
 import org.tim_18.UberApp.service.PanicService;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 @RequestMapping("api/panic")
@@ -30,8 +25,11 @@ public class PanicController {
     @Autowired
     private final PanicService panicService;
 
-    public PanicController(PanicService service) {
+    private final LocationsForRideService locationsForRideService;
+
+    public PanicController(PanicService service, LocationsForRideService locationsForRideService) {
         this.panicService = service;
+        this.locationsForRideService = locationsForRideService;
     }
 
 
@@ -42,7 +40,7 @@ public class PanicController {
         try {
             Pageable paging = PageRequest.of(page, size);
             Page<Panic> panics = panicService.findAll(paging);
-            List<PanicDTO> panicDTOs = PanicDTO.getPanicsDTO(panics);
+            List<PanicDTO> panicDTOs = getPanicsDTO(panics);
 
             Map<String, Object> response = new HashMap<>();
             response.put("totalCount", panics.getTotalElements());
@@ -53,12 +51,24 @@ public class PanicController {
         }
     }
 
+    private List<PanicDTO> getPanicsDTO(Page<Panic> panics) {
+        List<PanicDTO> panicDTOs = new ArrayList<>();
+        for (Panic panic : panics) {
+            panicDTOs.add(new PanicDTO(panic, getLocationsByRideId(panic.getRide().getId())));
+        }
+        return panicDTOs;
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<PanicDTO> getUser (
             @PathVariable("id") int id) {
         Panic panic = panicService.findById(id);
         System.out.println(panic);
-        PanicDTO panicDTO = new PanicDTO(panic);
+        PanicDTO panicDTO = new PanicDTO(panic, getLocationsByRideId(panic.getRide().getId()));
         return new ResponseEntity<>(panicDTO, HttpStatus.OK);
+    }
+
+    private Set<LocationsForRide> getLocationsByRideId(Integer id) {
+        return locationsForRideService.getByRideId(id);
     }
 }

@@ -42,15 +42,15 @@ public class Ride implements Serializable {
     @JoinColumn(name = "panic_id", referencedColumnName = "id")
     private Panic panic;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL}, mappedBy = "rides")
-    private Set<Location> locations = new HashSet<Location>();
+//    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL}, mappedBy = "rides")
+//    private Set<Location> locations = new HashSet<Location>();
     private Status status;
 
     @JsonIgnore
     @OneToMany(targetEntity = Review.class,cascade = {CascadeType.ALL}, fetch = FetchType.LAZY, mappedBy = "ride")
     private Set<Review> reviews = new HashSet<Review>();
 
-    public Ride(Date startTime, Date endTime, long totalCost, Driver driver, HashSet<Passenger> passengers, int estimatedTimeInMinutes, VehicleType vehicleType, boolean babyTransport, boolean petTransport, Rejection rejection, HashSet<Location> locations, Status status, HashSet<Review> reviews, Panic panic, Date scheduledTime) {
+    public Ride(Date startTime, Date endTime, long totalCost, Driver driver, HashSet<Passenger> passengers, int estimatedTimeInMinutes, VehicleType vehicleType, boolean babyTransport, boolean petTransport, Rejection rejection, /*HashSet<Location> locations,*/ Status status, HashSet<Review> reviews, Panic panic, Date scheduledTime) {
         this.startTime              = startTime;
         this.endTime                = endTime;
         this.totalCost              = totalCost;
@@ -61,7 +61,7 @@ public class Ride implements Serializable {
         this.babyTransport          = babyTransport;
         this.petTransport           = petTransport;
         this.rejection              = rejection;
-        this.locations              = locations;
+//        this.locations              = locations;
         this.status                 = status;
         this.reviews                = reviews;
         this.panic                  = panic;
@@ -146,12 +146,12 @@ public class Ride implements Serializable {
         this.rejection = rejection;
     }
 
-    public Set<Location> getLocations() {
-        return locations;
-    }
-    public void setLocations(HashSet<Location> locations) {
-        this.locations = locations;
-    }
+//    public Set<Location> getLocations() {
+//        return locations;
+//    }
+//    public void setLocations(HashSet<Location> locations) {
+//        this.locations = locations;
+//    }
 
     public Status getStatus() {
         return status;
@@ -195,8 +195,17 @@ public class Ride implements Serializable {
                 ", vehicleType=" + vehicleType +
                 ", babyTransport=" + babyTransport +
                 ", petTransport=" + petTransport +
-                ", locations=" + locations +
+//                ", locations=" + locations +
                 ", status=" + status +
+                '}';
+    }
+
+    public String toString2() {
+        return "Ride{" +
+                "id=" + id +
+                ", scheduledTime=" + scheduledTime +
+                ", driver=" + driver+
+                ", estimatedTimeInMinutes=" + estimatedTimeInMinutes +
                 '}';
     }
 }

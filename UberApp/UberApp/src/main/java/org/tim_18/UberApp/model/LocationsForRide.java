@@ -18,12 +18,27 @@ public class LocationsForRide implements Serializable {
     private Location destination;
     private Double kilometers;
 
+    private Double duration;
+
+    @ManyToOne(cascade = {CascadeType.ALL})
+    private Ride ride;
+
     public LocationsForRide() {}
-    public LocationsForRide(Integer id, Location departure, Location destination, Double kilometers) {
+    public LocationsForRide(Integer id, Location departure, Location destination, Double kilometers, Double duration, Ride ride) {
         this.id          = id;
         this.departure   = departure;
         this.destination = destination;
         this.kilometers  = kilometers;
+        this.duration    = duration;
+        this.ride        = ride;
+    }
+
+    public LocationsForRide(Location departure, Location destination, Double kilometers, Double duration, Ride ride) {
+        this.departure   = departure;
+        this.destination = destination;
+        this.kilometers  = kilometers;
+        this.duration    = duration;
+        this.ride        = ride;
     }
 
     public Integer getId() {
@@ -56,5 +71,21 @@ public class LocationsForRide implements Serializable {
 
     public void setKilometers(Double kilometers) {
         this.kilometers = kilometers;
+    }
+
+    public Ride getRide() {
+        return ride;
+    }
+
+    public void setRide(Ride ride) {
+        this.ride = ride;
+    }
+
+    public Double getDuration() {
+        return duration;
+    }
+
+    public void setDuration(Double duration) {
+        this.duration = duration;
     }
 }

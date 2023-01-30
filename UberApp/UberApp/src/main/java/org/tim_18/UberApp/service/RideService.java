@@ -7,9 +7,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.tim_18.UberApp.exception.RideNotFoundException;
 import org.tim_18.UberApp.model.Ride;
+import org.tim_18.UberApp.model.VehicleType;
 import org.tim_18.UberApp.repository.RideRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class RideService {
@@ -41,6 +43,14 @@ public class RideService {
     public Ride getDriverActiveRide(Integer driverId) {
         return rideRepository.findDriverActiveRide(driverId)
                 .orElseThrow(() -> new RideNotFoundException("Ride was not found"));
+    }
+
+    public Optional<Ride> getActiveRideDriver(Integer driverId) {
+        return rideRepository.findDriverActiveRide(driverId);
+    }
+
+    public List<Ride> getDriverAcceptedRides(Integer driverId) {
+        return rideRepository.findDriverAcceptedRides(driverId, "ACCEPTED", "PENDING");
 
     }
 
@@ -88,5 +98,13 @@ public class RideService {
 
     public List<Ride> findRidesForDriverByStatus(Integer id, String status, String now) {
         return rideRepository.findRidesForDriverByStatus(id, status, now);
+    }
+
+    public List<Ride> findScheduledRides(double time, VehicleType vehicleType, boolean babyTransport, boolean petTransport) {
+        return rideRepository.findScheduledRides(time, vehicleType.toString(), babyTransport, petTransport);
+    }
+
+    public List<Ride> findScheduledRides(double time) {
+        return rideRepository.findScheduledRides(time);
     }
 }

@@ -46,10 +46,12 @@ public class DriverController {
 
     private final AdministratorService adminService;
 
+    private final LocationsForRideService locationsForRideService;
+
     @Autowired
     PasswordEncoder passwordEncoder;
 
-    public DriverController(DriverService driverService, DocumentService documentService, VehicleService vehicleService, LocationService locationService, WorkTimeService workTimeService, RideService rideService, UserService userService, RoleService roleService, AdministratorService adminService) {
+    public DriverController(DriverService driverService, DocumentService documentService, VehicleService vehicleService, LocationService locationService, WorkTimeService workTimeService, RideService rideService, UserService userService, RoleService roleService, AdministratorService adminService, LocationsForRideService locationsForRideService) {
         this.driverService   = driverService;
         this.documentService = documentService;
         this.vehicleService  = vehicleService;
@@ -59,6 +61,7 @@ public class DriverController {
         this.userService     = userService;
         this.roleService     = roleService;
         this.adminService    = adminService;
+        this.locationsForRideService = locationsForRideService;
     }
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -356,7 +359,7 @@ public class DriverController {
             Page<Ride> rides = rideService.findRidesForDriver(id, from, to, pageable);
 
             Map<String, Object> map = new HashMap<>();
-            HashSet<RideRetDTO> ridesDTO = new RideRetDTO().makeRideRideDTOS(rides);
+            HashSet<RideRetDTO> ridesDTO = makeRideDTOS(rides);
 
             map.put("totalCount", ridesDTO.size());
             map.put("results", ridesDTO);
@@ -365,6 +368,19 @@ public class DriverController {
             return new ResponseEntity<>("Driver does not exist!", HttpStatus.NOT_FOUND);
         }
     }
+
+    private HashSet<RideRetDTO> makeRideDTOS(Page<Ride> rides) {
+        HashSet<RideRetDTO> rideRetDTOHashSet = new HashSet<>();
+        for (Ride ride : rides) {
+            rideRetDTOHashSet.add(new RideRetDTO(ride, getLocationsByRideId(ride.getId())));
+        }
+        return rideRetDTOHashSet;
+    }
+
+    private Set<LocationsForRide> getLocationsByRideId(Integer id) {
+        return locationsForRideService.getByRideId(id);
+    }
+
 
     private List<Role> getRoles() {
         List<Role> rD = roleService.findByName("ROLE_DRIVER");

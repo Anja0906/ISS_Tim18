@@ -8,6 +8,7 @@ import org.tim_18.UberApp.model.LocationsForRide;
 import org.tim_18.UberApp.repository.LocationsForRideRepository;
 
 import java.util.List;
+import java.util.Set;
 
 @Service("locationsForRidesService")
 public class LocationsForRideService {
@@ -38,5 +39,9 @@ public class LocationsForRideService {
 
     public void deleteLocationsForRide(Integer id) {
         locationsForRideRepository.deleteLocationsForRideById(id);
+    }
+
+    public Set<LocationsForRide> getByRideId(Integer id) {
+        return locationsForRideRepository.getLocationsForRideByRideId(id);
     }
 }

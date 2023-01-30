@@ -3,10 +3,7 @@ package org.tim_18.UberApp.dto.rideDTOs;
 import lombok.Data;
 import org.tim_18.UberApp.dto.locationDTOs.LocationSetDTO;
 import org.tim_18.UberApp.dto.passengerDTOs.PassengerIdEmailDTO;
-import org.tim_18.UberApp.model.FavoriteRide;
-import org.tim_18.UberApp.model.Location;
-import org.tim_18.UberApp.model.Passenger;
-import org.tim_18.UberApp.model.VehicleType;
+import org.tim_18.UberApp.model.*;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -50,25 +47,25 @@ public class FavoriteRideDTO {
         this.passengers             = passengerSet;
     }
 
-    public FavoriteRideDTO(FavoriteRide ride, Passenger passenger){
-        Set<Passenger> passengerSet = new HashSet<>();
-        passengerSet.add(passenger);
-        new FavoriteRideDTO(ride.getId(), ride.getFavoriteName(), ride.getLocations(),
-                passengerSet, ride.getVehicleType(),
-                ride.isBabyTransport(), ride.isPetTransport());
-    }
-
-    public FavoriteRideDTO(FavoriteRide ride){
-        this(ride.getId(), ride.getFavoriteName(), ride.getLocations(),
-                ride.getPassengers(), ride.getVehicleType(),
-                ride.isBabyTransport(), ride.isPetTransport());
-    }
-
-    public static List<FavoriteRideDTO> getFavoriteRidesDTO(List<FavoriteRide> favoriteRides) {
-        List<FavoriteRideDTO> favoriteRidesDTO = new ArrayList<>() ;
-        for (FavoriteRide fr : favoriteRides) {
-            favoriteRidesDTO.add(new FavoriteRideDTO(fr));
-        }
-        return favoriteRidesDTO;
-    }
+//    public FavoriteRideDTO(FavoriteRide ride, Passenger passenger){
+//        Set<Passenger> passengerSet = new HashSet<>();
+//        passengerSet.add(passenger);
+//        new FavoriteRideDTO(ride.getId(), ride.getFavoriteName(), ride.getLocations(),
+//                passengerSet, ride.getVehicleType(),
+//                ride.isBabyTransport(), ride.isPetTransport());
+//    }
+//
+//    public FavoriteRideDTO(FavoriteRide ride, Set<LocationsForFavoriteRide> locations){
+//        this(ride.getId(), ride.getFavoriteName(), locations,
+//                ride.getPassengers(), ride.getVehicleType(),
+//                ride.isBabyTransport(), ride.isPetTransport());
+//    }
+//
+//    public static List<FavoriteRideDTO> getFavoriteRidesDTO(List<FavoriteRide> favoriteRides) {
+//        List<FavoriteRideDTO> favoriteRidesDTO = new ArrayList<>() ;
+//        for (FavoriteRide fr : favoriteRides) {
+//            favoriteRidesDTO.add(new FavoriteRideDTO(fr));
+//        }
+//        return favoriteRidesDTO;
+//    }
 }

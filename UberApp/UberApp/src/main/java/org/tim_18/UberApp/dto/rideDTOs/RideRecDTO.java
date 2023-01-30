@@ -1,17 +1,14 @@
 package org.tim_18.UberApp.dto.rideDTOs;
 
 import lombok.Data;
+import org.tim_18.UberApp.dto.RejectionDTO;
+import org.tim_18.UberApp.dto.driverDTOs.DriverEmailDTO;
+import org.tim_18.UberApp.dto.locationDTOs.LocationDTO;
 import org.tim_18.UberApp.dto.locationDTOs.LocationSetDTO;
 import org.tim_18.UberApp.dto.passengerDTOs.PassengerIdEmailDTO;
-import org.tim_18.UberApp.model.Location;
-import org.tim_18.UberApp.model.Passenger;
-import org.tim_18.UberApp.model.Ride;
-import org.tim_18.UberApp.model.VehicleType;
+import org.tim_18.UberApp.model.*;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Data
 public class RideRecDTO {
@@ -48,9 +45,43 @@ public class RideRecDTO {
         this.passengers             = passengerSet;
     }
 
-    public RideRecDTO(Ride ride){
-        this(ride.getId(), ride.getLocations(),
-             ride.getPassengers(), ride.getVehicleType(),
-             ride.isBabyTransport(), ride.isPetTransport(), ride.getScheduledTime().toString());
+//    public RideRecDTO(Ride ride){
+//        this(ride.getId(), ride.getLocations(),
+//             ride.getPassengers(), ride.getVehicleType(),
+//             ride.isBabyTransport(), ride.isPetTransport(), ride.getScheduledTime().toString());
+//    }
+
+    public RideRecDTO(Integer id, Set<Passenger> passengers, VehicleType vehicleType, boolean babyTransport, boolean petTransport, Set<LocationsForRide> _locations, Date scheduledTime) {
+        this.id                             = id;
+        Set<PassengerIdEmailDTO> passengerSet = new HashSet<>();
+        for (Passenger p:passengers) {
+            passengerSet.add(new PassengerIdEmailDTO(p));
+        }
+        this.passengers                     = passengerSet;
+        this.vehicleType                    = vehicleType;
+        this.babyTransport                  = babyTransport;
+        this.petTransport                   = petTransport;
+        Set<LocationSetDTO> locationSetDTOSet = new HashSet<>();
+        for (LocationsForRide loc : _locations){
+            LocationSetDTO locationSetDTO = new LocationSetDTO();
+            locationSetDTO.setDeparture(new LocationDTO(loc.getDeparture()));
+            locationSetDTO.setDestination(new LocationDTO(loc.getDestination()));
+            locationSetDTOSet.add(locationSetDTO);
+        }
+        this.locations                      = locationSetDTOSet;
+        if (scheduledTime==null) {
+            this.scheduledTime              = "";
+        }
+        else {
+            this.scheduledTime              = scheduledTime.toString();
+        }
+    }
+    public RideRecDTO(Ride ride, Set<LocationsForRide> locations){
+        this(ride.getId(),
+                ride.getPassengers(),
+                ride.getVehicleType(), ride.isBabyTransport(),
+                ride.isPetTransport(),
+                locations, ride.getScheduledTime());
+
     }
 }

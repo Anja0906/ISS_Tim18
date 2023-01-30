@@ -20,8 +20,8 @@ public class FavoriteRide implements Serializable {
     private VehicleType vehicleType;
     private boolean babyTransport;
     private boolean petTransport;
-    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL}, mappedBy = "favoriteRides")
-    private Set<Location> locations = new HashSet<Location>();
+//    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL}, mappedBy = "favoriteRides")
+//    private Set<Location> locations = new HashSet<Location>();
     @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL}, mappedBy = "favoriteRides")
     private Set<Passenger> passengers = new HashSet<Passenger>();
 }
