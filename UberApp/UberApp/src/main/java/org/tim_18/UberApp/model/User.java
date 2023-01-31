@@ -47,7 +47,6 @@ public class User extends ImplementsSerializable implements UserDetails {
     private List<Role> roles;
 
     public User(String name, String surname, String profilePicture, String telephoneNumber, String email, String address, String password, boolean blocked, boolean active, List<Role> roles) {
-
         this.name            = name;
         this.surname         = surname;
         this.profilePicture  = profilePicture;
@@ -57,7 +56,7 @@ public class User extends ImplementsSerializable implements UserDetails {
         this.password        = password;
         this.blocked         = blocked;
         this.active          = active;
-        this.roles = roles;
+        this.roles           = roles;
     }
     public User() {}
 

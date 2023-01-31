@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface RideRepository extends JpaRepository<Ride, Integer> {
-    @Query(value = "SELECT * FROM rides r INNER JOIN locations_rides lr ON  r.id=lr.rid_id WHERE r.id=?1", nativeQuery = true)
+    @Query(value = "SELECT * FROM rides r INNER JOIN locations_rides lr ON  r.id=lr.ride_id WHERE r.id=?1", nativeQuery = true)
     public Optional<Ride> findById(Integer id);
 //    @Query(value = "SELECT * FROM rides rid natural join passenger p where rid.driver_id = ?1 OR p.id = ?1", nativeQuery = true)
 //    ArrayList<Ride> findRidesForUser(int id);
@@ -24,13 +24,17 @@ public interface RideRepository extends JpaRepository<Ride, Integer> {
     @Query(value = "SELECT * FROM rides INNER JOIN passenger_rides on rides.id=passenger_rides.ride_id WHERE passenger_id = ?1 and date(start_time) > ?2 and date(start_time) < ?3 and date(end_time) > ?2 and date(end_time) < ?3", nativeQuery = true)
     Page<Ride> findRidesByPassengersId(Integer passenger_id, String from, String to, Pageable pageable);
 
-    @Query(value = "SELECT * FROM rides r WHERE driver_id=?1 and now() between r.start_time and r.end_time", nativeQuery = true)
+
+    @Query(value = "SELECT * FROM rides r WHERE driver_id=?1 and now() between r.start_time and r.end_time and r.status=2", nativeQuery = true)
     Optional<Ride> findDriverActiveRide(Integer driver_id);
+
 
     @Query(value = "SELECT * FROM rides r WHERE driver_id=?1 and (r.status = ?2 or r.status = ?3)", nativeQuery = true)
     List<Ride> findDriverAcceptedRides(Integer driverId, String status, String otherStatus);
     @Query(value = "SELECT * FROM rides r INNER JOIN passenger_rides pr on r.id=pr.ride_id WHERE pr.passenger_id = ?1 and (now() between date_sub(start_time, INTERVAL estimated_time_in_minutes minute) and start_time or now() between start_time and end_time) and (r.status=1 or r.status=2)", nativeQuery = true)
     Optional<Ride> findPassengerActiveRide(Integer passenger_id, String status);
+    
+
 
     @Query(value = "SELECT * FROM rides r INNER JOIN passenger_rides pr on r.id=pr.ride_id WHERE pr.passenger_id = ?1 or r.driver_id = ?1", nativeQuery = true)
     Page<Ride> findRidesForUserPage(Integer id, Pageable pageable);
@@ -38,11 +42,21 @@ public interface RideRepository extends JpaRepository<Ride, Integer> {
     @Query(value = "SELECT * FROM rides r INNER JOIN passenger_rides pr on r.id=pr.ride_id WHERE pr.passenger_id = ?1 or r.driver_id = ?1", nativeQuery = true)
     List<Ride> findRidesForUser(Integer id);
 
-    @Query(value = "SELECT * FROM rides r INNER JOIN passenger_rides pr on r.id=pr.ride_id WHERE (pr.passenger_id = ?1 or r.driver_id = ?1) and (date(r.start_time) > ?2 and date(r.start_time) < ?3 and date(r.end_time) >?2 and date(r.end_time) < ?3)", nativeQuery = true)
+
+    @Query(value = "SELECT * FROM rides r LEFT JOIN passenger_rides pr on r.id=pr.ride_id WHERE pr.passenger_id = ?1 or r.driver_id = ?1 and date(r.start_time) > ?2 and date(r.start_time) < ?3 and date(r.end_time) >?2 and date(r.end_time) < ?3", nativeQuery = true)
     List<Ride> findRidesForUser(Integer id, String from, String to);
 
     @Query(value = "SELECT * FROM rides WHERE rides.driver_id = ?1 and DATE(rides.start_time)>?2 and DATE(rides.end_time)<?3", nativeQuery = true)
     Page<Ride> findRidesForDriver(Integer id, String start, String end, Pageable pageable);
+
+    @Query(value = "SELECT * FROM rides r LEFT JOIN passenger_rides pr on r.id=pr.ride_id WHERE pr.passenger_id = ?1 and DATE(r.start_time)>?2 and DATE(r.end_time)<?3", nativeQuery = true)
+    Page<Ride> findRidesForPassenger(Integer id, String start, String end, Pageable pageable);
+
+    @Query(value = "SELECT * FROM rides r LEFT JOIN passenger_rides pr on r.id=pr.ride_id WHERE pr.passenger_id = ?1 or r.driver_id = ?1 and DATE(r.start_time)>?2 and DATE(r.end_time)<?3", nativeQuery = true)
+    Page<Ride> findRidesForUser(Integer id, String start, String end, Pageable pageable);
+
+    @Query(value = "SELECT * FROM rides r WHERE DATE(r.start_time)>?1 and DATE(r.end_time)<?2", nativeQuery = true)
+    Page<Ride> findRidesInDateRange(String start, String end, Pageable pageable);
 
     @Query(value = "SELECT * FROM rides WHERE rides.status = ?1 ", nativeQuery = true)
     Page<Ride> findPendingRidesByStatus(String status,Pageable pageable);

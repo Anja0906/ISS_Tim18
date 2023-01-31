@@ -14,17 +14,11 @@ public class RoleService {
     private RoleRepository roleRepository;
 
     public Role findOneById(Integer id) {
-        Role auth = this.roleRepository.getOne(id);
-        return auth;
+        return this.roleRepository.getOne(id);
     }
-
     public Role findById(Integer id) {
         return this.roleRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException("Role by id " + id + " was not found"));
     }
-
-    public List<Role> findByName(String name) {
-        List<Role> roles = this.roleRepository.findByName(name);
-        return roles;
-    }
+    public List<Role> findByName(String name) {return this.roleRepository.findByName(name);}
 }

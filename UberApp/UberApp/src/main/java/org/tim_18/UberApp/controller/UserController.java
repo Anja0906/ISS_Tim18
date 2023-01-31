@@ -50,10 +50,13 @@ public class UserController {
     private final ReviewService reviewService;
 
     private final RoleService roleService;
+    @Autowired
+    private final RequestService requestService;
 
     private final LocationsForRideService locationsForRideService;
 
-    public UserController(UserService userService, MessageService messageService, RideService rideService, NoteService noteService, ReviewService reviewService, RoleService roleService, LocationsForRideService locationsForRideService) {
+
+    public UserController(UserService userService, MessageService messageService, RideService rideService, NoteService noteService, ReviewService reviewService, RoleService roleService, RequestService requestService) {
         this.userService    = userService;
         this.messageService = messageService;
         this.rideService    = rideService;
@@ -61,6 +64,7 @@ public class UserController {
         this.reviewService  = reviewService;
         this.roleService = roleService;
         this.locationsForRideService = locationsForRideService;
+        this.requestService = requestService;
     }
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("")
@@ -128,6 +132,7 @@ public class UserController {
     public void updateUser(@PathVariable("id") int id, @RequestBody UserDTO userDTO) {
         try{
             userService.updateUserFromDto(id, userDTO);
+            requestService.deleteByUserId(userDTO.getId());
         }catch (UserNotFoundException e){
             System.out.println("User not found");
         }
@@ -300,7 +305,7 @@ public class UserController {
     }
 
 
-    @PreAuthorize("hasRole('PASSENGER')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'DRIVER', 'PASSENGER')")
     @PutMapping("/{id}/changePassword")
     public ResponseEntity<?> changePassword(Principal principal, @PathVariable("id") int id, @RequestBody changePasswordDTO password) {
         try{

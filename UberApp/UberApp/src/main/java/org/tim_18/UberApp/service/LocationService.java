@@ -15,22 +15,13 @@ public class LocationService {
     @Autowired
     private final LocationRepository locationRepository;
 
-    public LocationService(LocationRepository locationRepository) {
-        this.locationRepository = locationRepository;
-    }
+    public LocationService(LocationRepository locationRepository) {this.locationRepository = locationRepository;}
+    public Location addLocation(Location location) {return locationRepository.save(location);}
 
-    public Location addLocation(Location location) {
-        return locationRepository.save(location);
-    }
-
-    public List<Location> findAllLocations() {
-        return locationRepository.findAll();
-    }
-
+    public List<Location> findAllLocations() {return locationRepository.findAll();}
     public Location updateLocation(Location location) {
         return locationRepository.save(location);
     }
-
     public Location findLocationById(Integer id) {
         return locationRepository.findLocationById(id)
                 .orElseThrow(() -> new LocationNotFoundException("Location by id " + id + " was not found"));
@@ -38,8 +29,5 @@ public class LocationService {
     public Location findLocationByAddressLongitudeLatitude(Double longitude,Double latitude,String address){
         return locationRepository.findLocationByAdressLongitudeLatitude(longitude,latitude,address);
     }
-
-    public void deleteLocation(Integer id) {
-        locationRepository.deleteLocationById(id);
-    }
+    public void deleteLocation(Integer id) {locationRepository.deleteLocationById(id);}
 }

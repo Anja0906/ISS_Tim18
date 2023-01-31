@@ -19,13 +19,9 @@ public class CustomUserDetailsService implements UserDetailsService {
 	@Autowired
 	private final UserRepository userRepository;
 
-	public CustomUserDetailsService(UserRepository userRepository) {
-		this.userRepository = userRepository;
-	}
-
+	public CustomUserDetailsService(UserRepository userRepository) {this.userRepository = userRepository;}
 	// Funkcija koja na osnovu username-a iz baze vraca objekat User-a
 	@Override
-
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 		User user = userRepository.findUserByEmail(email);
 		if (user == null) {
@@ -34,7 +30,4 @@ public class CustomUserDetailsService implements UserDetailsService {
 			return user;
 		}
 	}
-
-
-
 }

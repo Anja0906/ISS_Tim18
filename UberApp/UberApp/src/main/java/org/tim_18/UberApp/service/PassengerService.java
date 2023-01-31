@@ -22,35 +22,18 @@ public class PassengerService {
     @Autowired
     PassengerDTOwithPasswordMapper dtoMapper;
 
-    public PassengerService(PassengerRepository passengerRepository) {
-        this.passengerRepository = passengerRepository;
-    }
-
-    public Passenger addPassenger(Passenger passenger) {
-        return passengerRepository.save(passenger);
-    }
-    public Passenger update(Passenger passenger) {
-        return passengerRepository.save(passenger);
-    }
-
-    public List<Passenger> findAll() {
-        return passengerRepository.findAll();
-    }
+    public PassengerService(PassengerRepository passengerRepository) {this.passengerRepository = passengerRepository;}
+    public Passenger addPassenger(Passenger passenger) {return passengerRepository.save(passenger);}
+    public Passenger update(Passenger passenger) {return passengerRepository.save(passenger);}
+    public List<Passenger> findAll() {return passengerRepository.findAll();}
     public Page<Passenger> findAll(Pageable page){return passengerRepository.findAll(page);}
-
-
     public Passenger findById(Integer id) {
         return passengerRepository.findPassengerById(id)
                 .orElseThrow(() -> new PassengerNotFoundException("Passenger by id " + id + " was not found"));
     }
-
     public Passenger findByEmail(String email) {
         return passengerRepository.findPassengerByEmail(email)
                 .orElseThrow(() -> new PassengerNotFoundException("Passenger by email " + email + " was not found"));
     }
-
-
-    public Passenger save(Passenger passenger) {
-        return passengerRepository.save(passenger);
-    }
+    public Passenger save(Passenger passenger) {return passengerRepository.save(passenger);}
 }

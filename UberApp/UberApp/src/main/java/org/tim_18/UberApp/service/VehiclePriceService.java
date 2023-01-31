@@ -12,10 +12,7 @@ public class VehiclePriceService {
     @Autowired
     private final VehiclePriceRepository repo;
 
-    public VehiclePriceService(VehiclePriceRepository repo) {
-        this.repo = repo;
-    }
-
+    public VehiclePriceService(VehiclePriceRepository repo) {this.repo = repo;}
     public VehiclePrice findVehiclePriceByVehicleType(VehicleType vehicleType) {
         return repo.findVehiclePriceByVehicleType(vehicleType.toString().toUpperCase().trim());
     }

@@ -33,9 +33,7 @@ public class WebSecurityConfig {
 	private UserRepository userRepository;
 	// Servis koji se koristi za citanje podataka o korisnicima aplikacije
 	@Autowired
-    public UserDetailsService userDetailsService() {;
-		return new CustomUserDetailsService(userRepository);
-    }
+    public UserDetailsService userDetailsService() {return new CustomUserDetailsService(userRepository);}
 	
 	// Implementacija PasswordEncoder-a koriscenjem BCrypt hashing funkcije.
 	// BCrypt po defalt-u radi 10 rundi hesiranja prosledjene vrednosti.
@@ -43,35 +41,27 @@ public class WebSecurityConfig {
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-  	
 
+	// 1. koji servis da koristi da izvuce podatke o korisniku koji zeli da se autentifikuje
+	// prilikom autentifikacije, AuthenticationManager ce sam pozivati loadUserByUsername() metodu ovog servisa
+	// 2. kroz koji enkoder da provuce lozinku koju je dobio od klijenta u zahtevu
+	// da bi adekvatan hash koji dobije kao rezultat hash algoritma uporedio sa onim koji se nalazi u bazi (posto se u bazi ne cuva plain lozinka)
 	@Transactional
  	@Bean
  	public DaoAuthenticationProvider authenticationProvider() {
  	    DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
- 	   // 1. koji servis da koristi da izvuce podatke o korisniku koji zeli da se autentifikuje
- 	    // prilikom autentifikacije, AuthenticationManager ce sam pozivati loadUserByUsername() metodu ovog servisa
- 	    authProvider.setUserDetailsService(userDetailsService());
- 	    // 2. kroz koji enkoder da provuce lozinku koju je dobio od klijenta u zahtevu 
-	    // da bi adekvatan hash koji dobije kao rezultat hash algoritma uporedio sa onim koji se nalazi u bazi (posto se u bazi ne cuva plain lozinka)
- 	    authProvider.setPasswordEncoder(passwordEncoder());
- 	 
- 	    return authProvider;
+		authProvider.setUserDetailsService(userDetailsService());
+		authProvider.setPasswordEncoder(passwordEncoder());
+		return authProvider;
  	}
- 	
- 	
-
- 	
-    // Registrujemo authentication manager koji ce da uradi autentifikaciju korisnika za nas
+	 // Registrujemo authentication manager koji ce da uradi autentifikaciju korisnika za nas
  	@Bean
  	public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
  	    return authConfig.getAuthenticationManager();
  	}
- 	
-	// Injektujemo implementaciju iz TokenUtils klase kako bismo mogli da koristimo njene metode za rad sa JWT u TokenAuthenticationFilteru
+	 // Injektujemo implementaciju iz TokenUtils klase kako bismo mogli da koristimo njene metode za rad sa JWT u TokenAuthenticationFilteru
 	@Autowired
 	private TokenUtils tokenUtils;
-	
 	// Definisemo prava pristupa za zahteve ka odredjenim URL-ovima/rutama
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -82,7 +72,7 @@ public class WebSecurityConfig {
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 //        http.csrf().disable();
         // sve neautentifikovane zahteve obradi uniformno i posalji 401 gresku
-        http.authorizeHttpRequests().requestMatchers("/api/**").permitAll()		// /auth/**
+        http.authorizeHttpRequests().requestMatchers("/api/**", "/socket/**").permitAll()		// /auth/**
 //			.requestMatchers("/h2-console/**").permitAll()	// /h2-console/** ako se koristi H2 baza)
 //			.requestMatchers("/api/foo").permitAll()		// /api/foo
 			// ukoliko ne zelimo da koristimo @PreAuthorize anotacije nad metodama kontrolera, moze se iskoristiti hasRole() metoda da se ogranici
@@ -98,30 +88,22 @@ public class WebSecurityConfig {
 
 			// umetni custom filter TokenAuthenticationFilter kako bi se vrsila provera JWT tokena umesto cistih korisnickog imena i lozinke (koje radi BasicAuthenticationFilter)
 			.addFilterBefore(new TokenAuthenticationFilter(tokenUtils,  userDetailsService()), BasicAuthenticationFilter.class);
-		
 		// zbog jednostavnosti primera ne koristimo Anti-CSRF token (https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html)
 		http.csrf().disable();
 		http.headers().frameOptions().disable();
-        
-        // ulancavanje autentifikacije
+		// ulancavanje autentifikacije
         http.authenticationProvider(authenticationProvider());
-       
-        return http.build();
+		return http.build();
     }
- 
-    // metoda u kojoj se definisu putanje za igorisanje autentifikacije
+	// metoda u kojoj se definisu putanje za igorisanje autentifikacije
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
     	// Autentifikacija ce biti ignorisana ispod navedenih putanja (kako bismo ubrzali pristup resursima)
     	// Zahtevi koji se mecuju za web.ignoring().antMatchers() nemaju pristup SecurityContext-u
     	// Dozvoljena POST metoda na ruti /auth/login, za svaki drugi tip HTTP metode greska je 401 Unauthorized
-    	return (web) -> web.ignoring().requestMatchers(HttpMethod.POST, "/api/auth/**")
-    			
-    			
-    			// Ovim smo dozvolili pristup statickim resursima aplikacije
+    	return (web) -> web.ignoring().requestMatchers(HttpMethod.POST, "/api/auth/**", "/socket/**")
+				// Ovim smo dozvolili pristup statickim resursima aplikacije
     			.requestMatchers(HttpMethod.GET, "/", "/webjars/**", "/*.html", "favicon.ico",
-    			"/*/*.html", "/*/*.css", "/*/*.js");
-
-    }
-
+    			"/*/*.html", "/*/*.css", "/*/*.js", "/socket/**");
+	}
 }

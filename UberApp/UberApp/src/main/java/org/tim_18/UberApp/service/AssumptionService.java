@@ -9,12 +9,6 @@ public class AssumptionService {
     @Autowired
     private final AssumptionRepository assumptionRepository;
 
-    public AssumptionService(AssumptionRepository assumptionRepository) {
-        this.assumptionRepository = assumptionRepository;
-    }
-
-    public Ride calculatePrice(Ride ride){
-
-        return ride;
-    }
+    public AssumptionService(AssumptionRepository assumptionRepository) {this.assumptionRepository = assumptionRepository;}
+    public Ride calculatePrice(Ride ride){return ride;}
 }

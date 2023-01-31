@@ -30,10 +30,10 @@ public interface ReviewRepository extends JpaRepository<Review, Integer> {
     @Query(value = "SELECT rev.id as id, comment, is_driver, rating, passenger_id, ride_id, r.id as rideid, d.id as driverid FROM reviews rev INNER JOIN rides r ON rev.ride_id=r.id INNER JOIN drivers d ON r.driver_id=d.id where r.driver_id=?1 and passenger_id=?2 and rev.is_driver = true", nativeQuery = true)
     Page<Review> findByDriverAndPassengerId(int driverId, int passengerId, Pageable pageable);
 
-    @Query(value = "SELECT rev.id as id, comment, is_driver, rating, passenger_id, ride_id, rid.id as rideid FROM reviews rev INNER JOIN rides rid on rev.ride_id=rid.id where rid.id = ?1 and rev.passenger_id=?2 and rev.is_driver=false", nativeQuery = true)
+    @Query(value = "SELECT * FROM reviews rev where rev.ride_id=?1 and rev.passenger_id=?2 and rev.is_driver=false", nativeQuery = true)
     Review findByRideAndPassengerIdForVehicle(int rideId, int passengerId);
 
-    @Query(value = "SELECT rev.id as id, comment, is_driver, rating, passenger_id, ride_id, rid.id as rideid FROM reviews rev INNER JOIN rides rid on rev.ride_id=rid.id where rid.id = ?1 and rev.passenger_id=?2 and rev.is_driver=true", nativeQuery = true)
+    @Query(value = "SELECT * FROM reviews rev where rev.ride_id=?1 and rev.passenger_id=?2 and rev.is_driver=true", nativeQuery = true)
     Review findByRideAndPassengerIdForDriver(int rideId, int passengerId);
 
 }

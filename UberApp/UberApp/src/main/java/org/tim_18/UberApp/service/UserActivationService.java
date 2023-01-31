@@ -17,28 +17,13 @@ public class UserActivationService {
     @Autowired
     private final UserActivationRepository userActivationRepository;
 
-    public UserActivationService(UserActivationRepository userActivationRepository) {
-        this.userActivationRepository = userActivationRepository;
-    }
-
-    public UserActivation addUserActivation(UserActivation userActivation) {
-        return userActivationRepository.save(userActivation);
-    }
-
-    public List<UserActivation> findAllUserActivations() {
-        return userActivationRepository.findAll();
-    }
-
-    public UserActivation updateUserActivation(UserActivation userActivation) {
-        return userActivationRepository.save(userActivation);
-    }
-
+    public UserActivationService(UserActivationRepository userActivationRepository) {this.userActivationRepository = userActivationRepository;}
+    public UserActivation addUserActivation(UserActivation userActivation) {return userActivationRepository.save(userActivation);}
+    public List<UserActivation> findAllUserActivations() {return userActivationRepository.findAll();}
+    public UserActivation updateUserActivation(UserActivation userActivation) {return userActivationRepository.save(userActivation);}
     public UserActivation findUserActivationById(Integer id) {
         return userActivationRepository.findUserActivationById(id)
                 .orElseThrow(() -> new UserActivationNotFoundException("User activation by id " + id + " was not found"));
     }
-
-    public void deleteUserActivation(Integer id) {
-        userActivationRepository.deleteUserActivationById(id);
-    }
+    public void deleteUserActivation(Integer id) {userActivationRepository.deleteUserActivationById(id);}
 }

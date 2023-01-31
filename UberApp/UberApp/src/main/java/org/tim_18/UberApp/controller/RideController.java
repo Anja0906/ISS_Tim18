@@ -1,11 +1,13 @@
 package org.tim_18.UberApp.controller;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
@@ -15,6 +17,7 @@ import org.tim_18.UberApp.dto.Distance.DurationDistance;
 import org.tim_18.UberApp.dto.Distance.OsrmResponse;
 import org.tim_18.UberApp.dto.LoginDTO;
 import org.tim_18.UberApp.dto.PanicDTO;
+import org.tim_18.UberApp.dto.PanicSocketDTO;
 import org.tim_18.UberApp.dto.ReasonDTO;
 import org.tim_18.UberApp.dto.locationDTOs.LocationDTO;
 import org.tim_18.UberApp.dto.locationDTOs.LocationSetDTO;
@@ -36,7 +39,7 @@ import java.util.*;
 
 @RestController
 @RequestMapping("/api/ride")
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(value = "*")
 public class RideController {
 
     private final RideService rideService;
@@ -64,21 +67,21 @@ public class RideController {
 
     private final WorkTimeService workTimeService;
 
-    public RideController(RideService rideService, DriverService driverService, RejectionService rejectionService, ReviewService reviewService, PanicService panicService, PassengerService passengerService, UserService userService, FavoriteRideService favoriteRideService, LocationService locationService, LocationsForRideService locationsForRideService, LocationsForFavoriteRideService locationsForFavoriteRideService, VehiclePriceService vehiclePriceService, RoleService roleService, WorkTimeService workTimeService) {
-        this.rideService                     = rideService;
-        this.driverService                   = driverService;
-        this.rejectionService                = rejectionService;
-        this.reviewService                   = reviewService;
-        this.panicService                    = panicService;
-        this.passengerService                = passengerService;
-        this.userService                     = userService;
-        this.favoriteRideService             = favoriteRideService;
-        this.locationService                 = locationService;
-        this.locationsForRideService         = locationsForRideService;
-        this.locationsForFavoriteRideService = locationsForFavoriteRideService;
-        this.vehiclePriceService             = vehiclePriceService;
-        this.roleService                     = roleService;
-        this.workTimeService                 = workTimeService;
+    @Autowired
+    private SimpMessagingTemplate simpMessagingTemplate;
+
+    public RideController(SimpMessagingTemplate simpMessagingTemplate, RideService rideService, DriverService driverService, RejectionService rejectionService, ReviewService reviewService, PanicService panicService, PassengerService passengerService, UserService userService, FavoriteRideService favoriteRideService, LocationService locationService, WorkTimeService workTimeService) {
+        this.rideService        = rideService;
+        this.driverService      = driverService;
+        this.rejectionService   = rejectionService;
+        this.reviewService      = reviewService;
+        this.panicService       = panicService;
+        this.passengerService   = passengerService;
+        this.userService        = userService;
+        this.favoriteRideService = favoriteRideService;
+        this.locationService = locationService;
+        this.workTimeService = workTimeService;
+        this.simpMessagingTemplate = simpMessagingTemplate;
     }
 
     @PreAuthorize("hasRole('PASSENGER')")
@@ -195,7 +198,7 @@ public class RideController {
         }
     }
 
-    @PreAuthorize("hasRole('DRIVER')")
+    @PreAuthorize("hasAnyRole('DRIVER', 'ADMIN')")
     @GetMapping("/driver/{driverId}/active")
     public ResponseEntity<?> getDriverActiveRide(Principal principal, @PathVariable("driverId") Integer driverId) {
         try {
@@ -294,11 +297,16 @@ public class RideController {
             Status status = ride.getStatus();
             if (status == Status.STARTED) {
                 User user = userService.findUserByEmail(principal.getName());
-                Panic panic = new Panic(ride, user, new Date(), reason.getReason());
+                Panic panic = panicService.findById(ride.getPanic().getId());
+                panic.updatePanic(user,reason,ride);
                 panic = panicService.addPanic(panic);
                 ride.setPanic(panic);
                 rideService.updateRide(ride);
                 return new ResponseEntity<>(new PanicDTO(panic, getLocationsByRideId(ride.getId())), HttpStatus.OK);
+                this.simpMessagingTemplate.convertAndSend("/socket-topic/newPanic", new PanicSocketDTO(panic));
+
+                return new ResponseEntity<>(new PanicDTO(panic), HttpStatus.OK);
+
             } else {
                 return new ResponseEntity<>(new ErrorMessage("Cannot panic in ride that is not in status STARTED!"), HttpStatus.BAD_REQUEST);
             }
@@ -306,7 +314,6 @@ public class RideController {
             return new ResponseEntity<>("Ride does not exist!",HttpStatus.NOT_FOUND);
         }
     }
-
     @PreAuthorize("hasRole('DRIVER')")
     @PutMapping("/{id}/accept")
     public ResponseEntity<?> acceptRide(Principal principal, @PathVariable("id")Integer id) {

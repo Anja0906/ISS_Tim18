@@ -15,6 +15,8 @@ import org.tim_18.UberApp.model.VehiclePrice;
 import org.tim_18.UberApp.service.AssumptionService;
 import org.tim_18.UberApp.service.VehiclePriceService;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 @RestController
@@ -56,4 +58,11 @@ public class AssumptionController {
 
         return new DurationDistance(duration, distance);
     }
+    @PostMapping("duration")
+    public ResponseEntity<DurationDistance> rideAssumption (@RequestBody LocationSetDTO locationSetDTO) {
+        DurationDistance depdis = getDurationDistance(locationSetDTO.getDeparture().getLatitude(), locationSetDTO.getDeparture().getLongitude(),
+                                                    locationSetDTO.getDestination().getLatitude(), locationSetDTO.getDestination().getLongitude());
+        return new ResponseEntity<>(depdis, HttpStatus.OK);
+    }
+
 }

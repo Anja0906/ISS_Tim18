@@ -2,6 +2,7 @@ package org.tim_18.UberApp.model;
 
 import jakarta.persistence.*;
 import org.tim_18.UberApp.dto.VehicleDTOWithoutIds;
+import org.tim_18.UberApp.dto.locationDTOs.LocationDTO;
 
 import java.io.Serializable;
 
@@ -18,7 +19,6 @@ public class Vehicle implements Serializable {
     private Driver driver;
     private VehicleType vehicleType;
     private String model;
-
     private String licenseNumber;
 
     @ManyToOne(cascade={CascadeType.ALL})
@@ -28,8 +28,6 @@ public class Vehicle implements Serializable {
     private Integer passengerSeats;
     private Boolean babyTransport;
     private Boolean petTransport;
-
-
 
     public Vehicle() {}
 
@@ -63,6 +61,11 @@ public class Vehicle implements Serializable {
         setPassengerSeats(vehicleDTOWithoutIds.getPassengerSeats());
         setBabyTransport(vehicleDTOWithoutIds.getBabyTransport());
         setPetTransport(vehicleDTOWithoutIds.getPetTransport());
+    }
+    public void updateLocation(LocationDTO locationDTO){
+        getCurrentLocation().setAddress(locationDTO.getAddress());
+        getCurrentLocation().setLatitude(locationDTO.getLongitude());
+        getCurrentLocation().setLongitude(locationDTO.getLongitude());
     }
 
 

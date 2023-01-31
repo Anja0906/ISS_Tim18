@@ -19,7 +19,7 @@ import java.util.*;
 
 @RestController
 @RequestMapping("api/panic")
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin( value = "*")
 public class PanicController {
 
     @Autowired
