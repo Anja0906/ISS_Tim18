@@ -268,7 +268,7 @@ public class RideController {
             Ride ride = rideService.findRideById(id);
             checkPassengersAuthorities(principal, ride);
             Status status = ride.getStatus();
-            if (status == Status.PENDING || status == Status.STARTED) {
+            if (status == Status.PENDING || status == Status.ACCEPTED) {
                 ride.setStatus(Status.CANCELLED);
                 Rejection rejection = ride.getRejection();
                 rejection.setTime(new Date());
@@ -278,7 +278,7 @@ public class RideController {
                 ride = rideService.updateRide(ride);
                 return new ResponseEntity<>(new RideRetDTO(ride, getLocationsByRideId(ride.getId())), HttpStatus.OK);
             } else {
-                return new ResponseEntity<>(new ErrorMessage("Cannot cancel a ride that is not in status PENDING or STARTED!"), HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>(new ErrorMessage("Cannot cancel a ride that is not in status PENDING or ACCEPTED!"), HttpStatus.BAD_REQUEST);
             }
         } catch(RideNotFoundException e){
             return new ResponseEntity<>("Ride does not exist!",HttpStatus.NOT_FOUND);
@@ -895,7 +895,7 @@ public class RideController {
         return locationsForRideService.getByRideId(id);
     }
 
-    @Scheduled(fixedDelay = 5000)
+    @Scheduled(fixedDelay = 100000)
     public void execute() {
         try {
             System.out.println("Finding driver for scheduled ride...");

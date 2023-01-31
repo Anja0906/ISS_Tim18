@@ -55,7 +55,7 @@ public class RideService {
     }
 
     public Ride getPassengerActiveRide(Integer passengerId) {
-        return rideRepository.findPassengerActiveRide(passengerId)
+        return rideRepository.findPassengerActiveRide(passengerId, "ACCEPTED")
                 .orElseThrow(() -> new RideNotFoundException("Ride was not found"));
 
     }
