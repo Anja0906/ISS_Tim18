@@ -33,6 +33,7 @@ public class RideService {
     public Ride getDriverActiveRide(Integer driverId) {
         return rideRepository.findDriverActiveRide(driverId)
                 .orElseThrow(() -> new RideNotFoundException("Ride was not found"));
+    }
 
     public Optional<Ride> getActiveRideDriver(Integer driverId) {
         return rideRepository.findDriverActiveRide(driverId);

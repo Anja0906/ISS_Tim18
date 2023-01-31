@@ -56,7 +56,7 @@ public class UserController {
     private final LocationsForRideService locationsForRideService;
 
 
-    public UserController(UserService userService, MessageService messageService, RideService rideService, NoteService noteService, ReviewService reviewService, RoleService roleService, RequestService requestService) {
+    public UserController(UserService userService, MessageService messageService, RideService rideService, NoteService noteService, ReviewService reviewService, RoleService roleService, RequestService requestService, LocationsForRideService locationsForRideService) {
         this.userService    = userService;
         this.messageService = messageService;
         this.rideService    = rideService;
