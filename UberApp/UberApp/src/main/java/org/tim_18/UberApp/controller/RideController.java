@@ -70,20 +70,23 @@ public class RideController {
     @Autowired
     private SimpMessagingTemplate simpMessagingTemplate;
 
-    public RideController(SimpMessagingTemplate simpMessagingTemplate, RideService rideService, DriverService driverService, RejectionService rejectionService, ReviewService reviewService, PanicService panicService, PassengerService passengerService, UserService userService, FavoriteRideService favoriteRideService, LocationService locationService, WorkTimeService workTimeService) {
-        this.rideService        = rideService;
-        this.driverService      = driverService;
-        this.rejectionService   = rejectionService;
-        this.reviewService      = reviewService;
-        this.panicService       = panicService;
-        this.passengerService   = passengerService;
-        this.userService        = userService;
-        this.favoriteRideService = favoriteRideService;
-        this.locationService = locationService;
-        this.workTimeService = workTimeService;
-        this.simpMessagingTemplate = simpMessagingTemplate;
+    public RideController(SimpMessagingTemplate simpMessagingTemplate,RideService rideService, DriverService driverService, RejectionService rejectionService, ReviewService reviewService, PanicService panicService, PassengerService passengerService, UserService userService, FavoriteRideService favoriteRideService, LocationService locationService, LocationsForRideService locationsForRideService, LocationsForFavoriteRideService locationsForFavoriteRideService, VehiclePriceService vehiclePriceService, RoleService roleService, WorkTimeService workTimeService) {
+        this.rideService                     = rideService;
+        this.driverService                   = driverService;
+        this.rejectionService                = rejectionService;
+        this.reviewService                   = reviewService;
+        this.panicService                    = panicService;
+        this.passengerService                = passengerService;
+        this.userService                     = userService;
+        this.favoriteRideService             = favoriteRideService;
+        this.locationService                 = locationService;
+        this.locationsForRideService         = locationsForRideService;
+        this.locationsForFavoriteRideService = locationsForFavoriteRideService;
+        this.vehiclePriceService             = vehiclePriceService;
+        this.roleService                     = roleService;
+        this.workTimeService                 = workTimeService;
+        this.simpMessagingTemplate           = simpMessagingTemplate;
     }
-
     @PreAuthorize("hasRole('PASSENGER')")
     @PostMapping
     public ResponseEntity<?> createRide(Principal principal, @RequestBody RideRecDTO oldDTO) {
@@ -93,11 +96,10 @@ public class RideController {
 
             Ride ride = fromDTOtoRide(oldDTO);
             ride = rideService.createRide(ride);
-
             Set<LocationsForRide> lfr = addLocations(oldDTO, ride);
-
             addPassengers(oldDTO, ride);
-
+            Integer id = ride.getDriver().getId();
+            this.simpMessagingTemplate.convertAndSend("/socket-topic/driver/"+id, new RideRetDTO(ride, lfr));
             return new ResponseEntity<>(new RideRetDTO(ride, lfr), HttpStatus.OK);
         } catch (PassengerNotFoundException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
@@ -302,11 +304,8 @@ public class RideController {
                 panic = panicService.addPanic(panic);
                 ride.setPanic(panic);
                 rideService.updateRide(ride);
-                return new ResponseEntity<>(new PanicDTO(panic, getLocationsByRideId(ride.getId())), HttpStatus.OK);
                 this.simpMessagingTemplate.convertAndSend("/socket-topic/newPanic", new PanicSocketDTO(panic));
-
-                return new ResponseEntity<>(new PanicDTO(panic), HttpStatus.OK);
-
+                return new ResponseEntity<>(new PanicDTO(panic, getLocationsByRideId(ride.getId())), HttpStatus.OK);
             } else {
                 return new ResponseEntity<>(new ErrorMessage("Cannot panic in ride that is not in status STARTED!"), HttpStatus.BAD_REQUEST);
             }

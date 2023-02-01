@@ -57,7 +57,7 @@ public class DriverController {
     @Autowired
     PasswordEncoder passwordEncoder;
 
-    public DriverController(DriverService driverService, DocumentService documentService, VehicleService vehicleService, LocationService locationService, WorkTimeService workTimeService, RideService rideService, UserService userService, RoleService roleService) {
+    public DriverController(LocationsForRideService locationsForRideService,AdministratorService adminService,DriverService driverService, DocumentService documentService, VehicleService vehicleService, LocationService locationService, WorkTimeService workTimeService, RideService rideService, UserService userService, RoleService roleService) {
         this.driverService           = driverService;
         this.documentService         = documentService;
         this.vehicleService          = vehicleService;
