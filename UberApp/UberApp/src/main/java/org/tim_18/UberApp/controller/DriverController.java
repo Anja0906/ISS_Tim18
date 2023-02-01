@@ -57,16 +57,17 @@ public class DriverController {
     @Autowired
     PasswordEncoder passwordEncoder;
 
-    public DriverController(LocationsForRideService locationsForRideService,AdministratorService adminService,DriverService driverService, DocumentService documentService, VehicleService vehicleService, LocationService locationService, WorkTimeService workTimeService, RideService rideService, UserService userService, RoleService roleService) {
-        this.driverService           = driverService;
-        this.documentService         = documentService;
-        this.vehicleService          = vehicleService;
-        this.locationService         = locationService;
-        this.workTimeService         = workTimeService;
-        this.rideService             = rideService;
-        this.userService             = userService;
-        this.roleService             = roleService;
-        this.adminService            = adminService;
+
+    public DriverController(DriverService driverService, DocumentService documentService, VehicleService vehicleService, LocationService locationService, WorkTimeService workTimeService, RideService rideService, UserService userService, RoleService roleService, AdministratorService adminService, LocationsForRideService locationsForRideService) {
+        this.driverService   = driverService;
+        this.documentService = documentService;
+        this.vehicleService  = vehicleService;
+        this.locationService = locationService;
+        this.workTimeService = workTimeService;
+        this.rideService     = rideService;
+        this.userService     = userService;
+        this.roleService     = roleService;
+        this.adminService    = adminService;
         this.locationsForRideService = locationsForRideService;
     }
 

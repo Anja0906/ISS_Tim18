@@ -15,7 +15,6 @@ import org.tim_18.UberApp.Validation.ErrorMessage;
 import org.tim_18.UberApp.dto.Distance.DriverTime;
 import org.tim_18.UberApp.dto.Distance.DurationDistance;
 import org.tim_18.UberApp.dto.Distance.OsrmResponse;
-import org.tim_18.UberApp.dto.LoginDTO;
 import org.tim_18.UberApp.dto.PanicDTO;
 import org.tim_18.UberApp.dto.PanicSocketDTO;
 import org.tim_18.UberApp.dto.ReasonDTO;
@@ -70,22 +69,23 @@ public class RideController {
     @Autowired
     private SimpMessagingTemplate simpMessagingTemplate;
 
-    public RideController(SimpMessagingTemplate simpMessagingTemplate,RideService rideService, DriverService driverService, RejectionService rejectionService, ReviewService reviewService, PanicService panicService, PassengerService passengerService, UserService userService, FavoriteRideService favoriteRideService, LocationService locationService, LocationsForRideService locationsForRideService, LocationsForFavoriteRideService locationsForFavoriteRideService, VehiclePriceService vehiclePriceService, RoleService roleService, WorkTimeService workTimeService) {
-        this.rideService                     = rideService;
-        this.driverService                   = driverService;
-        this.rejectionService                = rejectionService;
-        this.reviewService                   = reviewService;
-        this.panicService                    = panicService;
-        this.passengerService                = passengerService;
-        this.userService                     = userService;
-        this.favoriteRideService             = favoriteRideService;
-        this.locationService                 = locationService;
-        this.locationsForRideService         = locationsForRideService;
+
+    public RideController(SimpMessagingTemplate simpMessagingTemplate, RideService rideService, DriverService driverService, RejectionService rejectionService, ReviewService reviewService, PanicService panicService, PassengerService passengerService, UserService userService, FavoriteRideService favoriteRideService, LocationService locationService, LocationsForRideService locationsForRideService, LocationsForFavoriteRideService locationsForFavoriteRideService, VehiclePriceService vehiclePriceService, RoleService roleService, WorkTimeService workTimeService) {
+        this.rideService        = rideService;
+        this.driverService      = driverService;
+        this.rejectionService   = rejectionService;
+        this.reviewService      = reviewService;
+        this.panicService       = panicService;
+        this.passengerService   = passengerService;
+        this.userService        = userService;
+        this.favoriteRideService = favoriteRideService;
+        this.locationService = locationService;
+        this.locationsForRideService = locationsForRideService;
         this.locationsForFavoriteRideService = locationsForFavoriteRideService;
-        this.vehiclePriceService             = vehiclePriceService;
-        this.roleService                     = roleService;
-        this.workTimeService                 = workTimeService;
-        this.simpMessagingTemplate           = simpMessagingTemplate;
+        this.vehiclePriceService = vehiclePriceService;
+        this.roleService = roleService;
+        this.workTimeService = workTimeService;
+        this.simpMessagingTemplate = simpMessagingTemplate;
     }
     @PreAuthorize("hasRole('PASSENGER')")
     @PostMapping
@@ -671,7 +671,7 @@ public class RideController {
 //        @TODO ispravi na isOnline ne isActive
         List<Driver> activeDrivers = new ArrayList<>();
         for (Driver driver : allDrivers) {
-            if (driver.isActive()) {
+            if (driver.isActive() && driver.getIsOnline()) {
                 activeDrivers.add(driver);
             }
         }
