@@ -20,10 +20,8 @@ import org.tim_18.UberApp.model.*;
 import org.tim_18.UberApp.service.*;
 
 import java.security.Principal;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 @RestController
 @RequestMapping("api/review")
@@ -58,6 +56,18 @@ public class ReviewController {
         try {
             Ride ride = rideService.findRideById(rideId);
             checkPassengersAuthorities(principal, ride);
+            try {
+                Date rideEndDate = ride.getEndTime();
+                Date now = new Date();
+                long timeDiff = Math.abs(now.getTime() - rideEndDate.getTime());
+                long daysDiff = TimeUnit.DAYS.convert(timeDiff, TimeUnit.MILLISECONDS);
+                System.out.println("The number of days between dates: " + daysDiff);
+                if (daysDiff > 3 ) {
+                    return new ResponseEntity<>(new ErrorMessage("Cannot leave review after more than 3 days!!"), HttpStatus.BAD_REQUEST);
+                }
+            }catch(Exception e){
+                e.printStackTrace();
+            }
             Passenger passenger = passengerService.findById(userService.findUserByEmail(principal.getName()).getId());
             Review review = reviewService.findByRideAndPassengerIdForVehicle(ride.getId(), passenger.getId());
             if (!(review==null)) {
@@ -119,8 +129,21 @@ public class ReviewController {
             @RequestBody ReviewPostDTO reviewPostDTO) {
         try {
             Ride ride = rideService.findRideById(rideId);
-
             checkPassengersAuthorities(principal, ride);
+
+            try {
+                Date rideEndDate = ride.getEndTime();
+                Date now = new Date();
+                long timeDiff = Math.abs(now.getTime() - rideEndDate.getTime());
+                long daysDiff = TimeUnit.DAYS.convert(timeDiff, TimeUnit.MILLISECONDS);
+                System.out.println("The number of days between dates: " + daysDiff);
+                if (daysDiff > 3 ) {
+                    return new ResponseEntity<>(new ErrorMessage("Cannot leave review after more than 3 days!!"), HttpStatus.BAD_REQUEST);
+                }
+            }catch(Exception e){
+                e.printStackTrace();
+            }
+
             Passenger passenger = passengerService.findById(userService.findUserByEmail(principal.getName()).getId());
 
             Review review = reviewService.findByRideAndPassengerIdForDriver(ride.getId(), passenger.getId());
@@ -173,24 +196,51 @@ public class ReviewController {
         }
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'PASSENGER')")
     @GetMapping("/{rideId}")
     public ResponseEntity<?> getReviewsForRide (
+            Principal principal,
             @PathVariable("rideId") int id) {
         try {
             Ride ride = rideService.findRideById(id);
             Set<Passenger> passengers = ride.getPassengers();
             HashSet<ReviewDTOResponse> reviewsDTO = new HashSet<>();
-            Review reviewDriver,reviewVehicle;
-            for (Passenger passenger:passengers) {
-                reviewDriver = reviewService.findByRideAndPassengerIdForDriver(id,passenger.getId());
-                reviewVehicle = reviewService.findByRideAndPassengerIdForVehicle(id,passenger.getId());
-                reviewsDTO.add(new ReviewDTOResponse(
-                        new VehicleReviewDTO(reviewVehicle,new PassengerIdEmailDTO(passenger)),
-                        new DriverReviewDTO(reviewDriver,new PassengerIdEmailDTO(passenger))));
+            if (checkRole(principal) == 1){
+                Integer passengerId = userService.findUserByEmail(principal.getName()).getId();
+                getReviews(id, reviewsDTO, passengerService.findById(passengerId));
+            } else {
+                for (Passenger passenger:passengers) {
+                    getReviews(id, reviewsDTO, passenger);
+                }
             }
+
             return new ResponseEntity<>(reviewsDTO, HttpStatus.OK);
         } catch (RideNotFoundException e) {
             return new ResponseEntity<>("Ride does not exist!", HttpStatus.NOT_FOUND);
+        }
+    }
+
+    private void getReviews(int id, HashSet<ReviewDTOResponse> reviewsDTO, Passenger passenger) {
+        Review reviewDriver;
+        Review reviewVehicle;
+        reviewDriver = reviewService.findByRideAndPassengerIdForDriver(id, passenger.getId());
+        reviewVehicle = reviewService.findByRideAndPassengerIdForVehicle(id, passenger.getId());
+        if (reviewVehicle==null && reviewDriver==null) {
+            reviewsDTO.add(new ReviewDTOResponse(null, null));
+        }
+        else if (reviewDriver == null) {
+            reviewsDTO.add(new ReviewDTOResponse(
+                    new VehicleReviewDTO(reviewVehicle, new PassengerIdEmailDTO(passenger)),
+                    null));
+        } else if (reviewVehicle == null) {
+            reviewsDTO.add(new ReviewDTOResponse(
+                    null,
+                    new DriverReviewDTO(reviewDriver, new PassengerIdEmailDTO(passenger))));
+        }
+        else {
+            reviewsDTO.add(new ReviewDTOResponse(
+                    new VehicleReviewDTO(reviewVehicle, new PassengerIdEmailDTO(passenger)),
+                    new DriverReviewDTO(reviewDriver, new PassengerIdEmailDTO(passenger))));
         }
     }
 

@@ -98,8 +98,10 @@ public class RideController {
             ride = rideService.createRide(ride);
             Set<LocationsForRide> lfr = addLocations(oldDTO, ride);
             addPassengers(oldDTO, ride);
-            Integer id = ride.getDriver().getId();
-            this.simpMessagingTemplate.convertAndSend("/socket-topic/driver/"+id, new RideRetDTO(ride, lfr));
+            if (ride.getDriver()!=null) {
+                Integer id = ride.getDriver().getId();
+                this.simpMessagingTemplate.convertAndSend("/socket-topic/driver/" + id, new RideRetDTO(ride, lfr));
+            }
             return new ResponseEntity<>(new RideRetDTO(ride, lfr), HttpStatus.OK);
         } catch (PassengerNotFoundException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
@@ -901,7 +903,7 @@ public class RideController {
         return locationsForRideService.getByRideId(id);
     }
 
-    @Scheduled(fixedDelay = 100000)
+    @Scheduled(fixedDelay = 60000)
     public void execute() {
         try {
             System.out.println("Finding driver for scheduled ride...");
@@ -913,6 +915,8 @@ public class RideController {
                 ride.setEstimatedTimeInMinutes(driverTime.getTime());
                 ride = rideService.updateRide(ride);
                 System.out.println(ride.toString2());
+                Integer id = ride.getDriver().getId();
+                this.simpMessagingTemplate.convertAndSend("/socket-topic/driver/" + id, new RideRetDTO(ride, getLocationsByRideId(ride.getId())));
             }
             if (scheduledRidesLackingDriver.isEmpty()) {
                 System.out.println("All scheduled ride have drivers");

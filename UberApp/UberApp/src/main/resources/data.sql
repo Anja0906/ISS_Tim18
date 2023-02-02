@@ -244,6 +244,14 @@ INSERT INTO locations_for_rides (duration, kilometers, departure_id, destination
 VALUES (5, 2, '3', '2', '3');
 INSERT INTO locations_for_rides (duration, kilometers, departure_id, destination_id, ride_id)
 VALUES (7, 2, '2', '3', '4');
+INSERT INTO locations_for_rides (duration, kilometers, departure_id, destination_id, ride_id)
+VALUES (5, 25, '1', '2', '5');
+INSERT INTO locations_for_rides (duration, kilometers, departure_id, destination_id, ride_id)
+VALUES (7, 5, '2', '1', '6');
+INSERT INTO locations_for_rides (duration, kilometers, departure_id, destination_id, ride_id)
+VALUES (5, 2, '3', '2', '7');
+INSERT INTO locations_for_rides (duration, kilometers, departure_id, destination_id, ride_id)
+VALUES (7, 2, '2', '3', '7');
 
 
 # locations_for_fav_rides
