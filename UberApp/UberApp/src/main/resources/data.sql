@@ -265,6 +265,6 @@ INSERT INTO locations_for_favorite_rides (departure_id, destination_id, ride_id)
 VALUES ('2', '3', '3');
 
 
-insert into requests (address, email, id, name, profile_picture, surname, telephone_number) VALUES ("address", "skdjhfjsd", 2, "name", "profile_picture", "surname", "telephone_number");
+insert into requests (address, email, id, name, profile_picture, surname, telephone_number) VALUES ("address", 'skdjhfjsd', 2, "name", "profile_picture", "surname", "telephone_number");
 
 
