@@ -15,12 +15,14 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.tim_18.UberApp.Validation.ErrorMessage;
 import org.tim_18.UberApp.dto.*;
 import org.tim_18.UberApp.dto.noteDTOs.NotePostDTO;
 import org.tim_18.UberApp.dto.noteDTOs.NoteResponseDTO;
+import org.tim_18.UberApp.dto.passengerDTOs.PassengerEmailDTO;
 import org.tim_18.UberApp.dto.rideDTOs.RideRetDTO;
 import org.tim_18.UberApp.exception.RideNotFoundException;
 import org.tim_18.UberApp.exception.UserNotFoundException;
@@ -303,6 +305,18 @@ public class UserController {
             return new ResponseEntity<>("User does not exist!", HttpStatus.NOT_FOUND);
         }
     }
+    @PostMapping("/{email}")
+    public ResponseEntity<?> findUserByEmail(@PathVariable("email") String email){
+        try{
+            System.out.println("hip hop bugi");
+            User user = userService.findUserByEmail(email);
+            System.out.println("Nasao sam ga");
+            return new ResponseEntity<>(new UserDTO(user), HttpStatus.OK);
+        }
+        catch (UsernameNotFoundException e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
 
 
     @PreAuthorize("hasAnyRole('ADMIN', 'DRIVER', 'PASSENGER')")
@@ -334,10 +348,14 @@ public class UserController {
             String token = String.valueOf(userService.generateRandomInt());
             userService.updateResetPasswordToken(token, email);
             userService.sendEmail(email, token);
+            System.out.println("Posla sam mail");
+
             return new ResponseEntity<>("Email with reset code has been sent!", HttpStatus.NO_CONTENT);
         }catch (UserNotFoundException e){
+            System.out.println("Posla sam mail1");
             return new ResponseEntity<>("User does not exist!", HttpStatus.NOT_FOUND);
         } catch (UnsupportedEncodingException | MessagingException e) {
+            System.out.println("Posla sam mail2");
             return new ResponseEntity<>("Error while sending email", HttpStatus.NOT_FOUND);
         }
     }
@@ -351,6 +369,7 @@ public class UserController {
             boolean isExpired = userService.compareIfCodeIsExpired(expiresIn);
             if(token.equals(resetPasswordDTO.getCode()) && !isExpired){
                 userService.updatePassword(user, resetPasswordDTO.getNewPassword());
+                System.out.println("DOBRO JE SVE");
                 return new ResponseEntity<>("Password successfully changed!", HttpStatus.NO_CONTENT);
             }
             else {

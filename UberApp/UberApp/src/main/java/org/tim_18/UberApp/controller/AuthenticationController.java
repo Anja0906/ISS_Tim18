@@ -88,6 +88,9 @@ public class AuthenticationController {
 			if (!user.isActive()) {
 				return new ResponseEntity<>(new ErrorMessage("Account not activated!"), HttpStatus.BAD_REQUEST);
 			}
+			if (user.isBlocked()) {
+				return new ResponseEntity<>(new ErrorMessage("Account is blocked!"), HttpStatus.BAD_REQUEST);
+			}
 			String jwt = tokenUtils.generateToken(user.getEmail());
 			int expiresIn = tokenUtils.getExpiredIn();
 			List<String> rolesStr = new ArrayList<>();

@@ -318,8 +318,6 @@ public class DriverController {
         try {
             User user = userService.findUserByEmail(principal.getName());
             WorkTime workTime = workTimeService.findWorkTimeById(id);
-            System.out.println(workTime.getStart());
-            System.out.println(workTime.getEnd());
             if (user.getId().equals(workTime.getDriver().getId())) {
                 return new ResponseEntity<>(new WorkTimeDTOWithoutDriver(workTime),HttpStatus.OK);
             }
@@ -486,12 +484,15 @@ public class DriverController {
 
         try {
             checkDriversAuthorities(principal, id);
+            System.out.println(id);
             Pageable pageable = PageRequest.of(page, size, Sort.by(sort));
             Page<Ride> rides = rideService.findRidesForDriver(id, from, to, pageable);
 
             Map<String, Object> map = new HashMap<>();
             HashSet<RideRetDTO> ridesDTO = makeRideDTOS(rides);
-
+            for(RideRetDTO rideRetDTO:ridesDTO){
+                System.out.println(rideRetDTO);
+            }
             map.put("totalCount", ridesDTO.size());
             map.put("results", ridesDTO);
             return new ResponseEntity<>(map, HttpStatus.OK);
