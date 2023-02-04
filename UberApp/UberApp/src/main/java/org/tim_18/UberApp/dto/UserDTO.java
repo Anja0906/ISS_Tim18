@@ -5,7 +5,9 @@ import lombok.Data;
 import org.springframework.data.domain.Page;
 import org.tim_18.UberApp.model.User;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 @Data
 public class UserDTO {
@@ -51,6 +53,12 @@ public class UserDTO {
     }
 
 
-
+    public List<UserDTO> makeUserDTOS(List<User> users){
+        List<UserDTO> usersDTO = new ArrayList<>();
+        for (User user:users) {
+            usersDTO.add(new UserDTO(user));
+        }
+        return usersDTO;
+    }
 
 }

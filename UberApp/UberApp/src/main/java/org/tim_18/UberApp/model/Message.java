@@ -1,6 +1,7 @@
 package org.tim_18.UberApp.model;
 
 import jakarta.persistence.*;
+import org.springframework.lang.Nullable;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -20,7 +21,8 @@ public class Message implements Serializable {
     private String message;
     private Date time;
     private String messageType;
-    @ManyToOne(cascade = {CascadeType.ALL})
+    @ManyToOne()
+    @Nullable
     private Ride ride;
 
 
