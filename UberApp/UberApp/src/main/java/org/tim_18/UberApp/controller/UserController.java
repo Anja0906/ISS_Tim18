@@ -88,6 +88,7 @@ public class UserController {
         return new ResponseEntity<>(map, HttpStatus.OK);
     }
 
+
     @PostMapping("/register")
     public ResponseEntity<?> processRegister(@RequestBody User user)
             throws UnsupportedEncodingException, MessagingException {
@@ -129,7 +130,8 @@ public class UserController {
             @PathVariable("id") int id) {
         User user = userService.findUserById(id);
         System.out.println(user);
-        UserDTO userDTO = new UserDTO(user);
+        List<Role> roles = roleService.findByUserId(id);
+        UserDTO userDTO = new UserDTO(user, roles);
         return new ResponseEntity<>(userDTO, HttpStatus.OK);
     }
 
@@ -446,7 +448,15 @@ public class UserController {
         User user = userService.findUserByEmail(principal.getName());
         List<User> allUsers = this.userService.findAll();
         allUsers.remove(user);
-        return new UserDTO().makeUserDTOS(allUsers);
+        return makeUserDTOS(allUsers);
+    }
+
+    private List<UserDTO> makeUserDTOS(List<User> users){
+        List<UserDTO> usersDTO = new ArrayList<>();
+        for (User user:users) {
+            usersDTO.add(new UserDTO(user, roleService.findByUserId(user.getId())));
+        }
+        return usersDTO;
     }
 }
 

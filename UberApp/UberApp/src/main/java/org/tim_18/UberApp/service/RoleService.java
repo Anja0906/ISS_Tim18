@@ -21,4 +21,8 @@ public class RoleService {
                 .orElseThrow(() -> new UserNotFoundException("Role by id " + id + " was not found"));
     }
     public List<Role> findByName(String name) {return this.roleRepository.findByName(name);}
+
+    public List<Role> findByUserId(Integer id) {
+        return this.roleRepository.findByUserId(id);
+    }
 }
