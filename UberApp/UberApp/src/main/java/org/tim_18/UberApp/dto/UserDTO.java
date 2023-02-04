@@ -20,12 +20,14 @@ public class UserDTO {
     private String email;
     private String address;
     private boolean blocked;
+
+    private boolean isActive;
     private List<String> roles;
 
     public UserDTO() {
     }
 
-    public UserDTO(Integer id, String name, String surname, String profilePicture, String telephoneNumber, String email, String address, List<String> roles) {
+    public UserDTO(Integer id, String name, String surname, String profilePicture, String telephoneNumber, String email, String address, List<String> roles,boolean isActive) {
         this.id                 = id;
         this.name               = name;
         this.surname            = surname;
@@ -34,6 +36,7 @@ public class UserDTO {
         this.email              = email;
         this.address            = address;
         this.roles              = roles;
+        this.isActive           = isActive;
     }
 
     public UserDTO(User user, List<Role> roles) {
@@ -61,6 +64,7 @@ public class UserDTO {
         this.email = user.getEmail();
         this.address = user.getAddress();
         this.blocked = user.isBlocked();
+        this.isActive= user.isActive();
     }
 
     public HashSet<UserDTO> makeUserDTOS(Page<User> users){

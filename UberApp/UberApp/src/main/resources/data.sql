@@ -2,7 +2,7 @@
 INSERT INTO users (active, address, blocked, email, name, profile_picture, surname, password, telephone_number, verification_code)
 VALUES (true, 'Strumicka 6', false, 'anjapetkovic92@gmail.com', 'Anja', 'profile_picture', 'Petkovic', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', '0614843070', 'sdhfkuhsdufhsedh');
 INSERT INTO users (active, address, blocked, email, name, profile_picture, surname, password, telephone_number)
-VALUES (true, 'Strumicka 5', false, 'bangiekg@gmail.com', 'Branislav', 'profile_picture1', 'Stojkovic', '$2a$10$iYCFgw.vl7KlYVikqSbLtOyAR5lNEKalF29dfYfGn7SRiE8pbskeu', '0654315454');
+VALUES (true, 'Strumicka 5', false, 'baniekg@gmail.com', 'Branislav', 'profile_picture1', 'Stojkovic', '$2a$10$iYCFgw.vl7KlYVikqSbLtOyAR5lNEKalF29dfYfGn7SRiE8pbskeu', '0654315454');
 INSERT INTO users (active, address, blocked, email, name, profile_picture, surname, password, telephone_number)
 VALUES (true, 'Strumicka 6', true, 'pera@gmail.com', 'Pera', 'profile_picture', 'Peric', '$2a$10$iYCFgw.vl7KlYVikqSbLtOyAR5lNEKalF29dfYfGn7SRiE8pbskeu', '45421545151');
 INSERT INTO users (active, address, blocked, email, name, profile_picture, surname, password, telephone_number)

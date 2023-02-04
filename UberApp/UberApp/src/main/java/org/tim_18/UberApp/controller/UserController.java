@@ -96,12 +96,7 @@ public class UserController {
         return new ResponseEntity<>("Successful account activation!", HttpStatus.OK);
     }
 
-    //odraditi ovo u frontu
-    //<div class="container text-center">
-    //    <h3>You have signed up successfully!</h3>
-    //    <p>Please check your email to verify your account.</p>
-    //    <h4><a th:href="/@{/login}">Click here to Login</a></h4>
-    //</div>
+
 
     @GetMapping("/verify")
     public String verifyUser(@Param("code") String code) {
@@ -112,17 +107,6 @@ public class UserController {
         }
     }
 
-    //uraditi ovo u frontu za uspesan verify
-    //<div class="container text-center">
-    //    <h3>Congratulations, your account has been verified.</h3>
-    //    <h4><a th:href="/@{/login}">Click here to Login</a></h4>
-    //</div>
-
-    //uraditi ovo u frontu za neuspesan verify
-    //<div class="container text-center">
-    //    <h3>Sorry, we could not verify account. It maybe already verified,
-    //        or verification code is incorrect.</h3>
-    //</div>
 
 
     @GetMapping("/{id}")
