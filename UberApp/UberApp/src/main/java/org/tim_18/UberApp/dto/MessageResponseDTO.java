@@ -33,7 +33,7 @@ public class MessageResponseDTO {
     }
     public MessageResponseDTO(Message message) {
         this.id                 = message.getId();
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
         String strDate = format.format(message.getTime());
         this.timeOfSending      = strDate;
         this.senderId           = message.getSender().getId();

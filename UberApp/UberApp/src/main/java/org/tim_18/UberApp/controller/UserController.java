@@ -9,6 +9,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -56,6 +57,9 @@ public class UserController {
     private final RequestService requestService;
 
     private final LocationsForRideService locationsForRideService;
+
+    @Autowired
+    private SimpMessagingTemplate simpMessagingTemplate;
 
 
     public UserController(UserService userService, MessageService messageService, RideService rideService, NoteService noteService, ReviewService reviewService, RoleService roleService, RequestService requestService, LocationsForRideService locationsForRideService) {
@@ -182,11 +186,13 @@ public class UserController {
     public ResponseEntity<?> getMessagesForUser(Principal principal,
                                                 @PathVariable("id") int id,
                                                 @RequestParam(defaultValue = "0") Integer page,
-                                                @RequestParam(defaultValue = "4") Integer size){
+                                                @RequestParam(defaultValue = "50") Integer size,
+                                                @RequestParam(defaultValue = "time") String sort){
         try {
             checkAuthorities(principal, id);
-            Pageable pageable = PageRequest.of(page, size);
+            Pageable pageable = PageRequest.of(page, size, Sort.by(sort));
             Page<Message> messages = messageService.findMessagesByUserId(id, pageable);
+
 
             Map<String, Object> map = new HashMap<>();
             HashSet<MessageResponseDTO> messageDTOS = new MessageResponseDTO().makeMessageResponseDTOS(messages);
@@ -203,18 +209,22 @@ public class UserController {
     @PreAuthorize("hasRole('USER')")
     @PostMapping("/{id}/message")
     public ResponseEntity<?> sendMessage(Principal principal,
-                                         @PathVariable("id") int id,
+                                         @PathVariable("id") int receiverId,
                                          @RequestBody MessageDTO messageDTO) {
         try {
-            userService.findUserById(id); //throws 404
+            userService.findUserById(receiverId); //throws 404
 //            rideService.findRideById(messageDTO.getRideId()); //throws 404
             User sender = userService.findUserByEmail(principal.getName());
-            if (sender.getId().equals(id)) {
+            if (sender.getId().equals(receiverId)) {
                 return new ResponseEntity<>("Cannot send message to yourself!", HttpStatus.BAD_REQUEST);
             }
-            messageDTO.setReceiverId(id);
+            messageDTO.setReceiverId(receiverId);
             Message message = messageFromMessageDTO(principal, messageDTO);
             messageService.saveMessage(message);
+
+
+            this.simpMessagingTemplate.convertAndSend("/socket-topic/newMessageInbox/" + receiverId, new MessageResponseDTO(message));
+//            this.simpMessagingTemplate.convertAndSend("/socket-topic/newMessage/" + receiverId, new MessageResponseDTO(message));
             return new ResponseEntity<>(new MessageResponseDTO(message), HttpStatus.OK);
         } catch (UserNotFoundException e) {
             return new ResponseEntity<>("Receiver does not exist!", HttpStatus.NOT_FOUND);
