@@ -189,7 +189,7 @@ public class UserController {
                                          @RequestBody MessageDTO messageDTO) {
         try {
             userService.findUserById(id); //throws 404
-            rideService.findRideById(messageDTO.getRideId()); //throws 404
+//            rideService.findRideById(messageDTO.getRideId()); //throws 404
             User sender = userService.findUserByEmail(principal.getName());
             if (sender.getId().equals(id)) {
                 return new ResponseEntity<>("Cannot send message to yourself!", HttpStatus.BAD_REQUEST);
@@ -207,6 +207,14 @@ public class UserController {
 
     private Message messageFromMessageDTO(Principal principal, MessageDTO messageDTO){
         User user = userService.findUserByEmail(principal.getName());
+        if (messageDTO.getRideId() <= 0) {
+            return new Message(user,
+                    userService.findUserById(messageDTO.getReceiverId()),
+                    messageDTO.getMessage(),
+                    new Date(),
+                    messageDTO.getType(),
+                    null);
+        }
         return new Message(user,
                 userService.findUserById(messageDTO.getReceiverId()),
                 messageDTO.getMessage(),
@@ -386,6 +394,14 @@ public class UserController {
         if (!user.getRoles().contains(roleService.findById(4)) && !user.getId().equals(id)) {
             throw new UserNotFoundException("");
         }
+    }
+
+    @GetMapping("/almostAll")
+    public List<UserDTO> findAll(Principal principal) {
+        User user = userService.findUserByEmail(principal.getName());
+        List<User> allUsers = this.userService.findAll();
+        allUsers.remove(user);
+        return new UserDTO().makeUserDTOS(allUsers);
     }
 }
 

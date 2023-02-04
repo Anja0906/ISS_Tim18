@@ -4,6 +4,7 @@ import lombok.Data;
 import org.springframework.data.domain.Page;
 import org.tim_18.UberApp.model.Message;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.HashSet;
@@ -31,13 +32,19 @@ public class MessageResponseDTO {
         this.rideId         = rideId;
     }
     public MessageResponseDTO(Message message) {
-        this.id             = message.getId();
-        this.timeOfSending  = message.getTime().toString();
-        this.senderId       = message.getSender().getId();
-        this.receiverId     = message.getReceiver().getId();
-        this.message        = message.getMessage();
-        this.type           = message.getMessageType();
-        this.rideId         = message.getRide().getId();
+        this.id                 = message.getId();
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
+        String strDate = format.format(message.getTime());
+        this.timeOfSending      = strDate;
+        this.senderId           = message.getSender().getId();
+        this.receiverId         = message.getReceiver().getId();
+        this.message            = message.getMessage();
+        this.type               = message.getMessageType();
+        if (message.getRide()==null) {
+            this.rideId         = -1;
+        } else {
+            this.rideId = message.getRide().getId();
+        }
     }
 
     public HashSet<MessageResponseDTO> makeMessageResponseDTOS(Page<Message> messages){
