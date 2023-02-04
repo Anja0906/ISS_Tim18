@@ -226,4 +226,8 @@ public class UserService {
         return this.userRepository.save(u);
     }
 
+    public List<User> findAll() {
+        return this.userRepository.findAll();
+    }
+
 }
