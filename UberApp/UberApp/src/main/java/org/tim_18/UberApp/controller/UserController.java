@@ -160,7 +160,7 @@ public class UserController {
             checkAuthorities(principal, id);
             Pageable pageable = PageRequest.of(page, size, Sort.by(sort));
 //            Page<Ride> rides;
-            List<Ride> rides = rideService.findRidesByUser(id, from, to);
+            List<Ride> rides = rideService.findRidesByUser(id, from, to, sort);
             Map<String, Object> map = new HashMap<>();
             HashSet<RideRetDTO> ridesDTO = makeRideDTOS(rides);
             map.put("totalCount",ridesDTO.size());

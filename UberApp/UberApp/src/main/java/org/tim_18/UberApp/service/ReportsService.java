@@ -4,12 +4,13 @@ import org.springframework.stereotype.Service;
 import org.tim_18.UberApp.model.Ride;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Random;
 
 @Service
 public class ReportsService {
 
-    public HashMap<String, Integer>  getRidesPerDay(Page<Ride> rides){
+    public HashMap<String, Integer>  getRidesPerDay(List<Ride> rides){
         HashMap<String, Integer> map = new HashMap<>();
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
         for (Ride ride : rides){map.put(String.valueOf(dateFormat.format(ride.getScheduledTime())), 0);}
@@ -19,7 +20,7 @@ public class ReportsService {
         return map;
     }
 
-    public HashMap<String, Long>  getMoneyCountPerDay(Page<Ride> rides){
+    public HashMap<String, Long>  getMoneyCountPerDay(List<Ride> rides){
         HashMap<String, Long> map = new HashMap<>();
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
         for (Ride ride : rides){map.put(String.valueOf(dateFormat.format(ride.getScheduledTime())), 0L);}
@@ -28,7 +29,7 @@ public class ReportsService {
         }
         return map;
     }
-    public HashMap<String, Double>  getKilometersPerDay(Page<Ride> rides){
+    public HashMap<String, Double>  getKilometersPerDay(List<Ride> rides){
         HashMap<String, Double> map = new HashMap<>();
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
         Random r = new Random();
@@ -40,7 +41,7 @@ public class ReportsService {
         return map;
     }
 
-    public double getMoneySum(Page<Ride> rides){
+    public double getMoneySum(List<Ride> rides){
         double sum = 0.0;
         for (Ride ride : rides){
             sum += ride.getTotalCost();
@@ -56,7 +57,7 @@ public class ReportsService {
         return sum;
     }
 
-    public double getAverage(Page<Ride> rides){
+    public double getAverage(List<Ride> rides){
         HashMap<String, Long> moneySum = this.getMoneyCountPerDay(rides);
         int dayCount = 0;
         for (String day : moneySum.keySet()){
