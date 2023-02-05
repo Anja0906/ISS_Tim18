@@ -191,6 +191,30 @@ public class UserController {
         }
     }
 
+    @GetMapping("{id}/otherUser/{otherId}/message/{rideId}")
+    public ResponseEntity<?> getMessagesForUserForRide(
+                                                @PathVariable("id") int id,
+                                                @PathVariable("otherId") int otherId,
+                                                @PathVariable("rideId") int rideId,
+                                                @RequestParam(defaultValue = "0") Integer page,
+                                                @RequestParam(defaultValue = "50") Integer size,
+                                                @RequestParam(defaultValue = "time") String sort){
+        try {
+            Pageable pageable = PageRequest.of(page, size, Sort.by(sort));
+            Page<Message> messages = messageService.findMessagesByUserAndRideId(id, otherId, rideId, pageable);
+
+
+            Map<String, Object> map = new HashMap<>();
+            HashSet<MessageResponseDTO> messageDTOS = new MessageResponseDTO().makeMessageResponseDTOS(messages);
+
+            map.put("totalCount", messageDTOS.size());
+            map.put("results", messageDTOS);
+            return new ResponseEntity<>(map, HttpStatus.OK);
+        } catch (UserNotFoundException e) {
+            return new ResponseEntity<>("User does not exist!", HttpStatus.NOT_FOUND);
+        }
+    }
+
 
     @PreAuthorize("hasRole('USER')")
     @PostMapping("/{id}/message")
