@@ -210,9 +210,12 @@ public class RideController {
     public ResponseEntity<?> getDriverActiveRide(Principal principal, @PathVariable("driverId") Integer driverId) {
         try {
             User user = userService.findUserByEmail(principal.getName());
-            if (!user.getId().equals(driverId)){
-                return new ResponseEntity<>("Active ride does not exist!",HttpStatus.NOT_FOUND);
-            }
+            System.out.println(user.getEmail());
+            System.out.println(user.getId());
+            if(user.getRoles().get(1).getName() =="ROLE_DRIVER")
+                if (!user.getId().equals(driverId)){
+                    return new ResponseEntity<>("Active ride does not exist!",HttpStatus.NOT_FOUND);
+                }
             Ride ride = rideService.getDriverActiveRide(driverId);
             return new ResponseEntity<>(new RideRetDTO(ride, getLocationsByRideId(ride.getId())), HttpStatus.OK);
         } catch(RideNotFoundException e){

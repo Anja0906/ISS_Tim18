@@ -2,7 +2,7 @@
 INSERT INTO users (active, address, blocked, email, name, profile_picture, surname, password, telephone_number, verification_code)
 VALUES (true, 'Strumicka 6', false, 'anjapetkovic92@gmail.com', 'Anja', 'profile_picture', 'Petkovic', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', '0614843070', 'sdhfkuhsdufhsedh');
 INSERT INTO users (active, address, blocked, email, name, profile_picture, surname, password, telephone_number)
-VALUES (true, 'Strumicka 5', false, 'baniekg@gmail.com', 'Branislav', 'profile_picture1', 'Stojkovic', '$2a$10$iYCFgw.vl7KlYVikqSbLtOyAR5lNEKalF29dfYfGn7SRiE8pbskeu', '0654315454');
+VALUES (true, 'Strumicka 5', false, 'bangiekg@gmail.com', 'Branislav', 'profile_picture1', 'Stojkovic', '$2a$10$iYCFgw.vl7KlYVikqSbLtOyAR5lNEKalF29dfYfGn7SRiE8pbskeu', '0654315454');
 INSERT INTO users (active, address, blocked, email, name, profile_picture, surname, password, telephone_number)
 VALUES (true, 'Strumicka 6', true, 'pera@gmail.com', 'Pera', 'profile_picture', 'Peric', '$2a$10$iYCFgw.vl7KlYVikqSbLtOyAR5lNEKalF29dfYfGn7SRiE8pbskeu', '45421545151');
 INSERT INTO users (active, address, blocked, email, name, profile_picture, surname, password, telephone_number)
@@ -20,7 +20,7 @@ VALUES (true, 'Strumicka 5', true, 'janko@gmail.com', 'Janko', 'profile_picture1
 INSERT INTO users (active, address, blocked, email, name, profile_picture, surname, password, telephone_number)
 VALUES (true, 'Narodnog fronta 5', false, 'ema@gmail.com', 'Emilija', 'profile_picture5', 'Markovic', '$2a$10$iYCFgw.vl7KlYVikqSbLtOyAR5lNEKalF29dfYfGn7SRiE8pbskeu', '321654987');
 INSERT INTO users (active, address, blocked, email, name, profile_picture, surname, password, telephone_number)
-VALUES (true, 'Strumicka 6', true, 'anita@gmail.com', 'Anita', 'profile_picture', 'Pajic', '$2a$10$iYCFgw.vl7KlYVikqSbLtOyAR5lNEKalF29dfYfGn7SRiE8pbskeu', '852741963');
+VALUES (true, 'Strumicka 6', false, 'anita@gmail.com', 'Anita', 'profile_picture', 'Pajic', '$2a$10$iYCFgw.vl7KlYVikqSbLtOyAR5lNEKalF29dfYfGn7SRiE8pbskeu', '852741963');
 INSERT INTO users (active, address, blocked, email, name, profile_picture, surname, password, telephone_number)
 VALUES (true, 'Strumicka 5', false, 'petar@gmail.com', 'Petar', 'profile_picture1', 'Petrovic', '$2a$10$iYCFgw.vl7KlYVikqSbLtOyAR5lNEKalF29dfYfGn7SRiE8pbskeu', '545841454');
 INSERT INTO users (active, address, blocked, email, name, profile_picture, surname, password, telephone_number)
@@ -59,7 +59,7 @@ INSERT INTO work_time (end, start, driver_id) VALUES ('2022-12-9 01:55:00', '202
 
 # rides
 INSERT INTO rides (baby_transport, end_time, estimated_time_in_minutes, pet_transport, start_time, status, total_cost, vehicle_type, driver_id, panic_id, rejection_id, scheduled_time)
-VALUES (true, '2022-12-11 23:59:59', 1, false, '2022-12-10 05:00:00', 2, 500, 0, '2', 1, 1, '2022-12-10 05:00:00');
+VALUES (true, '2023-12-11 23:59:59', 1, false, '2022-12-10 05:00:00', 2, 500, 0, '2', 1, 1, '2022-12-10 05:00:00');
 INSERT INTO rides (baby_transport, end_time, estimated_time_in_minutes, pet_transport, start_time, status, total_cost, vehicle_type, driver_id, panic_id, rejection_id, scheduled_time)
 VALUES (true, '2022-12-7 07:55:00', 5, false, '2022-12-7 07:40:00', 3, 500, 0, '1', '2', '2', '2022-12-10 05:00:00');
 INSERT INTO rides (baby_transport, end_time, estimated_time_in_minutes, pet_transport, start_time, status, total_cost, vehicle_type, driver_id, panic_id, rejection_id, scheduled_time)
@@ -266,5 +266,3 @@ VALUES ('2', '3', '3');
 
 
 insert into requests (address, email, id, name, profile_picture, surname, telephone_number) VALUES ("address", 'skdjhfjsd', 2, "name", "profile_picture", "surname", "telephone_number");
-
-
