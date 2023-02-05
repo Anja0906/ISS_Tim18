@@ -28,4 +28,6 @@ public class MessageService {
     public void deleteMessage(Integer id) {messageRepository.deleteMessageById(id);}
     public Message updateMessage(Message message) {return messageRepository.save(message);}
     public Page<Message> findMessagesByUserId(Integer id, Pageable pageable) {return messageRepository.findMessagesByUserId(id, pageable);}
+
+    public Page<Message> findMessagesByUserAndRideId(Integer id, Integer otherId, Integer rideId, Pageable pageable) {return messageRepository.findMessagesByUserAndRideId(id, otherId, rideId, pageable);}
 }

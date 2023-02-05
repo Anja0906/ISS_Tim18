@@ -162,16 +162,16 @@ VALUES ('VDsgfsjhfka', 'asbfhasfj', 'petkovic', 'scbshhfcjsh', 'jsdchhshc');
 
 # passenger_rides
 INSERT INTO passenger_rides (passenger_id, ride_id) VALUES (4, 1);
-INSERT INTO passenger_rides (passenger_id, ride_id) VALUES (4, 2);
+-- INSERT INTO passenger_rides (passenger_id, ride_id) VALUES (4, 2);
 INSERT INTO passenger_rides (passenger_id, ride_id) VALUES (4, 3);
 INSERT INTO passenger_rides (passenger_id, ride_id) VALUES (4, 7);
-INSERT INTO passenger_rides (passenger_id, ride_id) VALUES (5, 7);
+-- INSERT INTO passenger_rides (passenger_id, ride_id) VALUES (5, 7);
 INSERT INTO passenger_rides (passenger_id, ride_id) VALUES (5, 4);
 INSERT INTO passenger_rides (passenger_id, ride_id) VALUES (5, 5);
 INSERT INTO passenger_rides (passenger_id, ride_id) VALUES (5, 6);
-INSERT INTO passenger_rides (passenger_id, ride_id) VALUES (6, 1);
+-- INSERT INTO passenger_rides (passenger_id, ride_id) VALUES (6, 1);
 INSERT INTO passenger_rides (passenger_id, ride_id) VALUES (6, 2);
-INSERT INTO passenger_rides (passenger_id, ride_id) VALUES (6, 3);
+-- INSERT INTO passenger_rides (passenger_id, ride_id) VALUES (6, 3);
 
 #roles
 INSERT INTO role (name) VALUES ('ROLE_USER');

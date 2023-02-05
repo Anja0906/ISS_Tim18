@@ -16,4 +16,7 @@ public interface MessageRepository extends JpaRepository<Message,Integer> {
 
     @Query(value = "SELECT * FROM messages where sender_id = ?1 OR receiver_id = ?1", nativeQuery = true)
     Page<Message> findMessagesByUserId(Integer id, Pageable pageable);
+
+    @Query(value = "SELECT * FROM messages where ((sender_id = ?1 OR receiver_id = ?1) and (sender_id = ?2 OR receiver_id = ?2)) and ride_id=?3", nativeQuery = true)
+    Page<Message> findMessagesByUserAndRideId(Integer id, Integer otherId, Integer rideId, Pageable pageable);
 }

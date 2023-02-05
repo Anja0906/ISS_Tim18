@@ -16,6 +16,8 @@ import org.tim_18.UberApp.model.Ride;
 import org.tim_18.UberApp.service.ReportsService;
 import org.tim_18.UberApp.service.RideService;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("api/reports")
 @CrossOrigin(value = "*")
@@ -41,7 +43,7 @@ public class ReportsController {
 
         try {
             Pageable pageable = PageRequest.of(page, size, Sort.by(sort));
-            Page<Ride> rides = rideService.findRidesForDriver(id, from, to, pageable);
+            List<Ride> rides = rideService.findRidesForDriver(id, from, to, sort);
             return new ResponseEntity<>(this.getReportsDTO(rides), HttpStatus.OK);
         } catch (DriverNotFoundException driverNotFoundException) {
             return new ResponseEntity<>("Driver does not exist!", HttpStatus.NOT_FOUND);
@@ -59,7 +61,7 @@ public class ReportsController {
 
         try {
             Pageable pageable = PageRequest.of(page, size, Sort.by(sort));
-            Page<Ride> rides = rideService.findRidesForPassenger(id, from, to, pageable);
+            List<Ride> rides = rideService.findRidesForPassenger(id, from, to, sort);
             return new ResponseEntity<>(this.getReportsDTO(rides), HttpStatus.OK);
         } catch (PassengerNotFoundException passengerNotFoundException) {
             return new ResponseEntity<>("Passenger does not exist!", HttpStatus.NOT_FOUND);
@@ -78,7 +80,7 @@ public class ReportsController {
 
         try {
             Pageable pageable = PageRequest.of(page, size, Sort.by(sort));
-            Page<Ride> rides = rideService.findRidesForUser(id, from, to, pageable);
+            List<Ride> rides = rideService.findRidesByUser(id, from, to, sort);
             return new ResponseEntity<>(this.getReportsDTO(rides), HttpStatus.OK);
         } catch (UserNotFoundException userNotFoundException) {
             return new ResponseEntity<>("User does not exist!", HttpStatus.NOT_FOUND);
@@ -95,14 +97,25 @@ public class ReportsController {
 
         try {
             Pageable pageable = PageRequest.of(page, size, Sort.by(sort));
-            Page<Ride> rides = rideService.findRidesInDateRange(from, to, pageable);
+            List<Ride> rides = rideService.findRidesInDateRange(from, to, sort);
             return new ResponseEntity<>(this.getReportsDTO(rides), HttpStatus.OK);
         } catch (DriverNotFoundException driverNotFoundException) {
             return new ResponseEntity<>("Driver does not exist!", HttpStatus.NOT_FOUND);
         }
     }
 
-    private ReportDTO getReportsDTO(Page<Ride> rides) {
+//    private ReportDTO getReportsDTO(Page<Ride> rides) {
+//        ReportDTO reportDTO = new ReportDTO(this.reportsService.getRidesPerDay(rides),
+//                this.reportsService.getKilometersPerDay(rides),
+//                this.reportsService.getMoneyCountPerDay(rides),
+//                this.reportsService.getMoneySum(rides),
+//                this.reportsService.getAverage(rides),
+//                this.reportsService.getTotalKilometers(this.reportsService.getKilometersPerDay(rides)));
+//
+//        return reportDTO;
+//    }
+
+    private ReportDTO getReportsDTO(List<Ride> rides) {
         ReportDTO reportDTO = new ReportDTO(this.reportsService.getRidesPerDay(rides),
                 this.reportsService.getKilometersPerDay(rides),
                 this.reportsService.getMoneyCountPerDay(rides),
