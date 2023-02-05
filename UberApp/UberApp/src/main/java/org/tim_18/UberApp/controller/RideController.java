@@ -12,9 +12,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import org.tim_18.UberApp.Validation.ErrorMessage;
-import org.tim_18.UberApp.dto.Distance.DriverTime;
-import org.tim_18.UberApp.dto.Distance.DurationDistance;
-import org.tim_18.UberApp.dto.Distance.OsrmResponse;
+import org.tim_18.UberApp.dto.Distance.*;
 import org.tim_18.UberApp.dto.PanicDTO;
 import org.tim_18.UberApp.dto.PanicSocketDTO;
 import org.tim_18.UberApp.dto.ReasonDTO;
@@ -49,6 +47,7 @@ public class RideController {
     private final PassengerService passengerService;
     private final UserService userService;
     private final FavoriteRideService favoriteRideService;
+    private final VehicleService vehicleService;
 
     private final LocationService locationService;
 
@@ -70,7 +69,7 @@ public class RideController {
     private SimpMessagingTemplate simpMessagingTemplate;
 
 
-    public RideController(SimpMessagingTemplate simpMessagingTemplate, RideService rideService, DriverService driverService, RejectionService rejectionService, ReviewService reviewService, PanicService panicService, PassengerService passengerService, UserService userService, FavoriteRideService favoriteRideService, LocationService locationService, LocationsForRideService locationsForRideService, LocationsForFavoriteRideService locationsForFavoriteRideService, VehiclePriceService vehiclePriceService, RoleService roleService, WorkTimeService workTimeService) {
+    public RideController(SimpMessagingTemplate simpMessagingTemplate, RideService rideService, DriverService driverService, RejectionService rejectionService, ReviewService reviewService, PanicService panicService, PassengerService passengerService, UserService userService, FavoriteRideService favoriteRideService, VehicleService vehicleService, LocationService locationService, LocationsForRideService locationsForRideService, LocationsForFavoriteRideService locationsForFavoriteRideService, VehiclePriceService vehiclePriceService, RoleService roleService, WorkTimeService workTimeService) {
         this.rideService        = rideService;
         this.driverService      = driverService;
         this.rejectionService   = rejectionService;
@@ -79,6 +78,7 @@ public class RideController {
         this.passengerService   = passengerService;
         this.userService        = userService;
         this.favoriteRideService = favoriteRideService;
+        this.vehicleService = vehicleService;
         this.locationService = locationService;
         this.locationsForRideService = locationsForRideService;
         this.locationsForFavoriteRideService = locationsForFavoriteRideService;
@@ -362,6 +362,32 @@ public class RideController {
             return new ResponseEntity<>("Ride does not exist!",HttpStatus.NOT_FOUND);
         }
     }
+
+
+    @PreAuthorize("hasRole('PASSENGER')")
+    @PutMapping("/{id}/route")
+    public ResponseEntity<?> routeRide(Principal principal, @PathVariable("id")Integer id) {
+        try {
+            Ride ride = rideService.findRideById(id);
+            checkPassengersAuthorities(principal, ride);
+            Status status = ride.getStatus();
+            if (status == Status.STARTED) {
+                Set<LocationsForRide> locations = this.getLocationsByRideId(ride.getId());
+                Object[] locationSetDTOList = locations.toArray();
+                LocationsForRide locationsForRide = (LocationsForRide) locationSetDTOList[locationSetDTOList.length - 1];
+                OsrmResponse route = rideService.getSteps(locationsForRide);
+                vehicleService.routeVehicle(route, ride);
+                return new ResponseEntity<>(route, HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(new ErrorMessage("Cannot simulate a ride that is not in status STARTED!"), HttpStatus.BAD_REQUEST);
+            }
+        } catch(RideNotFoundException e){
+            return new ResponseEntity<>("Ride does not exist!",HttpStatus.NOT_FOUND);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     @PreAuthorize("hasRole('DRIVER')")
     @PutMapping("/{id}/end")
     public ResponseEntity<?> endRide(Principal principal, @PathVariable("id")Integer id) {

@@ -1,6 +1,9 @@
 package org.tim_18.UberApp.dto;
 
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.Data;
+import org.hibernate.validator.constraints.Length;
 import org.tim_18.UberApp.dto.locationDTOs.LocationDTO;
 import org.tim_18.UberApp.model.Vehicle;
 import org.tim_18.UberApp.model.VehicleType;
@@ -11,10 +14,15 @@ public class VehicleDTO {
     private Integer driverId;
 
     private VehicleType vehicleType;
+    @Length(max = 100)
     private String model;
+    @Length(max = 20)
+
     private String licenseNumber;
 
     private LocationDTO currentLocation;
+    @Min(value=1)
+    @Max(value=20)
     private Integer passengerSeats;
     private Boolean babyTransport;
     private Boolean petTransport;

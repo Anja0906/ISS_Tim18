@@ -1,6 +1,7 @@
 package org.tim_18.UberApp.dto;
 
 import lombok.Data;
+import org.hibernate.validator.constraints.Length;
 import org.springframework.data.domain.Page;
 import org.tim_18.UberApp.model.Message;
 
@@ -15,6 +16,8 @@ public class MessageResponseDTO {
     private String timeOfSending;
     private Integer senderId;
     private Integer receiverId;
+    @Length(max = 500, message = "Max length of message is 500")
+
     private String message;
     private String type;
     private Integer rideId;

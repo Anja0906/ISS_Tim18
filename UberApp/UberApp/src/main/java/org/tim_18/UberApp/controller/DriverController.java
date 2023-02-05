@@ -50,15 +50,13 @@ public class DriverController {
     @Autowired
     private final RoleService roleService;
 
-    private final AdministratorService adminService;
-
     private final LocationsForRideService locationsForRideService;
 
     @Autowired
     PasswordEncoder passwordEncoder;
 
 
-    public DriverController(DriverService driverService, DocumentService documentService, VehicleService vehicleService, LocationService locationService, WorkTimeService workTimeService, RideService rideService, UserService userService, RoleService roleService, AdministratorService adminService, LocationsForRideService locationsForRideService) {
+    public DriverController(DriverService driverService, DocumentService documentService, VehicleService vehicleService, LocationService locationService, WorkTimeService workTimeService, RideService rideService, UserService userService, RoleService roleService, LocationsForRideService locationsForRideService) {
         this.driverService   = driverService;
         this.documentService = documentService;
         this.vehicleService  = vehicleService;
@@ -67,7 +65,6 @@ public class DriverController {
         this.rideService     = rideService;
         this.userService     = userService;
         this.roleService     = roleService;
-        this.adminService    = adminService;
         this.locationsForRideService = locationsForRideService;
     }
 

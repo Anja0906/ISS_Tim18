@@ -1,6 +1,8 @@
 package org.tim_18.UberApp.dto;
 
+import jakarta.validation.constraints.Email;
 import lombok.Data;
+import org.hibernate.validator.constraints.Length;
 import org.springframework.data.domain.Page;
 import org.tim_18.UberApp.model.Role;
 import org.tim_18.UberApp.model.User;
@@ -12,16 +14,21 @@ import java.util.List;
 public class UserDTOwithPassword {
 
     private Integer id;
+    @Length(max = 100)
     private String name;
+    @Length(max = 100)
     private String surname;
     private String profilePicture;
+    @Length(max = 18)
     private String telephoneNumber;
+    @Length(max = 100)
+    @Email(regexp = "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$", message = "Bad email format")
     private String email;
+    @Length(max = 100)
     private String address;
 
+    private List<String> roles;
     private String password;
-    private List<Role> roles;
-
     public UserDTOwithPassword() {
     }
 
