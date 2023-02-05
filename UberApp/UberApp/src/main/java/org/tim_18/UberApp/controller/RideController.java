@@ -100,7 +100,10 @@ public class RideController {
             addPassengers(oldDTO, ride);
             if (ride.getDriver()!=null) {
                 Integer id = ride.getDriver().getId();
-                this.simpMessagingTemplate.convertAndSend("/socket-topic/driver/" + id, new RideRetDTO(ride, lfr));
+                this.simpMessagingTemplate.convertAndSend("/socket-topic/driver-new-ride/" + id, new RideRetDTO(ride, lfr));
+            }
+            for (Passenger passenger : ride.getPassengers()) {
+                this.simpMessagingTemplate.convertAndSend("/socket-topic/passenger-new-ride/" + passenger.getId(), new RideRetDTO(ride, lfr));
             }
             return new ResponseEntity<>(new RideRetDTO(ride, lfr), HttpStatus.OK);
         } catch (PassengerNotFoundException e) {
@@ -283,6 +286,9 @@ public class RideController {
                 rejectionService.updateRejection(rejection);
                 ride.setRejection(rejection);
                 ride = rideService.updateRide(ride);
+                if (ride.getDriver()!=null) {
+                    this.simpMessagingTemplate.convertAndSend("/socket-topic/withdraw/" + ride.getDriver().getId(), new RideRetDTO(ride, getLocationsByRideId(ride.getId())));
+                }
                 return new ResponseEntity<>(new RideRetDTO(ride, getLocationsByRideId(ride.getId())), HttpStatus.OK);
             } else {
                 return new ResponseEntity<>(new ErrorMessage("Cannot cancel a ride that is not in status PENDING or ACCEPTED!"), HttpStatus.BAD_REQUEST);
@@ -325,6 +331,9 @@ public class RideController {
             if (status == Status.PENDING) {
                 ride.setStatus(Status.ACCEPTED);
                 ride = rideService.updateRide(ride);
+                for (Passenger passenger : ride.getPassengers()) {
+                    this.simpMessagingTemplate.convertAndSend("/socket-topic/accepted/" + passenger.getId(), new RideRetDTO(ride, getLocationsByRideId(ride.getId())));
+                }
                 return new ResponseEntity<>(new RideRetDTO(ride, getLocationsByRideId(ride.getId())), HttpStatus.OK);
             } else {
                 return new ResponseEntity<>(new ErrorMessage("Cannot accept a ride that is not in status PENDING!"), HttpStatus.BAD_REQUEST);
@@ -344,6 +353,7 @@ public class RideController {
             if (status == Status.ACCEPTED) {
                 ride.setStatus(Status.STARTED);
                 ride = rideService.updateRide(ride);
+                this.simpMessagingTemplate.convertAndSend("/socket-topic/started/" + ride.getDriver().getId(), new RideRetDTO(ride, getLocationsByRideId(ride.getId())));
                 return new ResponseEntity<>(new RideRetDTO(ride, getLocationsByRideId(ride.getId())), HttpStatus.OK);
             } else {
                 return new ResponseEntity<>(new ErrorMessage("Cannot accept a ride that is not in status ACCEPTED!"), HttpStatus.BAD_REQUEST);
@@ -362,6 +372,9 @@ public class RideController {
             if (status == Status.STARTED) {
                 ride.setStatus(Status.FINISHED);
                 ride = rideService.updateRide(ride);
+                for (Passenger passenger : ride.getPassengers()) {
+                    this.simpMessagingTemplate.convertAndSend("/socket-topic/ended/" + passenger.getId(), new RideRetDTO(ride, getLocationsByRideId(ride.getId())));
+                }
                 return new ResponseEntity<>(new RideRetDTO(ride, getLocationsByRideId(ride.getId())), HttpStatus.OK);
             } else {
                 return new ResponseEntity<>(new ErrorMessage("Cannot accept a ride that is not in status STARTED!"), HttpStatus.BAD_REQUEST);
@@ -386,6 +399,9 @@ public class RideController {
                 rejectionService.addRejection(rejection);
                 ride.setRejection(rejection);
                 ride = rideService.updateRide(ride);
+                for (Passenger passenger : ride.getPassengers()) {
+                    this.simpMessagingTemplate.convertAndSend("/socket-topic/cancelled/" + passenger.getId(), new RideRetDTO(ride, getLocationsByRideId(ride.getId())));
+                }
                 return new ResponseEntity<>(new RideRetDTO(ride, getLocationsByRideId(ride.getId())), HttpStatus.OK);
             } else {
                 return new ResponseEntity<>(new ErrorMessage("Cannot accept a ride that is not in status PENDING or ACCEPTED!"), HttpStatus.BAD_REQUEST);
@@ -607,6 +623,9 @@ public class RideController {
         }
 
         Date startTime = new Date();
+        if (date==null) {
+            date=startTime;
+        }
         Calendar date1 = Calendar.getInstance();
         date1.setTime(startTime);
         long timeInSecs = date1.getTimeInMillis();
@@ -670,7 +689,6 @@ public class RideController {
             throw new DriverNotFoundException("");
         }
 
-//        @TODO ispravi na isOnline ne isActive
         List<Driver> activeDrivers = new ArrayList<>();
         for (Driver driver : allDrivers) {
             if (driver.isActive() && driver.getIsOnline()) {
