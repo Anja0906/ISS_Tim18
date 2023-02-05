@@ -3,17 +3,20 @@ package org.tim_18.UberApp.dto.Distance;
 import java.util.List;
 
 public class Leg {
-    private List<String> steps;
+    private List<Step> steps;
     private String summary;
     private double weight;
     private double duration;
     private double distance;
-    public List<String> getSteps() {
+
+    public List<Step> getSteps() {
         return steps;
     }
-    public void setSteps(List<String> steps) {
+
+    public void setSteps(List<Step> steps) {
         this.steps = steps;
     }
+
     public String getSummary() {
         return summary;
     }

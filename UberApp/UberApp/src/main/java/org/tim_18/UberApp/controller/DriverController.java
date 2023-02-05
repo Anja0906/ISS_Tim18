@@ -86,7 +86,7 @@ public class DriverController {
         return new ResponseEntity<>(map, HttpStatus.OK);
     }
 
-    @PreAuthorize("hasAnyRole('DRIVER', 'ADMIN')")
+    @PreAuthorize("hasAnyRole('DRIVER', 'ADMIN', 'PASSENGER')")
     @GetMapping("/{id}")
     public ResponseEntity<?> getDriverById (
             Principal principal,
