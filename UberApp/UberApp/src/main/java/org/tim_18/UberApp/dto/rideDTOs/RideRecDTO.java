@@ -1,5 +1,6 @@
 package org.tim_18.UberApp.dto.rideDTOs;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import org.tim_18.UberApp.dto.RejectionDTO;
 import org.tim_18.UberApp.dto.driverDTOs.DriverEmailDTO;
@@ -13,12 +14,22 @@ import java.util.*;
 @Data
 public class RideRecDTO {
     private Integer id;
+    @NotNull
     private Set<LocationSetDTO> locations;
+
+    @NotNull
     private Set<PassengerIdEmailDTO> passengers;
+
+    @NotNull
     private VehicleType vehicleType;
+
+    @NotNull
     private boolean babyTransport;
+
+    @NotNull
     private boolean petTransport;
 
+    @NotNull
     private String scheduledTime;
 
     public RideRecDTO(){}

@@ -649,9 +649,6 @@ public class RideController {
         }
 
         Date startTime = new Date();
-        if (date==null) {
-            date=startTime;
-        }
         Calendar date1 = Calendar.getInstance();
         date1.setTime(startTime);
         long timeInSecs = date1.getTimeInMillis();
@@ -660,6 +657,7 @@ public class RideController {
             startTime = date;
         } else {
             startTime = new Date(timeInSecs + ((long) time * 60 * 1000));
+            date = startTime;
         }
 
         date1.setTime(startTime);
@@ -960,7 +958,7 @@ public class RideController {
                 ride = rideService.updateRide(ride);
                 System.out.println(ride.toString2());
                 Integer id = ride.getDriver().getId();
-                this.simpMessagingTemplate.convertAndSend("/socket-topic/driver/" + id, new RideRetDTO(ride, getLocationsByRideId(ride.getId())));
+                this.simpMessagingTemplate.convertAndSend("/socket-topic/driver-new-ride/" + id, new RideRetDTO(ride, getLocationsByRideId(ride.getId())));
             }
             if (scheduledRidesLackingDriver.isEmpty()) {
                 System.out.println("All scheduled ride have drivers");

@@ -1,5 +1,6 @@
 package org.tim_18.UberApp.dto.rideDTOs;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import org.tim_18.UberApp.dto.locationDTOs.LocationSetDTO;
 import org.tim_18.UberApp.dto.passengerDTOs.PassengerIdEmailDTO;
@@ -14,11 +15,23 @@ import java.util.Set;
 public class FavoriteRideDTO {
 
     private Integer id;
+
+    @NotNull
     private String favoriteName;
+
+    @NotNull
     private Set<LocationSetDTO> locations;
+
+    @NotNull
     private Set<PassengerIdEmailDTO> passengers;
+
+    @NotNull
     private VehicleType vehicleType;
+
+    @NotNull
     private boolean babyTransport;
+
+    @NotNull
     private boolean petTransport;
 
     public FavoriteRideDTO(){}
