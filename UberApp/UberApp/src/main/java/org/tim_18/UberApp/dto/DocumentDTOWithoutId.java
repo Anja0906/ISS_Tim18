@@ -1,11 +1,13 @@
 package org.tim_18.UberApp.dto;
 
 import lombok.Data;
+import org.hibernate.validator.constraints.Length;
 import org.tim_18.UberApp.model.Document;
 @Data
 public class DocumentDTOWithoutId {
 
     private String name;
+    @Length(max = 100)
     private String image;
     private Integer driverId;
 

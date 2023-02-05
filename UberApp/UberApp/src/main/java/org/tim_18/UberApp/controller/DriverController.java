@@ -49,10 +49,14 @@ public class DriverController {
     private final UserService userService;
     @Autowired
     private final RoleService roleService;
+
+    private final LocationsForRideService locationsForRideService;
+
     @Autowired
     PasswordEncoder passwordEncoder;
 
-    public DriverController(DriverService driverService, DocumentService documentService, VehicleService vehicleService, LocationService locationService, WorkTimeService workTimeService, RideService rideService, UserService userService, RoleService roleService) {
+
+    public DriverController(DriverService driverService, DocumentService documentService, VehicleService vehicleService, LocationService locationService, WorkTimeService workTimeService, RideService rideService, UserService userService, RoleService roleService, LocationsForRideService locationsForRideService) {
         this.driverService   = driverService;
         this.documentService = documentService;
         this.vehicleService  = vehicleService;
@@ -61,6 +65,7 @@ public class DriverController {
         this.rideService     = rideService;
         this.userService     = userService;
         this.roleService     = roleService;
+        this.locationsForRideService = locationsForRideService;
     }
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -78,7 +83,7 @@ public class DriverController {
         return new ResponseEntity<>(map, HttpStatus.OK);
     }
 
-    @PreAuthorize("hasAnyRole('DRIVER', 'ADMIN')")
+    @PreAuthorize("hasAnyRole('DRIVER', 'ADMIN', 'PASSENGER')")
     @GetMapping("/{id}")
     public ResponseEntity<?> getDriverById (
             Principal principal,
@@ -310,8 +315,6 @@ public class DriverController {
         try {
             User user = userService.findUserByEmail(principal.getName());
             WorkTime workTime = workTimeService.findWorkTimeById(id);
-            System.out.println(workTime.getStart());
-            System.out.println(workTime.getEnd());
             if (user.getId().equals(workTime.getDriver().getId())) {
                 return new ResponseEntity<>(new WorkTimeDTOWithoutDriver(workTime),HttpStatus.OK);
             }
@@ -478,12 +481,15 @@ public class DriverController {
 
         try {
             checkDriversAuthorities(principal, id);
+            System.out.println(id);
             Pageable pageable = PageRequest.of(page, size, Sort.by(sort));
             Page<Ride> rides = rideService.findRidesForDriver(id, from, to, pageable);
 
             Map<String, Object> map = new HashMap<>();
-            HashSet<RideRetDTO> ridesDTO = new RideRetDTO().makeRideRideDTOS(rides);
-
+            HashSet<RideRetDTO> ridesDTO = makeRideDTOS(rides);
+            for(RideRetDTO rideRetDTO:ridesDTO){
+                System.out.println(rideRetDTO);
+            }
             map.put("totalCount", ridesDTO.size());
             map.put("results", ridesDTO);
             return new ResponseEntity<>(map, HttpStatus.OK);
@@ -491,6 +497,19 @@ public class DriverController {
             return new ResponseEntity<>("Driver does not exist!", HttpStatus.NOT_FOUND);
         }
     }
+
+    private HashSet<RideRetDTO> makeRideDTOS(Page<Ride> rides) {
+        HashSet<RideRetDTO> rideRetDTOHashSet = new HashSet<>();
+        for (Ride ride : rides) {
+            rideRetDTOHashSet.add(new RideRetDTO(ride, getLocationsByRideId(ride.getId())));
+        }
+        return rideRetDTOHashSet;
+    }
+
+    private Set<LocationsForRide> getLocationsByRideId(Integer id) {
+        return locationsForRideService.getByRideId(id);
+    }
+
 
     private List<Role> getRoles() {
         List<Role> roleDriver = roleService.findByName("ROLE_DRIVER");

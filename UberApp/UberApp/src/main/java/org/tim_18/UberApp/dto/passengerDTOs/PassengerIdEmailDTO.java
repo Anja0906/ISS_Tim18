@@ -7,8 +7,6 @@ import org.tim_18.UberApp.model.Passenger;
 
 @Data
 public class PassengerIdEmailDTO {
-
-    @NotNull
     private Integer id;
 
     @Email(regexp = "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$", message = "Bad email format")

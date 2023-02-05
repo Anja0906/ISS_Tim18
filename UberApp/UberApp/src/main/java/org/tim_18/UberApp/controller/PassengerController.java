@@ -34,6 +34,8 @@ public class PassengerController {
     private final UserActivationService userActivationService;
     private final RoleService roleService;
     private final UserService userService;
+
+    private final LocationsForRideService locationsForRideService;
     @Autowired
     private PassengerDTOwithPasswordMapper dtoWithPasswordMapper;
     @Autowired
@@ -42,12 +44,13 @@ public class PassengerController {
     @Autowired
     PasswordEncoder passwordEncoder;
 
-    public PassengerController(PassengerService passengerService, RideService rideService, UserActivationService userActivationService, RoleService roleService, UserService userService) {
+    public PassengerController(PassengerService passengerService, RideService rideService, UserActivationService userActivationService, RoleService roleService, UserService userService, LocationsForRideService locationsForRideService) {
         this.passengerService       = passengerService;
         this.rideService            = rideService;
         this.userActivationService  = userActivationService;
         this.roleService = roleService;
         this.userService = userService;
+        this.locationsForRideService = locationsForRideService;
     }
 
     @PostMapping()
@@ -147,7 +150,7 @@ public class PassengerController {
             Pageable paging = PageRequest.of(page, size);
 //            List<Ride> rides = rideService.findRidesByPassengersId(id, from, to);
             Page<Ride> rides = rideService.findRidesByPassengersId(id, from, to, paging);
-            HashSet<RideRetDTO> ridesDTO = new RideRetDTO().makeRideRideDTOS(rides);
+            HashSet<RideRetDTO> ridesDTO = makeRideDTOS(rides);
             Map<String, Object> response = new HashMap<>();
             response.put("totalCount", ridesDTO.size());
             response.put("results", ridesDTO);
@@ -155,6 +158,18 @@ public class PassengerController {
         } catch(PassengerNotFoundException e){
             return new ResponseEntity<>("Passenger does not exist!",HttpStatus.NOT_FOUND);
         }
+    }
+
+    private HashSet<RideRetDTO> makeRideDTOS(Page<Ride> rides) {
+        HashSet<RideRetDTO> rideRetDTOHashSet = new HashSet<>();
+        for (Ride ride : rides) {
+            rideRetDTOHashSet.add(new RideRetDTO(ride, getLocationsByRideId(ride.getId())));
+        }
+        return rideRetDTOHashSet;
+    }
+
+    private Set<LocationsForRide> getLocationsByRideId(Integer id) {
+        return locationsForRideService.getByRideId(id);
     }
 
     private void checkAuthorities(Principal principal, Integer id) throws PassengerNotFoundException {

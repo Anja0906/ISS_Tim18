@@ -10,6 +10,7 @@ public class DriverReviewDTO {
     private Integer rating;
     private String comment;
     private PassengerIdEmailDTO passenger;
+    private String type;
 
 
     public DriverReviewDTO(){}
@@ -18,6 +19,7 @@ public class DriverReviewDTO {
         this.rating     = rating;
         this.comment    = comment;
         this.passenger  = passenger;
+        this.type       = "driver";
     }
 
     public DriverReviewDTO(Review review, PassengerIdEmailDTO passenger){

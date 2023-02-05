@@ -48,9 +48,9 @@ public class RideAndroidDTO {
         this.passengers             = passengerSet;
     }
 
-    public RideAndroidDTO(Ride ride){
-        this(ride.getId(), ride.getLocations(),
-                ride.getPassengers(), ride.getVehicleType(),
-                ride.isBabyTransport(), ride.isPetTransport(), ride.getScheduledTime().toString());
-    }
+//    public RideAndroidDTO(Ride ride){
+//        this(ride.getId(), ride.getLocations(),
+//                ride.getPassengers(), ride.getVehicleType(),
+//                ride.isBabyTransport(), ride.isPetTransport(), ride.getScheduledTime().toString());
+//    }
 }

@@ -2,13 +2,14 @@ package org.tim_18.UberApp.dto;
 
 
 import lombok.Data;
+import org.hibernate.validator.constraints.Length;
 import org.tim_18.UberApp.model.Document;
 
 import java.util.HashSet;
 @Data
 public class DocumentDTO {
     private Integer id;
-
+    @Length(max = 100)
     private String name;
     private String documentImage;
     private Integer driverId;

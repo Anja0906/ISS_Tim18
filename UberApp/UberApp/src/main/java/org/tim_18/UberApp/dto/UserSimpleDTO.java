@@ -1,15 +1,28 @@
 package org.tim_18.UberApp.dto;
 
+import jakarta.validation.constraints.Email;
 import lombok.Data;
+import org.hibernate.validator.constraints.Length;
 import org.tim_18.UberApp.model.User;
 
 @Data
 public class UserSimpleDTO {
+    @Length(max = 100)
+
     private String name;
+    @Length(max = 100)
+
     private String surname;
     private String profilePicture;
+    @Length(max = 18)
+
     private String telephoneNumber;
+    @Email(regexp = "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$", message = "Bad email format")
+    @Length(max = 100)
+
     private String email;
+    @Length(max = 100)
+
     private String address;
 
     public UserSimpleDTO() {}

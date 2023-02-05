@@ -1,6 +1,7 @@
 package org.tim_18.UberApp.dto.noteDTOs;
 
 import lombok.Data;
+import org.hibernate.validator.constraints.Length;
 import org.springframework.data.domain.Page;
 import org.tim_18.UberApp.model.Note;
 
@@ -12,6 +13,7 @@ import java.util.HashSet;
 public class NoteResponseDTO {
     private Integer id;
     private String date;
+    @Length(max = 500, message = "Max length of message is 500")
     private String message;
 
     public NoteResponseDTO() {}

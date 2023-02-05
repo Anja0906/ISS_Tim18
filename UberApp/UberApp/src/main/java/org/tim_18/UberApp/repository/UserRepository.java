@@ -19,7 +19,7 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     User findByVerificationCode(String code);
 
     @Query("SELECT u FROM User u WHERE u.email = ?1")
-    User findByEmail(String email);
+    Optional<User> findByEmail(String email);
 
     User findByResetPasswordToken(String token);
 }

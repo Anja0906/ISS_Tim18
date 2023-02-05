@@ -6,14 +6,13 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import org.tim_18.UberApp.Validation.ErrorMessage;
-import org.tim_18.UberApp.dto.Distance.DriverTime;
-import org.tim_18.UberApp.dto.Distance.DurationDistance;
-import org.tim_18.UberApp.dto.Distance.OsrmResponse;
+import org.tim_18.UberApp.dto.Distance.*;
 import org.tim_18.UberApp.dto.PanicDTO;
 import org.tim_18.UberApp.dto.PanicSocketDTO;
 import org.tim_18.UberApp.dto.ReasonDTO;
@@ -48,8 +47,17 @@ public class RideController {
     private final PassengerService passengerService;
     private final UserService userService;
     private final FavoriteRideService favoriteRideService;
+    private final VehicleService vehicleService;
 
     private final LocationService locationService;
+
+    private final LocationsForRideService locationsForRideService;
+
+    private final LocationsForFavoriteRideService locationsForFavoriteRideService;
+
+    private final VehiclePriceService vehiclePriceService;
+
+    private final RoleService roleService;
 
 
     private LocationDTOMapper locationDTOMapper = new LocationDTOMapper(new ModelMapper());
@@ -58,10 +66,10 @@ public class RideController {
     private final WorkTimeService workTimeService;
 
     @Autowired
-
     private SimpMessagingTemplate simpMessagingTemplate;
 
-    public RideController(SimpMessagingTemplate simpMessagingTemplate, RideService rideService, DriverService driverService, RejectionService rejectionService, ReviewService reviewService, PanicService panicService, PassengerService passengerService, UserService userService, FavoriteRideService favoriteRideService, LocationService locationService, WorkTimeService workTimeService) {
+
+    public RideController(SimpMessagingTemplate simpMessagingTemplate, RideService rideService, DriverService driverService, RejectionService rejectionService, ReviewService reviewService, PanicService panicService, PassengerService passengerService, UserService userService, FavoriteRideService favoriteRideService, VehicleService vehicleService, LocationService locationService, LocationsForRideService locationsForRideService, LocationsForFavoriteRideService locationsForFavoriteRideService, VehiclePriceService vehiclePriceService, RoleService roleService, WorkTimeService workTimeService) {
         this.rideService        = rideService;
         this.driverService      = driverService;
         this.rejectionService   = rejectionService;
@@ -70,103 +78,146 @@ public class RideController {
         this.passengerService   = passengerService;
         this.userService        = userService;
         this.favoriteRideService = favoriteRideService;
+        this.vehicleService = vehicleService;
         this.locationService = locationService;
+        this.locationsForRideService = locationsForRideService;
+        this.locationsForFavoriteRideService = locationsForFavoriteRideService;
+        this.vehiclePriceService = vehiclePriceService;
+        this.roleService = roleService;
         this.workTimeService = workTimeService;
         this.simpMessagingTemplate = simpMessagingTemplate;
     }
-
     @PreAuthorize("hasRole('PASSENGER')")
     @PostMapping
-    public ResponseEntity<?> createARide(Principal principal, @RequestBody RideRecDTO oldDTO){
+    public ResponseEntity<?> createRide(Principal principal, @RequestBody RideRecDTO oldDTO) {
+        try {
+            checkPassengersForRide(principal, oldDTO);
+            checkScheduledTime(oldDTO);
+
+            Ride ride = fromDTOtoRide(oldDTO);
+            ride = rideService.createRide(ride);
+            Set<LocationsForRide> lfr = addLocations(oldDTO, ride);
+            addPassengers(oldDTO, ride);
+            if (ride.getDriver()!=null) {
+                Integer id = ride.getDriver().getId();
+                this.simpMessagingTemplate.convertAndSend("/socket-topic/driver-new-ride/" + id, new RideRetDTO(ride, lfr));
+            }
+            for (Passenger passenger : ride.getPassengers()) {
+                this.simpMessagingTemplate.convertAndSend("/socket-topic/passenger-new-ride/" + passenger.getId(), new RideRetDTO(ride, lfr));
+            }
+            return new ResponseEntity<>(new RideRetDTO(ride, lfr), HttpStatus.OK);
+        } catch (PassengerNotFoundException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        } catch (BadRequestException e) {
+            return new ResponseEntity<>(new ErrorMessage(e.getMessage()), HttpStatus.BAD_REQUEST);
+        } catch (DriverNotFoundException e) {
+            return new ResponseEntity<>("No driver found", HttpStatus.NOT_FOUND);
+        }
+    }
+
+    private void checkPassengersForRide(Principal principal, RideRecDTO oldDTO) throws PassengerNotFoundException, BadRequestException {
         User user = userService.findUserByEmail(principal.getName());
         boolean found = false;
-        for (PassengerIdEmailDTO p:oldDTO.getPassengers()) {
+        Passenger passenger;
+        boolean canMakeRide;
+        for (PassengerIdEmailDTO p : oldDTO.getPassengers()) {
             try {
-                Passenger passenger = passengerService.findById(p.getId());
-                if (passenger.isBlocked()) {
-                    return new ResponseEntity<>("Passenger with id " + passenger.getId() + " is blocked and cannot order ride!",HttpStatus.NOT_FOUND);
-                }
-                if (p.getId().equals(user.getId())){
-                    found = true;
-                    break;
+                String email = p.getEmail();
+                passenger = passengerService.findByEmail(email);
+                canMakeRide = rideService.checkRide(passenger.getId());
+                if (!canMakeRide) {
+                    throw new BadRequestException("Cannot create a ride while you have one already pending!");
                 }
             } catch (PassengerNotFoundException e) {
-                return new ResponseEntity<>("Passenger not found!",HttpStatus.NOT_FOUND);
+                throw new PassengerNotFoundException("Passenger not found!");
+            }
+            if (passenger.isBlocked()) {
+                throw new PassengerNotFoundException("Passenger with id " + passenger.getId() + " is blocked and cannot order ride!");
+            }
+            if (p.getEmail().equals(user.getEmail())) {
+                found = true;
+                break;
             }
         }
         if (!found) {
-            return new ResponseEntity<>("Cannot make ride for other people!",HttpStatus.NOT_FOUND);
+            throw new PassengerNotFoundException("Cannot make ride for other people!");
         }
+    }
 
+    private void checkScheduledTime(RideRecDTO oldDTO) throws BadRequestException {
+        if (oldDTO.getScheduledTime()==null) {
+            return;
+        }
         String scheduledTime = oldDTO.getScheduledTime();
         Instant instant = Instant.parse(scheduledTime);
         Date scheduledTimeDate = Date.from(instant);
-        Date now = new Date();
-        long diff = scheduledTimeDate.getTime() - now.getTime();
+        long diff = scheduledTimeDate.getTime() - new Date().getTime();
         if (diff <= 0) {
-            return new ResponseEntity<>(new ErrorMessage("Scheduled time should be in the future!"),HttpStatus.BAD_REQUEST);
+            throw new BadRequestException("Scheduled time should be in the future!");
         }
         long diffHours = diff / (60 * 60 * 1000) % 24;
         if (diffHours > 5) {
-            return new ResponseEntity<>(new ErrorMessage("You can schedule only in next 5 hours!"),HttpStatus.BAD_REQUEST);
+            throw new BadRequestException("You can schedule only in next 5 hours!");
         }
-        Ride ride = fromDTOtoRide(oldDTO);
+    }
 
-        boolean canMakeRide;
-        for (PassengerIdEmailDTO ped: oldDTO.getPassengers()) {
-            canMakeRide = rideService.checkRide(ped.getId());
-            if (!canMakeRide) {
-                return new ResponseEntity<>(new ErrorMessage("Cannot create a ride while you have one already pending!"),HttpStatus.BAD_REQUEST);
-            }
-        }
-
-        ride = rideService.createRide(ride);
-
-        Set<Ride> rides = new HashSet<>();
-        rides.add(ride);
-
+    private Set<LocationsForRide> addLocations(RideRecDTO oldDTO, Ride ride) {
+//        Set<Ride> rides = new HashSet<>();
+//        rides.add(ride);
         Set<LocationSetDTO> locs = oldDTO.getLocations();
-        Set<Location> ridesLocations = new HashSet<>();
+        Set<LocationsForRide> locationsForRides = new HashSet<>();
+//        Set<Location> ridesLocations = new HashSet<>();
         for (LocationSetDTO locationSetDTO : locs) {
             LocationDTO departureDTO = locationSetDTO.getDeparture();
             Location departure = locationService.findLocationByAddressLongitudeLatitude(departureDTO.getLongitude(), departureDTO.getLatitude(), departureDTO.getAddress());
-            if (departure==null) {
+            if (departure == null) {
                 departure = locationService.addLocation(new Location(departureDTO.getLongitude(), departureDTO.getLatitude(), departureDTO.getAddress()));
             }
-            ridesLocations.add(departure);
-            departure.setRides(rides);
+//            ridesLocations.add(departure);
+//            departure.setRides(rides);
             locationService.updateLocation(departure);
 
             LocationDTO destinationDTO = locationSetDTO.getDestination();
             Location destination = locationService.findLocationByAddressLongitudeLatitude(destinationDTO.getLongitude(), destinationDTO.getLatitude(), destinationDTO.getAddress());
-            if (destination==null) {
+            if (destination == null) {
                 destination = locationService.addLocation(new Location(destinationDTO.getLongitude(), destinationDTO.getLatitude(), destinationDTO.getAddress()));
             }
-            ridesLocations.add(destination);
-            destination.setRides(rides);
+//            ridesLocations.add(destination);
+//            destination.setRides(rides);
             locationService.updateLocation(destination);
+
+            DurationDistance dd = getDurationDistance(departureDTO.getLatitude(), departure.getLongitude(), destination.getLatitude(), destination.getLongitude());
+            LocationsForRide lfr = new LocationsForRide(departure, destination, dd.getDistance(), dd.getDuration(), ride);
+            lfr = locationsForRideService.addLocationsForRide(lfr);
+            locationsForRides.add(lfr);
         }
+//        ride.setLocations(new HashSet<>(ridesLocations));
+        return locationsForRides;
+    }
 
-        ride.setLocations(new HashSet<>(ridesLocations));
-        ride = rideService.updateRide(ride);
-
-
-        for (PassengerIdEmailDTO ped: oldDTO.getPassengers()) {
-            Passenger p = passengerService.findById(ped.getId());
+    private void addPassengers(RideRecDTO oldDTO, Ride ride) {
+        for (PassengerIdEmailDTO ped : oldDTO.getPassengers()) {
+            Passenger p = passengerService.findByEmail(ped.getEmail());
             Set<Ride> pr = p.getRides();
             pr.add(ride);
             p.setRides(new HashSet<>(pr));
             passengerService.update(p);
         }
-        return new ResponseEntity<>(new RideRetDTO(ride), HttpStatus.OK);
     }
 
     @PreAuthorize("hasAnyRole('DRIVER', 'ADMIN')")
     @GetMapping("/driver/{driverId}/active")
     public ResponseEntity<?> getDriverActiveRide(Principal principal, @PathVariable("driverId") Integer driverId) {
         try {
+            User user = userService.findUserByEmail(principal.getName());
+            System.out.println(user.getEmail());
+            System.out.println(user.getId());
+            if(user.getRoles().get(1).getName() =="ROLE_DRIVER")
+                if (!user.getId().equals(driverId)){
+                    return new ResponseEntity<>("Active ride does not exist!",HttpStatus.NOT_FOUND);
+                }
             Ride ride = rideService.getDriverActiveRide(driverId);
-            return new ResponseEntity<>(new RideRetDTO(ride), HttpStatus.OK);
+            return new ResponseEntity<>(new RideRetDTO(ride, getLocationsByRideId(ride.getId())), HttpStatus.OK);
         } catch(RideNotFoundException e){
             return new ResponseEntity<>("Active ride does not exist!",HttpStatus.NOT_FOUND);
         }
@@ -177,10 +228,10 @@ public class RideController {
         try {
             User user = userService.findUserByEmail(principal.getName());
             if (!user.getId().equals(passengerId)){
-                throw new RideNotFoundException("Active ride does not exist!");
+                return new ResponseEntity<>("Active ride does not exist!",HttpStatus.NOT_FOUND);
             }
             Ride ride = rideService.getPassengerActiveRide(passengerId);
-            return new ResponseEntity<>(new RideRetDTO(ride), HttpStatus.OK);
+            return new ResponseEntity<>(new RideRetDTO(ride, getLocationsByRideId(ride.getId())), HttpStatus.OK);
         } catch(RideNotFoundException e){
             return new ResponseEntity<>("Active ride does not exist!",HttpStatus.NOT_FOUND);
         }
@@ -191,13 +242,9 @@ public class RideController {
     public ResponseEntity<?> findRideById(Principal principal, @PathVariable("id") Integer id) {
         try {
             Ride ride = rideService.findRideById(id);
-            int role = checkRole(principal);
-            if (role == 1){
-                checkDriversAuthorities(principal, ride);
-            } else {
-                checkPassengersAuthorities(principal, ride);
-            }
-            return new ResponseEntity<>(new RideRetDTO(ride), HttpStatus.OK);
+            checkRole(principal, ride);
+
+            return new ResponseEntity<>(new RideRetDTO(ride, getLocationsByRideId(id)), HttpStatus.OK);
         } catch (RideNotFoundException e) {
             return new ResponseEntity<>("Ride does not exist!", HttpStatus.NOT_FOUND);
         }
@@ -211,13 +258,20 @@ public class RideController {
 
         Page<Ride> rides = rideService.findPendingRidesByStatus("PENDING",pageable);
         Map<String, Object> map = new HashMap<>();
-        HashSet<RideRetDTO> rideRetDTOS = new RideRetDTO().makeRideRideDTOS(rides);
+        HashSet<RideRetDTO> rideRetDTOS = makeRideRideDTOS(rides);
 
         map.put("totalCount",rideRetDTOS.size());
         map.put("results",rideRetDTOS);
         return new ResponseEntity<>(map, HttpStatus.OK);
         //TREBA OVO IZMENITI DA DOBIJA PENDING RIDES ZA POSEBNOG DRIVERA SA ID JER JOS UVEK NEMAMO LOGIN
+    }
 
+    private HashSet<RideRetDTO> makeRideRideDTOS(Page<Ride> rides) {
+        HashSet<RideRetDTO> ridesDTO = new HashSet<>();
+        for (Ride r : rides) {
+            ridesDTO.add(new RideRetDTO(r, getLocationsByRideId(r.getId())));
+        }
+        return ridesDTO;
     }
 
     @PreAuthorize("hasRole('PASSENGER')")
@@ -227,7 +281,7 @@ public class RideController {
             Ride ride = rideService.findRideById(id);
             checkPassengersAuthorities(principal, ride);
             Status status = ride.getStatus();
-            if (status == Status.PENDING || status == Status.STARTED) {
+            if (status == Status.PENDING || status == Status.ACCEPTED) {
                 ride.setStatus(Status.CANCELLED);
                 Rejection rejection = ride.getRejection();
                 rejection.setTime(new Date());
@@ -235,35 +289,34 @@ public class RideController {
                 rejectionService.updateRejection(rejection);
                 ride.setRejection(rejection);
                 ride = rideService.updateRide(ride);
-                return new ResponseEntity<>(new RideRetDTO(ride), HttpStatus.OK);
+                if (ride.getDriver()!=null) {
+                    this.simpMessagingTemplate.convertAndSend("/socket-topic/withdraw/" + ride.getDriver().getId(), new RideRetDTO(ride, getLocationsByRideId(ride.getId())));
+                }
+                return new ResponseEntity<>(new RideRetDTO(ride, getLocationsByRideId(ride.getId())), HttpStatus.OK);
             } else {
-                return new ResponseEntity<>(new ErrorMessage("Cannot cancel a ride that is not in status PENDING or STARTED!"), HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>(new ErrorMessage("Cannot cancel a ride that is not in status PENDING or ACCEPTED!"), HttpStatus.BAD_REQUEST);
             }
         } catch(RideNotFoundException e){
             return new ResponseEntity<>("Ride does not exist!",HttpStatus.NOT_FOUND);
         }
     }
-
+//
     @PreAuthorize("hasAnyRole('DRIVER', 'PASSENGER')")
     @PutMapping("/{id}/panic")
     public ResponseEntity<?> activatePanic(Principal principal, @PathVariable("id") Integer id, @RequestBody ReasonDTO reason){
         try {
             Ride ride = rideService.findRideById(id);
-            int role = checkRole(principal);
-            if (role == 1){
-                checkDriversAuthorities(principal, ride);
-            } else {
-                checkPassengersAuthorities(principal, ride);
-            }
+            checkRole(principal, ride);
             Status status = ride.getStatus();
             if (status == Status.STARTED) {
                 User user = userService.findUserByEmail(principal.getName());
                 Panic panic = panicService.findById(ride.getPanic().getId());
                 panic.updatePanic(user,reason,ride);
                 panic = panicService.addPanic(panic);
+                ride.setPanic(panic);
+                rideService.updateRide(ride);
                 this.simpMessagingTemplate.convertAndSend("/socket-topic/newPanic", new PanicSocketDTO(panic));
-
-                return new ResponseEntity<>(new PanicDTO(panic), HttpStatus.OK);
+                return new ResponseEntity<>(new PanicDTO(panic, getLocationsByRideId(ride.getId())), HttpStatus.OK);
             } else {
                 return new ResponseEntity<>(new ErrorMessage("Cannot panic in ride that is not in status STARTED!"), HttpStatus.BAD_REQUEST);
             }
@@ -281,7 +334,10 @@ public class RideController {
             if (status == Status.PENDING) {
                 ride.setStatus(Status.ACCEPTED);
                 ride = rideService.updateRide(ride);
-                return new ResponseEntity<>(new RideRetDTO(ride), HttpStatus.OK);
+                for (Passenger passenger : ride.getPassengers()) {
+                    this.simpMessagingTemplate.convertAndSend("/socket-topic/accepted/" + passenger.getId(), new RideRetDTO(ride, getLocationsByRideId(ride.getId())));
+                }
+                return new ResponseEntity<>(new RideRetDTO(ride, getLocationsByRideId(ride.getId())), HttpStatus.OK);
             } else {
                 return new ResponseEntity<>(new ErrorMessage("Cannot accept a ride that is not in status PENDING!"), HttpStatus.BAD_REQUEST);
             }
@@ -300,7 +356,8 @@ public class RideController {
             if (status == Status.ACCEPTED) {
                 ride.setStatus(Status.STARTED);
                 ride = rideService.updateRide(ride);
-                return new ResponseEntity<>(new RideRetDTO(ride), HttpStatus.OK);
+                this.simpMessagingTemplate.convertAndSend("/socket-topic/started/" + ride.getDriver().getId(), new RideRetDTO(ride, getLocationsByRideId(ride.getId())));
+                return new ResponseEntity<>(new RideRetDTO(ride, getLocationsByRideId(ride.getId())), HttpStatus.OK);
             } else {
                 return new ResponseEntity<>(new ErrorMessage("Cannot accept a ride that is not in status ACCEPTED!"), HttpStatus.BAD_REQUEST);
             }
@@ -308,6 +365,32 @@ public class RideController {
             return new ResponseEntity<>("Ride does not exist!",HttpStatus.NOT_FOUND);
         }
     }
+
+
+    @PreAuthorize("hasRole('PASSENGER')")
+    @PutMapping("/{id}/route")
+    public ResponseEntity<?> routeRide(Principal principal, @PathVariable("id")Integer id) {
+        try {
+            Ride ride = rideService.findRideById(id);
+            checkPassengersAuthorities(principal, ride);
+            Status status = ride.getStatus();
+            if (status == Status.STARTED) {
+                Set<LocationsForRide> locations = this.getLocationsByRideId(ride.getId());
+                Object[] locationSetDTOList = locations.toArray();
+                LocationsForRide locationsForRide = (LocationsForRide) locationSetDTOList[locationSetDTOList.length - 1];
+                OsrmResponse route = rideService.getSteps(locationsForRide);
+                vehicleService.routeVehicle(route, ride);
+                return new ResponseEntity<>(route, HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(new ErrorMessage("Cannot simulate a ride that is not in status STARTED!"), HttpStatus.BAD_REQUEST);
+            }
+        } catch(RideNotFoundException e){
+            return new ResponseEntity<>("Ride does not exist!",HttpStatus.NOT_FOUND);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     @PreAuthorize("hasRole('DRIVER')")
     @PutMapping("/{id}/end")
     public ResponseEntity<?> endRide(Principal principal, @PathVariable("id")Integer id) {
@@ -318,7 +401,10 @@ public class RideController {
             if (status == Status.STARTED) {
                 ride.setStatus(Status.FINISHED);
                 ride = rideService.updateRide(ride);
-                return new ResponseEntity<>(new RideRetDTO(ride), HttpStatus.OK);
+                for (Passenger passenger : ride.getPassengers()) {
+                    this.simpMessagingTemplate.convertAndSend("/socket-topic/ended/" + passenger.getId(), new RideRetDTO(ride, getLocationsByRideId(ride.getId())));
+                }
+                return new ResponseEntity<>(new RideRetDTO(ride, getLocationsByRideId(ride.getId())), HttpStatus.OK);
             } else {
                 return new ResponseEntity<>(new ErrorMessage("Cannot accept a ride that is not in status STARTED!"), HttpStatus.BAD_REQUEST);
             }
@@ -342,7 +428,10 @@ public class RideController {
                 rejectionService.addRejection(rejection);
                 ride.setRejection(rejection);
                 ride = rideService.updateRide(ride);
-                return new ResponseEntity<>(new RideRetDTO(ride), HttpStatus.OK);
+                for (Passenger passenger : ride.getPassengers()) {
+                    this.simpMessagingTemplate.convertAndSend("/socket-topic/cancelled/" + passenger.getId(), new RideRetDTO(ride, getLocationsByRideId(ride.getId())));
+                }
+                return new ResponseEntity<>(new RideRetDTO(ride, getLocationsByRideId(ride.getId())), HttpStatus.OK);
             } else {
                 return new ResponseEntity<>(new ErrorMessage("Cannot accept a ride that is not in status PENDING or ACCEPTED!"), HttpStatus.BAD_REQUEST);
             }
@@ -359,67 +448,87 @@ public class RideController {
             FavoriteRide ride = favoriteRideDTOMapper.fromDTOtoRide(oldDTO);
             User user = userService.findUserByEmail(principal.getName());
             Integer userId = user.getId();
-            Set<Passenger> passengerSet = ride.getPassengers();
-            if (passengerSet.size() != 1) {
-                throw new FavoriteRideNotFoundException("Favorite Ride does not exist");
-            }
-            for (Passenger p : passengerSet) {
-                if (!p.getId().equals(userId)) {
-                    throw new FavoriteRideNotFoundException("Favorite Ride does not exist");
-                }
-            }
             Passenger p = passengerService.findById(user.getId());
-            Set<FavoriteRide> pFavRides = p.getFavoriteRides();
-            if (pFavRides.size() > 10) {
-                return new ResponseEntity<>("Number of favorite rides cannot exceed 10!",HttpStatus.BAD_REQUEST);
-            }
+
             Set<PassengerIdEmailDTO> passengersDTOs = oldDTO.getPassengers();
-            HashSet<Passenger> passengers = new HashSet<>();
-            for (PassengerIdEmailDTO passDTO: passengersDTOs) {
-                passengers.add(passengerService.findById(passDTO.getId()));
-            }
-            ride.setPassengers(passengers);
+
+            ride = handlePassengers(ride, userId, passengersDTOs, p);
 
             ride = favoriteRideService.createFavRide(ride);
 
-            Set<FavoriteRide> rides = new HashSet<>();
-            rides.add(ride);
+            updatePassenger(ride, p);
 
             Set<LocationSetDTO> locs = oldDTO.getLocations();
-            Set<Location> ridesLocations = new HashSet<>();
-            for (LocationSetDTO locationSetDTO : locs) {
-                LocationDTO departureDTO = locationSetDTO.getDeparture();
-                Location departure = locationService.findLocationByAddressLongitudeLatitude(departureDTO.getLongitude(), departureDTO.getLatitude(), departureDTO.getAddress());
-                if (departure==null) {
-                    departure = locationService.addLocation(new Location(departureDTO.getLongitude(), departureDTO.getLatitude(), departureDTO.getAddress()));
-                }
-                ridesLocations.add(departure);
-                departure.setFavoriteRides(rides);
-                locationService.updateLocation(departure);
-
-                LocationDTO destinationDTO = locationSetDTO.getDestination();
-                Location destination = locationService.findLocationByAddressLongitudeLatitude(destinationDTO.getLongitude(), destinationDTO.getLatitude(), destinationDTO.getAddress());
-                if (destination==null) {
-                    destination = locationService.addLocation(new Location(destinationDTO.getLongitude(), destinationDTO.getLatitude(), destinationDTO.getAddress()));
-                }
-                ridesLocations.add(destination);
-                destination.setFavoriteRides(rides);
-                locationService.updateLocation(destination);
-            }
-//            ride = favoriteRideService.updateRide(ride);
-            Set<FavoriteRide> pr = p.getFavoriteRides();
-            pr.add(ride);
-            p.setFavoriteRides(new HashSet<>(pr));
-            passengerService.update(p);
+            Set<LocationsForFavoriteRide> ridesLocations = addLocations(ride, locs);
 
             // osiguravamo da u dto objektu vrati samo passengera koji je poslao zahtev ali ne sacuva tako u bazi!
             // paranoicno
+            Set<Passenger> passengerSet = new HashSet<>();
+            passengerSet.add(p);
             ride.setPassengers(passengerSet);
-            ride.setLocations(new HashSet<>(ridesLocations));
-            return new ResponseEntity<>(new FavoriteRideWithTimeDTO(ride, new Date()), HttpStatus.OK);
+            return new ResponseEntity<>(new FavoriteRideWithTimeDTO(ride, new Date(), ridesLocations), HttpStatus.OK);
         } catch (FavoriteRideNotFoundException e) {
-            return new ResponseEntity<>("Cannot make favorite ride for other people!",HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Favorite Ride does not exist",HttpStatus.NOT_FOUND);
+        } catch (BadRequestException e) {
+            return new ResponseEntity<>(new ErrorMessage(e.getMessage()), HttpStatus.BAD_REQUEST);
         }
+    }
+
+    private FavoriteRide handlePassengers(FavoriteRide ride, Integer userId, Set<PassengerIdEmailDTO> passengersDTOs, Passenger p) {
+        Set<Passenger> passengerSet = ride.getPassengers();
+        if (passengerSet.size() != 1) {
+            throw new BadRequestException("Cannot make favorite ride for other people!");
+        }
+        for (Passenger pass : passengerSet) {
+            if (!pass.getId().equals(userId)) {
+                throw new BadRequestException("Cannot make favorite ride for other people!");
+            }
+        }
+        HashSet<Passenger> passengers = new HashSet<>();
+        for (PassengerIdEmailDTO passDTO: passengersDTOs) {
+            passengers.add(passengerService.findById(passDTO.getId()));
+        }
+        ride.setPassengers(passengers);
+
+        Set<FavoriteRide> pFavRides = p.getFavoriteRides();
+        if (pFavRides.size() > 10) {
+            throw new BadRequestException("Number of favorite rides cannot exceed 10!");
+        }
+        return ride;
+    }
+
+    private void updatePassenger(FavoriteRide ride, Passenger p) {
+        Set<FavoriteRide> pr = p.getFavoriteRides();
+        pr.add(ride);
+        p.setFavoriteRides(new HashSet<>(pr));
+        passengerService.update(p);
+    }
+
+    private Set<LocationsForFavoriteRide> addLocations(FavoriteRide ride, Set<LocationSetDTO> locs) {
+        Set<LocationsForFavoriteRide> ridesLocations = new HashSet<>();
+        for (LocationSetDTO locationSetDTO : locs) {
+            LocationDTO departureDTO = locationSetDTO.getDeparture();
+            Location departure = locationService.findLocationByAddressLongitudeLatitude(departureDTO.getLongitude(), departureDTO.getLatitude(), departureDTO.getAddress());
+            if (departure==null) {
+                departure = locationService.addLocation(new Location(departureDTO.getLongitude(), departureDTO.getLatitude(), departureDTO.getAddress()));
+            }
+//            ridesLocations.add(departure);
+//            departure.setFavoriteRides(rides);
+            locationService.updateLocation(departure);
+
+            LocationDTO destinationDTO = locationSetDTO.getDestination();
+            Location destination = locationService.findLocationByAddressLongitudeLatitude(destinationDTO.getLongitude(), destinationDTO.getLatitude(), destinationDTO.getAddress());
+            if (destination==null) {
+                destination = locationService.addLocation(new Location(destinationDTO.getLongitude(), destinationDTO.getLatitude(), destinationDTO.getAddress()));
+            }
+//            ridesLocations.add(destination);
+//            destination.setFavoriteRides(rides);
+            locationService.updateLocation(destination);
+            LocationsForFavoriteRide lffr = new LocationsForFavoriteRide(departure, destination, ride);
+            locationsForFavoriteRideService.addFavRide(lffr);
+            ridesLocations.add(lffr);
+        }
+        return ridesLocations;
     }
 
 
@@ -434,9 +543,23 @@ public class RideController {
         for (FavoriteRide r : favoriteRides) {
             r.setPassengers(pS);
         }
-        List<FavoriteRideDTO> favoriteRidesDTO = FavoriteRideDTO.getFavoriteRidesDTO(favoriteRides);
+        HashSet<FavoriteRideWithTimeDTO> favoriteRidesDTO = getFavoriteRidesDTO(favoriteRides);
         return new ResponseEntity<>(favoriteRidesDTO, HttpStatus.OK);
     }
+
+    private HashSet<FavoriteRideWithTimeDTO> getFavoriteRidesDTO(List<FavoriteRide> rides) {
+        HashSet<FavoriteRideWithTimeDTO> ridesDTO = new HashSet<>();
+        for (FavoriteRide r : rides) {
+            ridesDTO.add(new FavoriteRideWithTimeDTO(r, getLocationsByFavoriteRideId(r.getId())));
+        }
+        return ridesDTO;
+    }
+
+    private Set<LocationsForFavoriteRide> getLocationsByFavoriteRideId(Integer id) {
+        return locationsForFavoriteRideService.getByRideId(id);
+    }
+
+
 
     @PreAuthorize("hasRole('PASSENGER')")
     @DeleteMapping("/favorites/{id}")
@@ -499,58 +622,77 @@ public class RideController {
         }
     }
 
-    // 1 - driver
-    // 2 - passenger
-    // iz nekog razloga role nece da prepozna sam sebe
-    private int checkRole(Principal principal) {
+
+    private void checkRole(Principal principal, Ride ride) {
         User user = userService.findUserByEmail(principal.getName());
-        Integer userId = user.getId();
-        boolean isPassenger = false;
-        boolean isDriver = false;
-        while (true) {
-            try {
-                if (!isDriver) {
-                    Passenger passenger = passengerService.findById(userId);
-//                    isPassenger = true;
-                    return 2;
-                }
-                if (!isPassenger) {
-                    Driver driver = driverService.findDriverById(userId);
-//                    isDriver = true;
-                    return 1;
-                }
-            }
-            catch (PassengerNotFoundException e) {
-                isPassenger = false;
-                isDriver = true;
-            }
-            catch (DriverNotFoundException e) {
-                isDriver = false;
-                isPassenger = true;
-            }
+        if (user.getRoles().contains(roleService.findById(2))) {
+            // passenger
+            checkPassengersAuthorities(principal, ride);
+        } else {
+            // driver
+            checkDriversAuthorities(principal, ride);
         }
     }
 
-    private Ride fromDTOtoRide(RideRecDTO dto) throws UserNotFoundException, DriverNotFoundException {
+    private Ride fromDTOtoRide(RideRecDTO dto) throws DriverNotFoundException {
+        Date date = null; // scheduled
+        if (dto.getScheduledTime() != null) {
+            Instant instant = Instant.parse(dto.getScheduledTime());
+            date = Date.from(instant);
+        }
+
+
+        DriverTime driverTime = null;
+        Driver driver = null;
+        int time = -1;
+        if (date == null) {
+            driverTime = generateDriver(dto);
+            driver = driverTime.getDriver(); // 404
+            time = driverTime.getTime();
+        }
+
         Date startTime = new Date();
-        Date endTime = new Date();
-        long totalCost = 5000;
-        List<Driver> drivers = driverService.findAllDrivers();
-        if (drivers.size() == 0) throw new UserNotFoundException("No available driver");
-        Driver driver = drivers.get(0);
+        Calendar date1 = Calendar.getInstance();
+        date1.setTime(startTime);
+        long timeInSecs = date1.getTimeInMillis();
+
+        if (date != null) {
+            startTime = date;
+        } else {
+            startTime = new Date(timeInSecs + ((long) time * 60 * 1000));
+            date = startTime;
+        }
+
+        date1.setTime(startTime);
+        timeInSecs = date1.getTimeInMillis();
+
+
+        Set<LocationSetDTO> locationSetDTOSet = dto.getLocations();
+        DurationDistance depdis;
+        double totalDistance = 0;
+        double totalDuration = 0;
+        for (LocationSetDTO loc : locationSetDTOSet) {
+            LocationDTO departure = loc.getDeparture();
+            LocationDTO destination = loc.getDestination();
+            depdis = getDurationDistance(departure.getLatitude(), departure.getLongitude(), destination.getLatitude(), destination.getLongitude());
+            totalDistance += depdis.getDistance();
+            totalDuration += depdis.getDuration()/60;
+        }
+
+        Date endDate = new Date((long) (timeInSecs + (totalDuration * 60 * 1000)));
+
+        VehiclePrice vehicle = vehiclePriceService.findVehiclePriceByVehicleType(dto.getVehicleType());
+        double vehiclePrice = vehicle.getPrice();
+        long totalCost = (long)(vehiclePrice + 120*totalDistance/1000);
+
         Set<PassengerIdEmailDTO> passengersDTOs = dto.getPassengers();
         HashSet<Passenger> passengers = new HashSet<>();
         for (PassengerIdEmailDTO passDTO: passengersDTOs) {
-            passengers.add(passengerService.findById(passDTO.getId()));
+            passengers.add(passengerService.findByEmail(passDTO.getEmail()));
         }
-        int estimatedTimeInMinutes = 4;
-        Set<LocationSetDTO> locationsDTO = dto.getLocations();
-        ArrayList<LocationSetDTO> locationSetDTOArrayList = new ArrayList<>();
-        for (LocationSetDTO locDTO:locationsDTO) {
-            locationSetDTOArrayList.add(locDTO);
-        }
-        HashSet<Location> locations = new HashSet<>();
         Status status = Status.PENDING;
+
+        // manje bitno.................
         HashSet<Review> reviews = new HashSet<>();
         Review review = new Review();
         review = reviewService.addReview(review);
@@ -561,21 +703,30 @@ public class RideController {
         newRejection.setTime(new Date());
         newRejection.setReason("lalala");
         rejectionService.addRejection(newRejection);
-        Instant instant = Instant.parse(dto.getScheduledTime());
-        Date date = Date.from(instant);
-        DriverTime driverTime = generateDriver(dto);
 
-        return new Ride(startTime, endTime, totalCost, driverTime.getDriver(), passengers, driverTime.getTime(), dto.getVehicleType(),
-                dto.isBabyTransport(), dto.isPetTransport(), newRejection, locations, status, reviews, panic, date);
+
+        return new Ride(startTime, endDate, totalCost, driver, passengers, time, dto.getVehicleType(),
+                dto.isBabyTransport(), dto.isPetTransport(), newRejection, status, reviews, panic, date);
     }
 
     private DriverTime generateDriver(RideRecDTO ride) throws DriverNotFoundException {
+        // gledamo imali li drivera u sistemu :,(
         List<Driver> allDrivers = driverService.findAllDrivers();
         if (allDrivers.isEmpty()) {
             throw new DriverNotFoundException("");
         }
-        List<Driver> potentialDriversCarEdition = new ArrayList<>();
+
+        List<Driver> activeDrivers = new ArrayList<>();
         for (Driver driver : allDrivers) {
+            if (driver.isActive() && driver.getIsOnline()) {
+                activeDrivers.add(driver);
+            }
+        }
+
+        // ako ima, moramo proci kroz svakog drivera i njegovo vozilo
+        // i videti da li ima odgovarajuce vozilo za ovu voznju
+        List<Driver> potentialDriversCarEdition = new ArrayList<>();
+        for (Driver driver : activeDrivers) {
             Vehicle vehicle = driver.getVehicle();
             if (!(vehicle.getVehicleType().equals(ride.getVehicleType()))) {
                 continue;
@@ -590,52 +741,108 @@ public class RideController {
                 continue;
             }
 
-            //drivers car has the capacity for the requested ride
+            // driver ima dobro vozilo
             potentialDriversCarEdition.add(driver);
         }
 
-        Set<LocationSetDTO> setDTOS = ride.getLocations();
-        LocationDTO departure = null, destination = null;
-        for (LocationSetDTO loc : setDTOS) {
-            departure = loc.getDeparture();
+        if (potentialDriversCarEdition.isEmpty()) {
+            throw new DriverNotFoundException("");
         }
+
+        // vadimo jedan set lokacija koji je dosao sa fronta na malo tezi nacin jer je na backu set setova
+        LocationSetDTO setDTO = getRoute(ride);
+        LocationDTO departure = setDTO.getDeparture();
+        LocationDTO destination = setDTO.getDestination();
+
+        // racunamo estimated time da se obavi voznja - potrebno zbog scheduled ride
+        DurationDistance depdis = getDurationDistance(departure.getLatitude(), departure.getLongitude(), destination.getLatitude(), destination.getLongitude());
 
         HashMap<Driver, Integer> durations = new HashMap<>();
 
-        for (Driver driver : potentialDriversCarEdition) {
-            Vehicle vehicle = driver.getVehicle();
-            Location location = vehicle.getCurrentLocation();
-            DurationDistance depdis = getDurationDistance(location.getLatitude(), location.getLongitude(), departure.getLatitude(), departure.getLongitude());
-            durations.put(driver, (int)depdis.getDistance()/60);
-        }
-//        List<Driver> potentialDriversWorkingHoursEdition = new ArrayList<>();
-//        for (Driver driver : potentialDriversCarEdition) {
-//            List<WorkTime> workTimes = workTimeService.findByDriversId(driver.getId());
-//            if (workTimes.isEmpty()) {
-//                continue;
-//            }
-//            for (WorkTime workTime : workTimes) {
-//                // work time did not start today
-//                if (workTime.getStart().compareTo(atStartOfDay(new Date())) < 0) {
-//                    workTimes.remove(workTime);
-//                }
-//                //work time does not end today
-//                if (workTime.getEnd().compareTo(atEndOfDay(new Date())) > 0) {
-//                    workTimes.remove(workTime);
-//                }
-//            }
-//            // driver does not want to wotk today ;(
-//            if (workTimes.isEmpty()) {
-//                continue;
-//            }
-//
-//        }
+        // u ovoj sekciji drugacije tretiramo scheduled ride od obicnog, zakazani ride ima prednost!
+        // odnosno
+        // ako gledamo ride koji nam treba sada, a imamo ride koji je zakazan, i mozda mu zatreba vozilo kakvom treba i trenutnom vozilo
+        // a mi smo by far nasli jednog drivera,
+        // koji nece uspeti da obavi voznju (estimatedTime) do 15 minuta pre zakazane (kada krece trazenje za zakazane)
+        // takvu voznju ne mozemo da prihvatimo jer nam je bitnije da driver ostane slobodan za zakazanu voznju
+        // ukoliko smo nasli vise takvih drivera, ovaj jedan jedini ce se vratiti, voznja je drugacije specifikacije itd
+        // mozemo zakazati voznju
+        boolean isScheduled = !(ride.getScheduledTime()==null);
+        List<Ride> scheduledRides = new ArrayList<>();
+        boolean scheduledRideExist = false;
+        if (!isScheduled) {
+            scheduledRides = rideService.findScheduledRides(depdis.getDuration() / 60 + 15, ride.getVehicleType(), ride.isBabyTransport(), ride.isPetTransport());
+            System.out.println(depdis.getDuration() + 15);
+//            System.out.println(ride.getVehicleType().toString());
 
-//        for (Driver driver : potentialDriversCarEdition) {
-//            List<Ride> pendingRides = rideService.findRidesForDriverByStatus(driver.getId(), "PENDING", new Date().toString());
-//            List<Ride> acceptedRides = rideService.findRidesForDriverByStatus(driver.getId(), "ACCEPTED", new Date().toString());
-//            Ride startedRide = rideService.getDriverActiveRide(driver.getId());
-//        }
+            scheduledRideExist = !scheduledRides.isEmpty();
+            if (scheduledRideExist && potentialDriversCarEdition.size() == 1) {
+                throw new DriverNotFoundException("");
+            }
+        }
+        // za svakog drivera gledamo trenutne i accepted voznje - voznje koje se desavaju ili ce se sigurno desiti
+        for (Driver driver : potentialDriversCarEdition) {
+            List<Ride> acceptedRides = rideService.getDriverAcceptedRides(driver.getId());
+            Optional<Ride> currentRideOpt = rideService.getActiveRideDriver(driver.getId());
+            Vehicle vehicle = driver.getVehicle();
+            Location driversCurrentLocation = vehicle.getCurrentLocation();
+            boolean acceptedRidesEmpty = acceptedRides.isEmpty();
+            int totalMinutes = 0;
+            //nece se desiti
+            if (driversCurrentLocation == null || departure == null) {
+                throw new DriverNotFoundException("");
+            }
+
+            // ako je ride zakazan, prethodnim postupkom smo obezbedili da sigurno postoji vozilo slobodno!
+            // u suprotnom, za sada mozda ne postoji vozilo pa moramo da istrazujemo dalje....
+
+            if (!isScheduled) {
+
+                // slucaj 1 - driver nema nijedno, gledamo samo koliko mu vremena treba da ode do pocetka voznje
+                if (currentRideOpt.isEmpty() && acceptedRidesEmpty) {
+                    depdis = getDurationDistance(driversCurrentLocation.getLatitude(), driversCurrentLocation.getLongitude(), departure.getLatitude(), departure.getLongitude());
+                    totalMinutes += (int) depdis.getDuration() / 60;
+                }
+
+                // slucaj 2 - imamo trenutnu voznju, nemamo accepted
+                // gledamo koliko vremena je potrebno da se ta voznja zavrsi, pa odatle idemo do potencijalne naredne
+                else if (currentRideOpt.isPresent() && acceptedRidesEmpty) {
+                    totalMinutes = getTotalMinutesForCurrentRide(departure, currentRideOpt, driversCurrentLocation, totalMinutes);
+                }
+
+
+                // slucaj 3 - imamo accepted rides, nemamo current ride
+                // gledamo koliko treba vremena dok krene prva, pa njeno trajanje, pa na to nadovezujemo put do naredne, pa njeno trajanje itd
+                else if (currentRideOpt.isEmpty() && !acceptedRidesEmpty) {
+                    totalMinutes = getTotalMinutesForAcceptedRides(departure, acceptedRides, totalMinutes, driversCurrentLocation);
+                }
+                // slucaj 4 - imamo i current ride i accepted rides, pa kombinujemo prethodna dva...
+                // gledamo za koliko ce driver stici do sadasnje destinacije
+                // pa za koliko ce zavrsiti accepted ride
+                else {
+                    Ride currentRide = currentRideOpt.get();
+                    Set<LocationsForRide> locations = getLocationsByRideId(currentRide.getId());
+                    Object[] locationSetDTOList = locations.toArray();
+                    LocationsForRide locationsForRide = (LocationsForRide) locationSetDTOList[locationSetDTOList.length - 1];
+                    Location currentDestination = locationsForRide.getDestination();
+
+                    depdis = getDurationDistance(driversCurrentLocation.getLatitude(), driversCurrentLocation.getLongitude(), currentDestination.getLatitude(), currentDestination.getLongitude());
+                    totalMinutes += (int) depdis.getDuration() / 60;
+                    totalMinutes += getTotalMinutesForAcceptedRides(departure, acceptedRides, totalMinutes, currentDestination);
+                }
+            } else {
+                depdis = getDurationDistance(driversCurrentLocation.getLatitude(), driversCurrentLocation.getLongitude(), departure.getLatitude(), departure.getLongitude());
+                totalMinutes += (int) depdis.getDuration() / 60;
+            }
+
+            durations.put(driver, totalMinutes);
+        }
+
+        // nece se desiti
+        if (durations.isEmpty()) {
+            throw new DriverNotFoundException("");
+        }
+
         Driver bestDriver = null;
         int minutes = 2147483645;
         for (Map.Entry<Driver, Integer> map : durations.entrySet()) {
@@ -649,6 +856,59 @@ public class RideController {
             throw new DriverNotFoundException("");
         }
         return new DriverTime(bestDriver, minutes);
+    }
+
+    private int getTotalMinutesForCurrentRide(LocationDTO departure, Optional<Ride> currentRideOpt, Location driversCurrentLocation, int totalMinutes) {
+        DurationDistance depdis;
+        Ride currentRide = currentRideOpt.get();
+        Set<LocationsForRide> locations = getLocationsByRideId(currentRide.getId());
+        Object[] locationSetDTOList = locations.toArray();
+        LocationsForRide locationsForRide = (LocationsForRide)locationSetDTOList[locationSetDTOList.length - 1];
+        Location currentDestination = locationsForRide.getDestination();
+        depdis = getDurationDistance(driversCurrentLocation.getLatitude(), driversCurrentLocation.getLongitude(), currentDestination.getLatitude(), currentDestination.getLongitude());
+        totalMinutes += (int)depdis.getDuration()/60;
+        depdis = getDurationDistance(currentDestination.getLatitude(), currentDestination.getLongitude(), departure.getLatitude(), departure.getLongitude());
+        totalMinutes += (int)depdis.getDuration()/60;
+        return totalMinutes;
+    }
+
+    private int getTotalMinutesForAcceptedRides(LocationDTO departure, List<Ride> acceptedRides, int totalMinutes, Location driversCurrentLocation) {
+        DurationDistance depdis;
+        for (int i = 0; i < acceptedRides.size(); i++) {
+            Ride acceptedRide = acceptedRides.get(i);
+            Set<LocationsForRide> locations = getLocationsByRideId(acceptedRide.getId());
+            Object[] locationSetDTOList = locations.toArray();
+            LocationsForRide locationsForRide = (LocationsForRide)locationSetDTOList[locationSetDTOList.length - 1];
+            Location acceptedDeparture = locationsForRide.getDeparture();
+            Location acceptedDestination = locationsForRide.getDestination();
+            if (i==0) {
+                depdis = getDurationDistance(driversCurrentLocation.getLatitude(), driversCurrentLocation.getLongitude(), acceptedDeparture.getLatitude(), acceptedDeparture.getLongitude());
+                totalMinutes += (int)depdis.getDuration()/60;
+                depdis = getDurationDistance(acceptedDeparture.getLatitude(), acceptedDeparture.getLongitude(), acceptedDestination.getLatitude(), acceptedDestination.getLongitude());
+                totalMinutes += (int)depdis.getDuration()/60;
+            } else {
+                Ride previousAcceptedRide = acceptedRides.get(i);
+                Set<LocationsForRide> locationsPrevious = getLocationsByRideId(previousAcceptedRide.getId());
+                Object[] locationSetDTOListPrevious = locationsPrevious.toArray();
+                LocationsForRide locationsForRidePrevious = (LocationsForRide)locationSetDTOListPrevious[locationSetDTOListPrevious.length - 1];
+                Location previousAcceptedDestination = locationsForRidePrevious.getDestination();
+                depdis = getDurationDistance(previousAcceptedDestination.getLatitude(), previousAcceptedDestination.getLongitude(), acceptedDeparture.getLatitude(), acceptedDeparture.getLongitude());
+                totalMinutes += (int)depdis.getDuration()/60;
+                depdis = getDurationDistance(acceptedDeparture.getLatitude(), acceptedDeparture.getLongitude(), acceptedDestination.getLatitude(), acceptedDestination.getLongitude());
+                totalMinutes += (int)depdis.getDuration()/60;
+            }
+            if (i <= acceptedRides.size() -1) {
+                depdis = getDurationDistance(acceptedDestination.getLatitude(), acceptedDestination.getLongitude(), departure.getLatitude(), departure.getLongitude());
+                totalMinutes += (int) depdis.getDuration() / 60;
+            }
+        }
+        return totalMinutes;
+    }
+
+    private static LocationSetDTO getRoute(RideRecDTO ride) {
+        Set<LocationSetDTO> setDTOS = ride.getLocations();
+        Object[] locationSetDTOList = setDTOS.toArray();
+        return (LocationSetDTO)locationSetDTOList[0];
     }
 
 
@@ -684,42 +944,71 @@ public class RideController {
         return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
     }
 
-    // --------------------------- ANDROID -------------------------------//
-    @PreAuthorize("hasRole('PASSENGER')")
-    @PostMapping("android")
-    public ResponseEntity<?> createARideAndroid(Principal principal, @RequestBody RideAndroidDTO oldDTO){
-        User user = userService.findUserByEmail(principal.getName());
-        boolean found = false;
-        for (PassengerEmailDTO p:oldDTO.getPassengers()) {
-            if (p.getEmail().equals(user.getEmail())){
-                found = true;
-                break;
-            }
-        }
-        if (!found) {
-            return new ResponseEntity<>("Cannot make ride for other people!",HttpStatus.NOT_FOUND);
-        }
-
-        Ride ride = fromDTOtoRide(oldDTO);
-
-        boolean canMakeRide;
-        for (PassengerEmailDTO ped: oldDTO.getPassengers()) {
-            Passenger pa = passengerService.findByEmail(ped.getEmail());
-            canMakeRide = rideService.checkRide(pa.getId());
-            if (!canMakeRide) {
-                return new ResponseEntity<>(new ErrorMessage("Cannot create a ride while you have one already pending!"), HttpStatus.BAD_REQUEST);
-            }
-        }
-        ride = rideService.createRide(ride);
-        for (PassengerEmailDTO ped: oldDTO.getPassengers()) {
-            Passenger p = passengerService.findByEmail(ped.getEmail());
-            Set<Ride> pr = p.getRides();
-            pr.add(ride);
-            p.setRides(new HashSet<>(pr));
-            passengerService.update(p);
-        }
-        return new ResponseEntity<>(new RideRetDTO(ride), HttpStatus.OK);
+    private Set<LocationsForRide> getLocationsByRideId(Integer id) {
+        return locationsForRideService.getByRideId(id);
     }
+
+    @Scheduled(fixedDelay = 60000)
+    public void execute() {
+        try {
+            System.out.println("Finding driver for scheduled ride...");
+            List<Ride> scheduledRidesLackingDriver = rideService.findScheduledRides(15);
+            for (Ride ride : scheduledRidesLackingDriver) {
+                System.out.println(ride.toString2());
+                DriverTime driverTime = generateDriver(new RideRecDTO(ride, getLocationsByRideId(ride.getId())));
+                ride.setDriver(driverTime.getDriver());
+                ride.setEstimatedTimeInMinutes(driverTime.getTime());
+                ride = rideService.updateRide(ride);
+                System.out.println(ride.toString2());
+                Integer id = ride.getDriver().getId();
+                this.simpMessagingTemplate.convertAndSend("/socket-topic/driver-new-ride/" + id, new RideRetDTO(ride, getLocationsByRideId(ride.getId())));
+            }
+            if (scheduledRidesLackingDriver.isEmpty()) {
+                System.out.println("All scheduled ride have drivers");
+            }
+        } catch (DriverNotFoundException e) {
+            System.out.println("Unable to find driver!");
+        }
+    }
+
+
+
+    // --------------------------- ANDROID -------------------------------//
+//    @PreAuthorize("hasRole('PASSENGER')")
+//    @PostMapping("android")
+//    public ResponseEntity<?> createARideAndroid(Principal principal, @RequestBody RideAndroidDTO oldDTO){
+//        User user = userService.findUserByEmail(principal.getName());
+//        boolean found = false;
+//        for (PassengerEmailDTO p:oldDTO.getPassengers()) {
+//            if (p.getEmail().equals(user.getEmail())){
+//                found = true;
+//                break;
+//            }
+//        }
+//        if (!found) {
+//            return new ResponseEntity<>("Cannot make ride for other people!",HttpStatus.NOT_FOUND);
+//        }
+//
+//        Ride ride = fromDTOtoRide(oldDTO);
+//
+//        boolean canMakeRide;
+//        for (PassengerEmailDTO ped: oldDTO.getPassengers()) {
+//            Passenger pa = passengerService.findByEmail(ped.getEmail());
+//            canMakeRide = rideService.checkRide(pa.getId());
+//            if (!canMakeRide) {
+//                return new ResponseEntity<>(new ErrorMessage("Cannot create a ride while you have one already pending!"), HttpStatus.BAD_REQUEST);
+//            }
+//        }
+//        ride = rideService.createRide(ride);
+//        for (PassengerEmailDTO ped: oldDTO.getPassengers()) {
+//            Passenger p = passengerService.findByEmail(ped.getEmail());
+//            Set<Ride> pr = p.getRides();
+//            pr.add(ride);
+//            p.setRides(new HashSet<>(pr));
+//            passengerService.update(p);
+//        }
+//        return new ResponseEntity<>(new RideRetDTO(ride), HttpStatus.OK);
+//    }
 
     private Ride fromDTOtoRide(RideAndroidDTO dto) throws UserNotFoundException {
         Date startTime = new Date();
@@ -755,6 +1044,6 @@ public class RideController {
         Instant instant = Instant.parse(dto.getScheduledTime());
         Date date = Date.from(instant);
         return new Ride(startTime, endTime, totalCost, driver, passengers, estimatedTimeInMinutes, dto.getVehicleType(),
-                dto.isBabyTransport(), dto.isPetTransport(), newRejection, locations, status, reviews, panic, date);
+                dto.isBabyTransport(), dto.isPetTransport(), newRejection, /*locations,*/ status, reviews, panic, date);
     }
 }

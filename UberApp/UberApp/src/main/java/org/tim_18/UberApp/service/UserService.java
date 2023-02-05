@@ -159,7 +159,7 @@ public class UserService {
     }
 
     public User findUserByEmail(String email) throws UsernameNotFoundException {
-        return userRepository.findUserByEmail(email);
+        return userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException("User by email " + email + " was not found"));
     }
 
 
@@ -180,7 +180,7 @@ public class UserService {
     }
 
     public void updateResetPasswordToken(String token, String email) throws UserNotFoundException {
-        User user = userRepository.findByEmail(email);
+        User user = userRepository.findByEmail(email).get();
         if (user != null) {
             user.setResetPasswordToken(token);
             user.setTimeOfResetPasswordToken(new Date());

@@ -9,18 +9,21 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.tim_18.UberApp.Validation.ErrorMessage;
 import org.tim_18.UberApp.dto.*;
 import org.tim_18.UberApp.dto.noteDTOs.NotePostDTO;
 import org.tim_18.UberApp.dto.noteDTOs.NoteResponseDTO;
+import org.tim_18.UberApp.dto.passengerDTOs.PassengerEmailDTO;
 import org.tim_18.UberApp.dto.rideDTOs.RideRetDTO;
 import org.tim_18.UberApp.exception.RideNotFoundException;
 import org.tim_18.UberApp.exception.UserNotFoundException;
@@ -53,13 +56,20 @@ public class UserController {
     @Autowired
     private final RequestService requestService;
 
-    public UserController(UserService userService, MessageService messageService, RideService rideService, NoteService noteService, ReviewService reviewService, RoleService roleService, RequestService requestService) {
+    private final LocationsForRideService locationsForRideService;
+
+    @Autowired
+    private SimpMessagingTemplate simpMessagingTemplate;
+
+
+    public UserController(UserService userService, MessageService messageService, RideService rideService, NoteService noteService, ReviewService reviewService, RoleService roleService, RequestService requestService, LocationsForRideService locationsForRideService) {
         this.userService    = userService;
         this.messageService = messageService;
         this.rideService    = rideService;
         this.noteService    = noteService;
         this.reviewService  = reviewService;
         this.roleService = roleService;
+        this.locationsForRideService = locationsForRideService;
         this.requestService = requestService;
     }
     @PreAuthorize("hasRole('ADMIN')")
@@ -78,6 +88,7 @@ public class UserController {
         return new ResponseEntity<>(map, HttpStatus.OK);
     }
 
+
     @PostMapping("/register")
     public ResponseEntity<?> processRegister(@RequestBody User user)
             throws UnsupportedEncodingException, MessagingException {
@@ -85,12 +96,7 @@ public class UserController {
         return new ResponseEntity<>("Successful account activation!", HttpStatus.OK);
     }
 
-    //odraditi ovo u frontu
-    //<div class="container text-center">
-    //    <h3>You have signed up successfully!</h3>
-    //    <p>Please check your email to verify your account.</p>
-    //    <h4><a th:href="/@{/login}">Click here to Login</a></h4>
-    //</div>
+
 
     @GetMapping("/verify")
     public String verifyUser(@Param("code") String code) {
@@ -101,17 +107,6 @@ public class UserController {
         }
     }
 
-    //uraditi ovo u frontu za uspesan verify
-    //<div class="container text-center">
-    //    <h3>Congratulations, your account has been verified.</h3>
-    //    <h4><a th:href="/@{/login}">Click here to Login</a></h4>
-    //</div>
-
-    //uraditi ovo u frontu za neuspesan verify
-    //<div class="container text-center">
-    //    <h3>Sorry, we could not verify account. It maybe already verified,
-    //        or verification code is incorrect.</h3>
-    //</div>
 
 
     @GetMapping("/{id}")
@@ -119,7 +114,8 @@ public class UserController {
             @PathVariable("id") int id) {
         User user = userService.findUserById(id);
         System.out.println(user);
-        UserDTO userDTO = new UserDTO(user);
+        List<Role> roles = roleService.findByUserId(id);
+        UserDTO userDTO = new UserDTO(user, roles);
         return new ResponseEntity<>(userDTO, HttpStatus.OK);
     }
 
@@ -148,9 +144,9 @@ public class UserController {
             checkAuthorities(principal, id);
             Pageable pageable = PageRequest.of(page, size, Sort.by(sort));
 //            Page<Ride> rides;
-            List<Ride> rides = rideService.findRidesByUser(id, from, to);
+            List<Ride> rides = rideService.findRidesByUser(id, from, to, sort);
             Map<String, Object> map = new HashMap<>();
-            HashSet<RideRetDTO> ridesDTO = new RideRetDTO().makeRideRideDTOS(rides);
+            HashSet<RideRetDTO> ridesDTO = makeRideDTOS(rides);
             map.put("totalCount",ridesDTO.size());
             map.put("results",ridesDTO);
             return new ResponseEntity<>(map, HttpStatus.OK);
@@ -159,16 +155,54 @@ public class UserController {
         }
     }
 
+    private HashSet<RideRetDTO> makeRideDTOS(List<Ride> rides) {
+        HashSet<RideRetDTO> rideRetDTOHashSet = new HashSet<>();
+        for (Ride ride : rides) {
+            rideRetDTOHashSet.add(new RideRetDTO(ride, getLocationsByRideId(ride.getId())));
+        }
+        return rideRetDTOHashSet;
+    }
+
+    private Set<LocationsForRide> getLocationsByRideId(Integer id) {
+        return locationsForRideService.getByRideId(id);
+    }
+
     @PreAuthorize("hasRole('USER')")
     @GetMapping("{id}/message")
     public ResponseEntity<?> getMessagesForUser(Principal principal,
                                                 @PathVariable("id") int id,
                                                 @RequestParam(defaultValue = "0") Integer page,
-                                                @RequestParam(defaultValue = "4") Integer size){
+                                                @RequestParam(defaultValue = "50") Integer size,
+                                                @RequestParam(defaultValue = "time") String sort){
         try {
             checkAuthorities(principal, id);
-            Pageable pageable = PageRequest.of(page, size);
+            Pageable pageable = PageRequest.of(page, size, Sort.by(sort));
             Page<Message> messages = messageService.findMessagesByUserId(id, pageable);
+
+
+            Map<String, Object> map = new HashMap<>();
+            HashSet<MessageResponseDTO> messageDTOS = new MessageResponseDTO().makeMessageResponseDTOS(messages);
+
+            map.put("totalCount", messageDTOS.size());
+            map.put("results", messageDTOS);
+            return new ResponseEntity<>(map, HttpStatus.OK);
+        } catch (UserNotFoundException e) {
+            return new ResponseEntity<>("User does not exist!", HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @GetMapping("{id}/otherUser/{otherId}/message/{rideId}")
+    public ResponseEntity<?> getMessagesForUserForRide(
+                                                @PathVariable("id") int id,
+                                                @PathVariable("otherId") int otherId,
+                                                @PathVariable("rideId") int rideId,
+                                                @RequestParam(defaultValue = "0") Integer page,
+                                                @RequestParam(defaultValue = "50") Integer size,
+                                                @RequestParam(defaultValue = "time") String sort){
+        try {
+            Pageable pageable = PageRequest.of(page, size, Sort.by(sort));
+            Page<Message> messages = messageService.findMessagesByUserAndRideId(id, otherId, rideId, pageable);
+
 
             Map<String, Object> map = new HashMap<>();
             HashSet<MessageResponseDTO> messageDTOS = new MessageResponseDTO().makeMessageResponseDTOS(messages);
@@ -185,18 +219,22 @@ public class UserController {
     @PreAuthorize("hasRole('USER')")
     @PostMapping("/{id}/message")
     public ResponseEntity<?> sendMessage(Principal principal,
-                                         @PathVariable("id") int id,
+                                         @PathVariable("id") int receiverId,
                                          @RequestBody MessageDTO messageDTO) {
         try {
-            userService.findUserById(id); //throws 404
+            userService.findUserById(receiverId); //throws 404
 //            rideService.findRideById(messageDTO.getRideId()); //throws 404
             User sender = userService.findUserByEmail(principal.getName());
-            if (sender.getId().equals(id)) {
+            if (sender.getId().equals(receiverId)) {
                 return new ResponseEntity<>("Cannot send message to yourself!", HttpStatus.BAD_REQUEST);
             }
-            messageDTO.setReceiverId(id);
+            messageDTO.setReceiverId(receiverId);
             Message message = messageFromMessageDTO(principal, messageDTO);
             messageService.saveMessage(message);
+
+
+            this.simpMessagingTemplate.convertAndSend("/socket-topic/newMessageInbox/" + receiverId, new MessageResponseDTO(message));
+//            this.simpMessagingTemplate.convertAndSend("/socket-topic/newMessage/" + receiverId, new MessageResponseDTO(message));
             return new ResponseEntity<>(new MessageResponseDTO(message), HttpStatus.OK);
         } catch (UserNotFoundException e) {
             return new ResponseEntity<>("Receiver does not exist!", HttpStatus.NOT_FOUND);
@@ -295,6 +333,18 @@ public class UserController {
             return new ResponseEntity<>("User does not exist!", HttpStatus.NOT_FOUND);
         }
     }
+    @PostMapping("/{email}")
+    public ResponseEntity<?> findUserByEmail(@PathVariable("email") String email){
+        try{
+            System.out.println("hip hop bugi");
+            User user = userService.findUserByEmail(email);
+            System.out.println("Nasao sam ga");
+            return new ResponseEntity<>(new UserDTO(user), HttpStatus.OK);
+        }
+        catch (UsernameNotFoundException e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
 
 
     @PreAuthorize("hasAnyRole('ADMIN', 'DRIVER', 'PASSENGER')")
@@ -326,10 +376,14 @@ public class UserController {
             String token = String.valueOf(userService.generateRandomInt());
             userService.updateResetPasswordToken(token, email);
             userService.sendEmail(email, token);
+            System.out.println("Posla sam mail");
+
             return new ResponseEntity<>("Email with reset code has been sent!", HttpStatus.NO_CONTENT);
         }catch (UserNotFoundException e){
+            System.out.println("Posla sam mail1");
             return new ResponseEntity<>("User does not exist!", HttpStatus.NOT_FOUND);
         } catch (UnsupportedEncodingException | MessagingException e) {
+            System.out.println("Posla sam mail2");
             return new ResponseEntity<>("Error while sending email", HttpStatus.NOT_FOUND);
         }
     }
@@ -343,6 +397,7 @@ public class UserController {
             boolean isExpired = userService.compareIfCodeIsExpired(expiresIn);
             if(token.equals(resetPasswordDTO.getCode()) && !isExpired){
                 userService.updatePassword(user, resetPasswordDTO.getNewPassword());
+                System.out.println("DOBRO JE SVE");
                 return new ResponseEntity<>("Password successfully changed!", HttpStatus.NO_CONTENT);
             }
             else {
@@ -401,7 +456,15 @@ public class UserController {
         User user = userService.findUserByEmail(principal.getName());
         List<User> allUsers = this.userService.findAll();
         allUsers.remove(user);
-        return new UserDTO().makeUserDTOS(allUsers);
+        return makeUserDTOS(allUsers);
+    }
+
+    private List<UserDTO> makeUserDTOS(List<User> users){
+        List<UserDTO> usersDTO = new ArrayList<>();
+        for (User user:users) {
+            usersDTO.add(new UserDTO(user, roleService.findByUserId(user.getId())));
+        }
+        return usersDTO;
     }
 }
 

@@ -28,7 +28,7 @@ public class RideDTO {
 
     private Set<Location> locations = new HashSet<Location>();
 
-    public RideDTO(Integer id,Date startTime, Date endTime, long totalCost, Driver driver, Set<Passenger> passengers, int estimatedTimeInMinutes, VehicleType vehicleType, boolean babyTransport, boolean petTransport, Rejection rejection, Set<Location> locations) {
+    public RideDTO(Integer id,Date startTime, Date endTime, long totalCost, Driver driver, Set<Passenger> passengers, int estimatedTimeInMinutes, VehicleType vehicleType, boolean babyTransport, boolean petTransport, Rejection rejection) {
         this.id                     = id;
         this.startTime              = startTime;
         this.endTime                = endTime;
@@ -40,7 +40,7 @@ public class RideDTO {
         this.babyTransport          = babyTransport;
         this.petTransport           = petTransport;
         this.rejection              = rejection;
-        this.locations              = locations;
+//        this.locations              = locations;
     }
 
     public RideDTO() {}
@@ -50,7 +50,7 @@ public class RideDTO {
                 ride.getDriver(), ride.getPassengers(),
                 ride.getEstimatedTimeInMinutes(), ride.getVehicleType(),
                 ride.isBabyTransport(), ride.isPetTransport(),
-                ride.getRejection(), ride.getLocations());
+                ride.getRejection());
     }
     public HashSet<RideDTO> makeRides(Page<Ride> rides){
         HashSet<RideDTO> rideDTOS = new HashSet<>();
