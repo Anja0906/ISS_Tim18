@@ -100,7 +100,7 @@ public class RideController {
             addPassengers(oldDTO, ride);
             if (ride.getDriver()!=null) {
                 Integer id = ride.getDriver().getId();
-                this.simpMessagingTemplate.convertAndSend("/socket-topic/driver/" + id, new RideRetDTO(ride, lfr));
+                this.simpMessagingTemplate.convertAndSend("/socket-topic/newRide/" + id, new RideRetDTO(ride, lfr));
             }
             return new ResponseEntity<>(new RideRetDTO(ride, lfr), HttpStatus.OK);
         } catch (PassengerNotFoundException e) {
