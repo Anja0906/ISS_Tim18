@@ -1,16 +1,11 @@
 package org.tim_18.UberApp.service;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.client.RestTemplate;
 import org.tim_18.UberApp.dto.Distance.OsrmResponse;
-import org.tim_18.UberApp.dto.locationDTOs.LocationSetDTO;
 import org.tim_18.UberApp.exception.RideNotFoundException;
 import org.tim_18.UberApp.model.LocationsForRide;
 import org.tim_18.UberApp.model.Ride;
@@ -28,7 +23,6 @@ public class RideService {
 
 
     public RideService(RideRepository rideRepository) {this.rideRepository = rideRepository;}
-    public List<Ride> findRidesByPassengersId(Integer id, String from, String to) {return rideRepository.findRidesByPassengersId(id, from, to);}
     public Page<Ride> findRidesByPassengersId(Integer id, String from, String to, Pageable pageable) {
         return rideRepository.findRidesByPassengersId(id, from, to, pageable);
     }
@@ -58,37 +52,24 @@ public class RideService {
         return rideRepository.findRideById(id)
                 .orElseThrow(() -> new RideNotFoundException("Ride was not found"));
     }
-    public Page<Ride> findRidesForUserPage(Integer id, Pageable pageable) {return rideRepository.findRidesForUserPage(id,pageable);}
     public Ride updateRide(Ride ride) {return rideRepository.save(ride);}
-
     public Page<Ride> findRidesForDriver(Integer id, String start, String end, Pageable pageable){return rideRepository.findRidesForDriver(id,start,end,pageable);}
-
     public List<Ride> findRidesForDriver(Integer id, String start, String end, String sort){return rideRepository.findRidesForDriver(id,start,end, sort);}
-    public Page<Ride> findRidesForPassenger(Integer id, String start, String end, Pageable pageable){return rideRepository.findRidesForPassenger(id,start,end,pageable);}
     public List<Ride> findRidesForPassenger(Integer id, String start, String end, String sort){return rideRepository.findRidesForPassenger(id,start,end, sort);}
-    public Page<Ride> findRidesForUser(Integer id, String start, String end, Pageable pageable){return rideRepository.findRidesForUser(id,start,end,pageable);}
     public boolean checkRide(Integer passengerId) {
         List<Ride> pendingRides = rideRepository.findPassengersRidesByStatus(passengerId, "PENDING");
         return pendingRides.isEmpty();
-        // returns true if there's no pending rides => passenger can make a new ride
     }
     public Page<Ride> findAll(Pageable pageable) {
         return rideRepository.findAll(pageable);
     }
     public List<Ride> findAll() {return rideRepository.findAll();}
-    public Page<Ride> findRidesInDateRange(String start, String end, Pageable pageable) {return rideRepository.findRidesInDateRange(start,end,pageable);}
-
     public List<Ride> findRidesInDateRange(String start, String end, String sort) {return rideRepository.findRidesInDateRange(start,end, sort);}
-
     public List<Ride> findRidesByUser(Integer id, String from, String to, String sort) {return rideRepository.findRidesForUser(id, from, to, sort);}
-    public List<Ride> findRidesForDriverByStatus(Integer id, String status, String now) {
-        return rideRepository.findRidesForDriverByStatus(id, status, now);
-    }
 
     public List<Ride> findScheduledRides(double time, VehicleType vehicleType, boolean babyTransport, boolean petTransport) {
         return rideRepository.findScheduledRides(time, vehicleType.toString(), babyTransport, petTransport);
     }
-
     public List<Ride> findScheduledRides(double time) {
         return rideRepository.findScheduledRides(time);
     }

@@ -61,7 +61,6 @@ public class Ride implements Serializable {
         this.babyTransport          = babyTransport;
         this.petTransport           = petTransport;
         this.rejection              = rejection;
-//        this.locations              = locations;
         this.status                 = status;
         this.reviews                = reviews;
         this.panic                  = panic;
@@ -69,6 +68,11 @@ public class Ride implements Serializable {
     }
 
     public Ride() {}
+
+    public void updateRide(Driver driver,int estimatedTimeInMinutes){
+        setDriver(driver);
+        setEstimatedTimeInMinutes(estimatedTimeInMinutes);
+    }
 
 
     public Integer getId() {
@@ -208,4 +212,6 @@ public class Ride implements Serializable {
                 ", estimatedTimeInMinutes=" + estimatedTimeInMinutes +
                 '}';
     }
+
+
 }
