@@ -59,7 +59,7 @@ public class UserService {
         sendVerificationEmail(user, siteURL);
     }
 
-    private void sendVerificationEmail(User user, String siteURL)
+    public void sendVerificationEmail(User user, String siteURL)
             throws MessagingException, UnsupportedEncodingException {
         String toAddress = user.getEmail();
         String fromAddress = "uberapptim18@gmail.com";

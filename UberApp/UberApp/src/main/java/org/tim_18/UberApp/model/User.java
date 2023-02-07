@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+import org.springframework.boot.autoconfigure.security.saml2.Saml2RelyingPartyProperties;
 import org.tim_18.UberApp.dto.UserDTO;
 import java.io.Serializable;
 import org.springframework.security.core.GrantedAuthority;
@@ -70,6 +71,19 @@ public class User extends ImplementsSerializable implements UserDetails {
         this.password        = password;
         this.blocked         = blocked;
         this.active          = active;
+    }
+
+    public User(String name, String surname, String profilePicture, String telephoneNumber, String email, String address, String password, boolean blocked, boolean active, String verificationCode) {
+        this.name            = name;
+        this.surname         = surname;
+        this.profilePicture  = profilePicture;
+        this.telephoneNumber = telephoneNumber;
+        this.email           = email;
+        this.address         = address;
+        this.password        = password;
+        this.blocked         = blocked;
+        this.active          = active;
+        this.verificationCode = verificationCode;
     }
 
     public Integer getId() {
