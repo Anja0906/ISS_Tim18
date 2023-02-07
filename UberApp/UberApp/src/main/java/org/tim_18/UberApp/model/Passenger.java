@@ -42,6 +42,11 @@ public class Passenger extends User {
 
     public Passenger(){}
 
+    public Passenger(String name, String surname, String profilePicture, String telephoneNumber, String email, String address, String password, boolean blocked, boolean active, String verification) {
+        super(name, surname, profilePicture, telephoneNumber, email, address, password, blocked, active,verification);
+    }
+
+
     public Passenger(String name, String surname, String profilePicture, String telephoneNumber, String email, String address, String password, boolean blocked, boolean active, Integer id, HashSet<Location> favouriteLocations, HashSet<Ride> rides, HashSet<FavoriteRide> favoriteRides) {
         super(name, surname, profilePicture, telephoneNumber, email, address, password, blocked, active);
         this.id                 = id;
@@ -56,7 +61,7 @@ public class Passenger extends User {
 
     public Passenger(User user) {
         super(user.getName(), user.getSurname(), user.getProfilePicture(), user.getTelephoneNumber(),
-                user.getEmail(), user.getAddress(), user.getPassword(), user.isBlocked(), user.isActive());
+                user.getEmail(), user.getAddress(), user.getPassword(), user.isBlocked(), user.isActive(), user.getVerificationCode());
     }
     @Override
     public Integer getId() {

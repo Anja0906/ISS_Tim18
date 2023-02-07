@@ -123,8 +123,8 @@ public class UserController {
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public void updateUser(@PathVariable("id") int id, @RequestBody UserDTO userDTO) {
         try{
-            userService.updateUserFromDto(id, userDTO);
-            requestService.deleteByUserId(userDTO.getId());
+            User user = userService.updateUserFromDto(id, userDTO);
+            requestService.deleteByUserId(user.getId());
         }catch (UserNotFoundException e){
             System.out.println("User not found");
         }

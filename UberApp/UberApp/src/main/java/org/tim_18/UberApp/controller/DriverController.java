@@ -101,8 +101,10 @@ public class DriverController {
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping()
     public ResponseEntity<?> addDriver(@RequestBody DriverDTOWithoutId driverDTOWithoutId) {
-        User user = userService.findUserByEmail(driverDTOWithoutId.getEmail());
-        if(user == null){
+        try{
+            User user = userService.findUserByEmail(driverDTOWithoutId.getEmail());
+            return new ResponseEntity<>(new ErrorMessage("User with that email already exists!"),HttpStatus.BAD_REQUEST);
+        }catch (UserNotFoundException e){
             Driver driver = new Driver(driverDTOWithoutId.getName() , driverDTOWithoutId.getSurname(),
                     driverDTOWithoutId.getProfilePicture()          , driverDTOWithoutId.getTelephoneNumber(),
                     driverDTOWithoutId.getEmail()                   , driverDTOWithoutId.getAddress(),
@@ -112,8 +114,6 @@ public class DriverController {
             );
             driverService.save(driver);
             return new ResponseEntity<>(new DriverDTO(driver), HttpStatus.OK);
-        }else{
-            return new ResponseEntity<>(new ErrorMessage("User with that email already exists!"),HttpStatus.BAD_REQUEST);
         }
     }
 

@@ -1,7 +1,9 @@
 package org.tim_18.UberApp.controller;
 
 
+import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletResponse;
+import net.bytebuddy.utility.RandomString;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -21,6 +23,7 @@ import org.tim_18.UberApp.dto.JwtAuthenticationRequest;
 import org.tim_18.UberApp.dto.UserDTOwithPassword;
 import org.tim_18.UberApp.dto.UserTokenState;
 import org.tim_18.UberApp.exception.ResourceConflictException;
+import org.tim_18.UberApp.exception.UserNotFoundException;
 import org.tim_18.UberApp.mapper.UserDTOwithPasswordMapper;
 import org.tim_18.UberApp.model.*;
 import org.tim_18.UberApp.security.TokenUtils;
@@ -29,6 +32,7 @@ import org.tim_18.UberApp.service.PassengerService;
 import org.tim_18.UberApp.service.RoleService;
 import org.tim_18.UberApp.service.UserService;
 
+import java.io.UnsupportedEncodingException;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
@@ -107,19 +111,32 @@ public class AuthenticationController {
 	// Endpoint za registraciju novog korisnika
 	//@TODO
 	@PostMapping("/signupPassenger")
-	public ResponseEntity<Passenger> addPassenger(@RequestBody UserDTOwithPassword userRequest, UriComponentsBuilder ucBuilder) {
-		User existUser = this.userService.findUserByEmail(userRequest.getEmail());
+	public ResponseEntity<?> addPassenger(@RequestBody UserDTOwithPassword userRequest, UriComponentsBuilder ucBuilder) throws MessagingException, UnsupportedEncodingException {
+		try{
+			User existUser = this.userService.findUserByEmail(userRequest.getEmail());
+			if (existUser != null) {
+				return new ResponseEntity<>(new ResourceConflictException(userRequest.getId(), "Username already exists").getMessage(), HttpStatus.BAD_REQUEST);
+			}
+		}catch(UserNotFoundException e){
+			User user = mapper.fromDTOtoUser(userRequest);
+			user.setPassword(passwordEncoder.encode(userRequest.getPassword()));
+			String randomCode = RandomString.make(64);
+			System.out.println(randomCode);
+			user.setVerificationCode(randomCode);
+			user.setActive(false);
+			Passenger passenger = new Passenger(user);
+			passenger.setRoles(getRoles(1));
 
-		if (existUser != null) {
-			throw new ResourceConflictException(userRequest.getId(), "Username already exists");
+			this.passengerService.save(passenger);
+			try{
+
+				this.userService.sendVerificationEmail(user, "http://localhost:8080/api/user");
+				return new ResponseEntity<>(passenger, HttpStatus.CREATED);
+			}catch (MessagingException | UnsupportedEncodingException exception){
+				return new ResponseEntity<>("Email is not valid", HttpStatus.BAD_REQUEST);
+			}
 		}
-		User user = mapper.fromDTOtoUser(userRequest);
-		user.setPassword(passwordEncoder.encode(userRequest.getPassword()));
-//		user = this.userService.save(user);
-		Passenger passenger = new Passenger(user);
-		passenger.setRoles(getRoles(1));
-		this.passengerService.save(passenger);
-		return new ResponseEntity<>(passenger, HttpStatus.CREATED);
+		return  new ResponseEntity<>(HttpStatus.OK);
 	}
 
 	private List<Role> getRoles(int role) {
