@@ -16,12 +16,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EntityScan("org.tim_18.UberApp.*")
 @EnableScheduling
 public class UberAppApplication {
-
-
-	@Bean
-	public ModelMapper getModelMapper() {
-		return new ModelMapper();
-	}
 	public static void main(String[] args) {
 		SpringApplication.run(UberAppApplication.class, args);
 	}

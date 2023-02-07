@@ -30,6 +30,11 @@ public class Rejection implements Serializable {
         this.reason = reason;
     }
 
+    public void withdrawRide(){
+        setReason("");
+        setTime(new Date());
+    }
+
     public Rejection() {}
 
 

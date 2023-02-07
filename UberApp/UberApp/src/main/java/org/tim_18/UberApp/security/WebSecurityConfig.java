@@ -1,9 +1,11 @@
 package org.tim_18.UberApp.security;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -16,6 +18,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 import org.tim_18.UberApp.repository.UserRepository;
 import org.tim_18.UberApp.service.CustomUserDetailsService;
 
@@ -34,6 +37,11 @@ public class WebSecurityConfig {
 	// Servis koji se koristi za citanje podataka o korisnicima aplikacije
 	@Autowired
     public UserDetailsService userDetailsService() {return new CustomUserDetailsService(userRepository);}
+
+	@Bean(name = "mvcHandlerMappingIntrospector")
+	public HandlerMappingIntrospector mvcHandlerMappingIntrospector() {
+		return new HandlerMappingIntrospector();
+	}
 	
 	// Implementacija PasswordEncoder-a koriscenjem BCrypt hashing funkcije.
 	// BCrypt po defalt-u radi 10 rundi hesiranja prosledjene vrednosti.
@@ -105,5 +113,16 @@ public class WebSecurityConfig {
 				// Ovim smo dozvolili pristup statickim resursima aplikacije
     			.requestMatchers(HttpMethod.GET, "/", "/webjars/**", "/*.html", "favicon.ico",
     			"/*/*.html", "/*/*.css", "/*/*.js", "/socket/**");
+	}
+
+	@Bean
+	public ModelMapper getModelMapper() {
+		return new ModelMapper();
+	}
+
+
+	@Bean
+	public JavaMailSenderImpl mailSender() {
+		return new JavaMailSenderImpl();
 	}
 }
