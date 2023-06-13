@@ -1,14 +1,9 @@
 package org.tim_18.UberApp.model;
 
 import jakarta.persistence.*;
-import org.tim_18.UberApp.dto.EndTimeDTO;
-import org.tim_18.UberApp.dto.StartTimeDTO;
-import org.tim_18.UberApp.dto.WorkTimeDTOWithoutDriver;
+import org.tim_18.UberApp.dto.worktimeDTOs.WorkTimeDTOWithoutDriver;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
@@ -26,14 +21,6 @@ public class WorkTime {
     private Driver driver;
 
     public WorkTime() {}
-    public WorkTime(Integer id, Date start, Date end, Driver driver,Date flagStart,Integer workedTimeInMinutes) {
-        this.id                  = id;
-        this.start               = start;
-        this.flagStart           = flagStart;
-        this.end                 = end;
-        this.driver              = driver;
-        this.workedTimeInMinutes = workedTimeInMinutes;
-    }
     public WorkTime(Date start, Date end, Driver driver,Date flagStart,Integer workedTimeInMinutes) {
         this.start               = start;
         this.flagStart           = flagStart;
@@ -41,13 +28,22 @@ public class WorkTime {
         this.driver              = driver;
         this.workedTimeInMinutes = workedTimeInMinutes;
     }
-    public void updateWorkTime(WorkTimeDTOWithoutDriver workTimeDTOWithoutDriver){
-        Instant instant = Instant.parse(workTimeDTOWithoutDriver.getStart());
-        setStart(Date.from(instant));
-        setFlagStart(Date.from(instant));
-        instant = Instant.parse(workTimeDTOWithoutDriver.getEnd());
-        setEnd(Date.from(instant));
+
+    public void updateWorkingHour(Date date){
+        if(getWorkedTimeInMinutes()+(int)( date.getTime()/60000 -  getFlagStart().getTime()/60000)>480)
+            setWorkedTimeInMinutes(480);
+        else
+            setWorkedTimeInMinutes(getWorkedTimeInMinutes()+(int)( date.getTime()/60000 -  getFlagStart().getTime()/60000));
+
+        setEnd(date);
+        setFlagStart(date);
     }
+
+    public void updateWorkingHourLogin(Date date){
+        setEnd(date);
+        setFlagStart(date);
+    }
+
 
     public Date getFlagStart() {
         return flagStart;
@@ -61,25 +57,10 @@ public class WorkTime {
         return workedTimeInMinutes;
     }
 
-    public void updateWorkingHour(Date date){
-        if(getWorkedTimeInMinutes()+(int)( date.getTime()/60000 -  getFlagStart().getTime()/60000)>480){
-            setWorkedTimeInMinutes(480);
-        }else{
-            setWorkedTimeInMinutes(getWorkedTimeInMinutes()+(int)( date.getTime()/60000 -  getFlagStart().getTime()/60000));
-        }
-        setEnd(date);
-        setFlagStart(date);
-    }
-
-    public void updateWorkingHourLogin(Date date){
-        setEnd(date);
-        setFlagStart(date);
-    }
 
     public void setWorkedTimeInMinutes(Integer workedTimeInMinutes) {
         this.workedTimeInMinutes = workedTimeInMinutes;
     }
-
     public Date getStart() {return start;}
     public void setStart(Date start) {this.start = start;}
 

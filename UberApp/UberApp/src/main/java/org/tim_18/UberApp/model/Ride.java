@@ -41,9 +41,6 @@ public class Ride implements Serializable {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "panic_id", referencedColumnName = "id")
     private Panic panic;
-
-    //    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL}, mappedBy = "rides")
-//    private Set<Location> locations = new HashSet<Location>();
     private Status status;
 
     @JsonIgnore
@@ -148,14 +145,16 @@ public class Ride implements Serializable {
     }
     public void setRejection(Rejection rejection) {
         this.rejection = rejection;
+        if (rejection != null)
+            rejection.setRide(this);
     }
 
-//    public Set<Location> getLocations() {
-//        return locations;
-//    }
-//    public void setLocations(HashSet<Location> locations) {
-//        this.locations = locations;
-//    }
+    public void removeRejection() {
+        if (rejection != null) {
+            rejection.setRide(null);
+            this.rejection = null;
+        }
+    }
 
     public Status getStatus() {
         return status;
@@ -199,7 +198,6 @@ public class Ride implements Serializable {
                 ", vehicleType=" + vehicleType +
                 ", babyTransport=" + babyTransport +
                 ", petTransport=" + petTransport +
-//                ", locations=" + locations +
                 ", status=" + status +
                 '}';
     }

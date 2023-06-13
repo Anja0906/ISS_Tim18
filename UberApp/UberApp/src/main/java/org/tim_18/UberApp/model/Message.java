@@ -28,16 +28,6 @@ public class Message implements Serializable {
 
     public Message() {}
 
-    public Message(Integer id, User sender, User receiver, String message, Date time, String messageType, Ride ride) {
-        this.id          = id;
-        this.sender      = sender;
-        this.receiver    = receiver;
-        this.message     = message;
-        this.time        = time;
-        this.messageType = messageType;
-        this.ride        = ride;
-    }
-
     public Message(User sender, User receiver, String message, Date time, String messageType, Ride ride) {
         this.sender      = sender;
         this.receiver    = receiver;

@@ -16,14 +16,7 @@ public class Note implements Serializable {
     @ManyToOne
     private User user;
 
-    public Note() {
-    }
-
-    public Note(Integer id, String message, User user) {
-        this.id         = id;
-        this.message    = message;
-        this.user       = user;
-    }
+    public Note() {}
 
     public Note(User user, String message) {
         this.message    = message;

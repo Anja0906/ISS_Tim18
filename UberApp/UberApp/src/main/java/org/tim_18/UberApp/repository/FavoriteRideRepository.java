@@ -15,7 +15,6 @@ public interface FavoriteRideRepository extends JpaRepository<FavoriteRide, Inte
     @Query(value = "SELECT * FROM favorite_rides r INNER JOIN passenger_favorite_rides pr on r.id=pr.favorite_rides_id WHERE pr.passengers_id = ?1", nativeQuery = true)
     List<FavoriteRide> findAllByPassenger(Integer id);
 
-
     @Modifying
     @Query(value="DELETE FROM passenger_favorite_rides pr WHERE pr.favorite_rides_id=?1", nativeQuery = true)
     void deleteFavoriteRideById(Integer id);

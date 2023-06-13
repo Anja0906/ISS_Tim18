@@ -10,5 +10,4 @@ public class AssumptionService {
     private final AssumptionRepository assumptionRepository;
 
     public AssumptionService(AssumptionRepository assumptionRepository) {this.assumptionRepository = assumptionRepository;}
-    public Ride calculatePrice(Ride ride){return ride;}
 }

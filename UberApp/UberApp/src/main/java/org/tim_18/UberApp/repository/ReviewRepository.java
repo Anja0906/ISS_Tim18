@@ -15,12 +15,12 @@ public interface ReviewRepository extends JpaRepository<Review, Integer> {
     @Query(value = "SELECT rev.id as id, comment, is_driver, rating, passenger_id, ride_id, r.id as rideid, d.id as driverid FROM reviews rev INNER JOIN rides r ON rev.ride_id=r.id INNER JOIN drivers d ON r.driver_id=d.id where vehicle_id=?1 and rev.is_driver = false", nativeQuery = true)
     Page<Review> findByVehicleId(int id, Pageable pageable);
 
-    //    rev NATURAL JOIN rides rid NATURAL JOIN passenger p where rev.passenger_id = p.id and rid.id = ?1
     @Query(value = "SELECT * FROM reviews rev where rev.ride_id = ?1 ", nativeQuery = true)
     HashSet<Review> findByRideIdHash(Integer id);
 
     @Query(value = "SELECT * FROM reviews rev NATURAL JOIN rides rid where rid.id = ?1", nativeQuery = true)
     Page<Review> findByRideId(int id, Pageable pageable);
+
     @Query(value = "SELECT * FROM reviews rev NATURAL JOIN rides rid  where rid.driver_id=?1 and rev.is_driver = true", nativeQuery = true)
     Page<Review> findByDriverId(int id, Pageable pageable);
 

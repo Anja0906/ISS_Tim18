@@ -17,7 +17,7 @@ public interface DocumentRepository extends JpaRepository<Document, Integer> {
 
     @Modifying
     @Query(value = "DELETE FROM Document doc WHERE doc.id = :id")
-    void deleteById(@Param("id") int id);
+    void deleteDocumentById(@Param("id") int id);
 
 
 }

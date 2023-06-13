@@ -1,7 +1,7 @@
 package org.tim_18.UberApp.model;
 
 import jakarta.persistence.*;
-import org.tim_18.UberApp.dto.VehicleDTOWithoutIds;
+import org.tim_18.UberApp.dto.vehicleDTOs.VehicleDTOWithoutIds;
 import org.tim_18.UberApp.dto.locationDTOs.LocationDTO;
 
 import java.io.Serializable;
@@ -31,17 +31,6 @@ public class Vehicle implements Serializable {
 
     public Vehicle() {}
 
-    public Vehicle(Integer id, Driver driver, VehicleType vehicleType, String model, String licenseNumber, Location currentLocation, Integer passengerSeats, Boolean babyTransport, Boolean petTransport) {
-        this.id                 = id;
-        this.driver             = driver;
-        this.vehicleType        = vehicleType;
-        this.model              = model;
-        this.licenseNumber      = licenseNumber;
-        this.currentLocation    = currentLocation;
-        this.passengerSeats     = passengerSeats;
-        this.babyTransport      = babyTransport;
-        this.petTransport       = petTransport;
-    }
     public Vehicle(Driver driver, VehicleType vehicleType, String model, String licenseNumber, Location currentLocation, Integer passengerSeats, Boolean babyTransport, Boolean petTransport) {
         this.driver             = driver;
         this.vehicleType        = vehicleType;

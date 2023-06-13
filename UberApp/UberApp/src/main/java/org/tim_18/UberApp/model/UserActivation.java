@@ -18,8 +18,7 @@ public class UserActivation implements Serializable {
     private LocalDate creationDate;
     private int duration;
 
-    public UserActivation(Integer id, User user, LocalDate creationDate, int duration) {
-        this.id           = id;
+    public UserActivation(User user, LocalDate creationDate, int duration) {
         this.user         = user;
         this.creationDate = creationDate;
         this.duration     = duration;

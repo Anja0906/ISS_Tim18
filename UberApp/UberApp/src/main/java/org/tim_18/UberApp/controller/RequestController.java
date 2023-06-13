@@ -6,7 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.tim_18.UberApp.dto.RequestDTO;
-import org.tim_18.UberApp.dto.UserDTO;
+import org.tim_18.UberApp.dto.userDTOs.UserDTO;
 import org.tim_18.UberApp.exception.UserNotFoundException;
 import org.tim_18.UberApp.model.Request;
 import org.tim_18.UberApp.service.RequestService;

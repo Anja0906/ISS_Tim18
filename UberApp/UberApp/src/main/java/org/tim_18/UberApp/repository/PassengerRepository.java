@@ -14,4 +14,4 @@ public interface PassengerRepository extends JpaRepository<Passenger, Integer> {
     Optional<Passenger> findPassengerByEmail(String email);
 
     List<Passenger> findAll();
-    public Page<Passenger> findAll(Pageable pageable);}
+    Page<Passenger> findAll(Pageable pageable);}

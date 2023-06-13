@@ -24,14 +24,6 @@ public class LocationsForRide implements Serializable {
     private Ride ride;
 
     public LocationsForRide() {}
-    public LocationsForRide(Integer id, Location departure, Location destination, Double kilometers, Double duration, Ride ride) {
-        this.id          = id;
-        this.departure   = departure;
-        this.destination = destination;
-        this.kilometers  = kilometers;
-        this.duration    = duration;
-        this.ride        = ride;
-    }
 
     public LocationsForRide(Location departure, Location destination, Double kilometers, Double duration, Ride ride) {
         this.departure   = departure;

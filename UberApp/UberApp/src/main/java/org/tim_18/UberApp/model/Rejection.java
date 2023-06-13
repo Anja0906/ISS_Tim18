@@ -18,16 +18,17 @@ public class Rejection implements Serializable {
     private User user;
     @JsonIgnore
     @OneToOne(mappedBy = "rejection")
+    @JoinColumn(name = "ride_id")
     private Ride ride;
     private Date timeOfRejection;
     private String reason;
 
 
     public Rejection(Ride ride, User user, Date time, String reason) {
-        this.ride   = ride;
-        this.user   = user;
-        this.timeOfRejection   = time;
-        this.reason = reason;
+        this.ride               = ride;
+        this.user               = user;
+        this.timeOfRejection    = time;
+        this.reason             = reason;
     }
 
     public void withdrawRide(){
@@ -36,6 +37,10 @@ public class Rejection implements Serializable {
     }
 
     public Rejection() {}
+    public Rejection(String reason,Date time) {
+        this.reason             = reason;
+        this.timeOfRejection    = time;
+    }
 
 
     public Integer getId() {

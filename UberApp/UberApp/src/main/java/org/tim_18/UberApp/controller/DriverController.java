@@ -13,11 +13,14 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.tim_18.UberApp.Validation.ErrorMessage;
-import org.tim_18.UberApp.dto.*;
+import org.tim_18.UberApp.dto.documentDTOs.DocumentDTO;
 import org.tim_18.UberApp.dto.driverDTOs.DriverDTO;
 import org.tim_18.UberApp.dto.driverDTOs.DriverDTOWithoutId;
 import org.tim_18.UberApp.dto.locationDTOs.LocationDTO;
 import org.tim_18.UberApp.dto.rideDTOs.RideRetDTO;
+import org.tim_18.UberApp.dto.vehicleDTOs.VehicleDTO;
+import org.tim_18.UberApp.dto.vehicleDTOs.VehicleDTOWithoutIds;
+import org.tim_18.UberApp.dto.worktimeDTOs.WorkTimeDTOWithoutDriver;
 import org.tim_18.UberApp.exception.*;
 import org.tim_18.UberApp.model.*;
 import org.tim_18.UberApp.service.*;
@@ -25,7 +28,6 @@ import org.tim_18.UberApp.service.*;
 import java.security.Principal;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.time.Instant;
 import java.util.*;
 
 
@@ -74,7 +76,7 @@ public class DriverController {
             @RequestParam(defaultValue = "0") Integer page,
             @RequestParam(defaultValue = "100") Integer size) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<Driver> drivers = driverService.findAll(pageable);
+        Page<Driver> drivers = driverService.findAllDriversPage(pageable);
         Map<String, Object> map = new HashMap<>();
         HashSet<DriverDTO> driversDTO = new DriverDTO().makeDriversDTO(drivers);
 
@@ -98,24 +100,24 @@ public class DriverController {
         }
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping()
-    public ResponseEntity<?> addDriver(@RequestBody DriverDTOWithoutId driverDTOWithoutId) {
-        try{
-            User user = userService.findUserByEmail(driverDTOWithoutId.getEmail());
-            return new ResponseEntity<>(new ErrorMessage("User with that email already exists!"),HttpStatus.BAD_REQUEST);
-        }catch (UserNotFoundException e){
-            Driver driver = new Driver(driverDTOWithoutId.getName() , driverDTOWithoutId.getSurname(),
-                    driverDTOWithoutId.getProfilePicture()          , driverDTOWithoutId.getTelephoneNumber(),
-                    driverDTOWithoutId.getEmail()                   , driverDTOWithoutId.getAddress(),
-                    passwordEncoder.encode(driverDTOWithoutId.getPassword()),
-                    false                                    ,false,
-                    false                                    ,this.getRoles()
-            );
-            driverService.save(driver);
-            return new ResponseEntity<>(new DriverDTO(driver), HttpStatus.OK);
-        }
-    }
+//    @PreAuthorize("hasRole('ADMIN')")
+//    @PostMapping()
+//    public ResponseEntity<?> addDriver(@RequestBody DriverDTOWithoutId driverDTOWithoutId) {
+//        try{
+//            User user = userService.findUserByEmail(driverDTOWithoutId.getEmail());
+//            return new ResponseEntity<>(new ErrorMessage("User with that email already exists!"),HttpStatus.BAD_REQUEST);
+//        }catch (UserNotFoundException e){
+//            Driver driver = new Driver(driverDTOWithoutId.getName() , driverDTOWithoutId.getSurname(),
+//                    driverDTOWithoutId.getProfilePicture()          , driverDTOWithoutId.getTelephoneNumber(),
+//                    driverDTOWithoutId.getEmail()                   , driverDTOWithoutId.getAddress(),
+//                    passwordEncoder.encode(driverDTOWithoutId.getPassword()),
+//                    false                                    ,false,
+//                    false                                    ,this.getRoles()
+//            );
+//            driverService.save(driver);
+//            return new ResponseEntity<>(new DriverDTO(driver), HttpStatus.OK);
+//        }
+//    }
 
     @PreAuthorize("hasAnyRole('DRIVER', 'ADMIN')")
     @PutMapping("/{id}")
@@ -159,7 +161,7 @@ public class DriverController {
         try{
             checkAuthorities(principal, id);
             Driver driver = driverService.findDriverById(id);
-            Document document = new Document().makeDocumentFromDTO(documentDTO,driver);
+            Document document = new Document(documentDTO,driver);
             document = documentService.addDocument(document);
             return new ResponseEntity<>(new DocumentDTO(document), HttpStatus.CREATED);
         }catch (DriverNotFoundException driverNotFoundException){
@@ -176,7 +178,7 @@ public class DriverController {
             Document document = documentService.findDocumentById(id);
             checkAuthorities(principal, document.getDriver().getId());
             Driver driver = driverService.findDriverById(document.getDriver().getId());
-            documentService.deleteById(id);
+            documentService.deleteDocumentById(id);
             return new ResponseEntity<>("Driver document deleted successfully" ,HttpStatus.NO_CONTENT);
         } catch (DocumentNotFoundException documentNotFoundException) {
             return new ResponseEntity<>("Document does not exist!", HttpStatus.NOT_FOUND);

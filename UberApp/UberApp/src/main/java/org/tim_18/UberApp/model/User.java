@@ -2,13 +2,10 @@ package org.tim_18.UberApp.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
-import lombok.Data;
-import org.springframework.boot.autoconfigure.security.saml2.Saml2RelyingPartyProperties;
-import org.tim_18.UberApp.dto.UserDTO;
-import java.io.Serializable;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -16,7 +13,7 @@ import java.util.List;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Entity
 @Table(name = "users")
-public class User extends ImplementsSerializable implements UserDetails {
+public class User implements UserDetails, Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
@@ -47,6 +44,8 @@ public class User extends ImplementsSerializable implements UserDetails {
             inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
     private List<Role> roles;
 
+    public User() {}
+
     public User(String name, String surname, String profilePicture, String telephoneNumber, String email, String address, String password, boolean blocked, boolean active, List<Role> roles) {
         this.name            = name;
         this.surname         = surname;
@@ -59,7 +58,6 @@ public class User extends ImplementsSerializable implements UserDetails {
         this.active          = active;
         this.roles           = roles;
     }
-    public User() {}
 
     public User(String name, String surname, String profilePicture, String telephoneNumber, String email, String address, String password, boolean blocked, boolean active) {
         this.name            = name;

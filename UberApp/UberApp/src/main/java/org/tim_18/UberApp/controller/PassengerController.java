@@ -16,7 +16,6 @@ import org.tim_18.UberApp.dto.rideDTOs.RideRetDTO;
 import org.tim_18.UberApp.exception.PassengerNotFoundException;
 import org.tim_18.UberApp.exception.UserActivationNotFoundException;
 import org.tim_18.UberApp.exception.UserNotFoundException;
-import org.tim_18.UberApp.mapper.passengerDTOmappers.PassengerDTOnoPasswordMapper;
 import org.tim_18.UberApp.mapper.passengerDTOmappers.PassengerDTOwithPasswordMapper;
 import org.tim_18.UberApp.model.*;
 import org.tim_18.UberApp.service.*;
@@ -38,8 +37,7 @@ public class PassengerController {
     private final LocationsForRideService locationsForRideService;
     @Autowired
     private PassengerDTOwithPasswordMapper dtoWithPasswordMapper;
-    @Autowired
-    private PassengerDTOnoPasswordMapper dtoNoPasswordMapper;
+
 
     @Autowired
     PasswordEncoder passwordEncoder;
@@ -82,7 +80,7 @@ public class PassengerController {
             @RequestParam(defaultValue = "0") Integer page,
             @RequestParam(defaultValue = "4") Integer size) {
         Pageable paging = PageRequest.of(page, size);
-        Page<Passenger> passengers = passengerService.findAll(paging);
+        Page<Passenger> passengers = passengerService.findAllPassangersPage(paging);
         List<PassengerDTOnoPassword> passengersDTO = PassengerDTOnoPassword.getPassengersDTO(passengers);
 
         Map<String, Object> response = new HashMap<>();
@@ -148,7 +146,6 @@ public class PassengerController {
             checkAuthoritiesAdmin(principal, id);
             Passenger passenger = passengerService.findById(id);
             Pageable paging = PageRequest.of(page, size);
-//            List<Ride> rides = rideService.findRidesByPassengersId(id, from, to);
             Page<Ride> rides = rideService.findRidesByPassengersId(id, from, to, paging);
             HashSet<RideRetDTO> ridesDTO = makeRideDTOS(rides);
             Map<String, Object> response = new HashMap<>();

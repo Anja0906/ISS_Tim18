@@ -1,12 +1,10 @@
 package org.tim_18.UberApp.dto.rideDTOs;
 
 import lombok.Data;
-import org.springframework.data.domain.Page;
-import org.tim_18.UberApp.dto.RejectionDTO;
+import org.tim_18.UberApp.dto.rejectionDTO.RejectionDTO;
 import org.tim_18.UberApp.dto.driverDTOs.DriverEmailDTO;
 import org.tim_18.UberApp.dto.locationDTOs.LocationDTO;
 import org.tim_18.UberApp.dto.locationDTOs.LocationSetDTO;
-import org.tim_18.UberApp.dto.locationDTOs.LocationsForRideDTO;
 import org.tim_18.UberApp.dto.passengerDTOs.PassengerIdEmailDTO;
 import org.tim_18.UberApp.model.*;
 
@@ -62,12 +60,7 @@ public class RideRetDTO {
             locationSetDTO.setDestination(new LocationDTO(loc.getDestination()));
             locationSetDTOSet.add(locationSetDTO);
         }
-//        Set<LocationSetDTO> locationSetDTOSet = new HashSet<>();
-//        for (int i = 1; i < locList.size(); i++) {
-//            Location loc1 = locList.get(i);
-//            Location loc2 = locList.get(i-1);
-//            locationSetDTOSet.add(new LocationSetDTO(locList.get(i-1), locList.get(i)));
-//        }
+
         this.locations                      = locationSetDTOSet;
         this.status                         = status;
         if (scheduledTime==null) {
@@ -77,6 +70,8 @@ public class RideRetDTO {
             this.scheduledTime              = scheduledTime.toString();
         }
     }
+
+
     public RideRetDTO(Ride ride, Set<LocationsForRide> locations){
         this(ride.getId(), ride.getStartTime().toString(), ride.getEndTime().toString(),
                 ride.getTotalCost(), ride.getDriver(),

@@ -8,7 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import org.tim_18.UberApp.dto.PanicDTO;
+import org.tim_18.UberApp.dto.panicDTOs.PanicDTO;
 import org.tim_18.UberApp.exception.PanicNotFoundException;
 import org.tim_18.UberApp.model.LocationsForRide;
 import org.tim_18.UberApp.model.Panic;

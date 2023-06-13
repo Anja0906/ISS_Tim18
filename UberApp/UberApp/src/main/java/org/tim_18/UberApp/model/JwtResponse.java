@@ -10,7 +10,7 @@ public class JwtResponse {
 
     private String refreshToken;
     private int expiresIn;
-    private String type = "Bearer";
+    private final String type = "Bearer";
     private Integer id;
     private String email;
     private String details;

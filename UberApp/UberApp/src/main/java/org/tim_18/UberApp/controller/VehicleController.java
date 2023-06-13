@@ -5,8 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.tim_18.UberApp.dto.VehicleDTO;
-import org.tim_18.UberApp.dto.VehiclesForMapDTO;
+import org.tim_18.UberApp.dto.vehicleDTOs.VehicleDTO;
+import org.tim_18.UberApp.dto.vehicleDTOs.VehiclesForMapDTO;
 import org.tim_18.UberApp.dto.locationDTOs.LocationDTO;
 import org.tim_18.UberApp.exception.RideNotFoundException;
 import org.tim_18.UberApp.exception.VehicleNotFoundException;
@@ -17,7 +17,6 @@ import org.tim_18.UberApp.service.DriverService;
 import org.tim_18.UberApp.service.RideService;
 import org.tim_18.UberApp.service.VehicleService;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;

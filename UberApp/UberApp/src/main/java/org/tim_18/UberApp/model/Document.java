@@ -2,7 +2,7 @@ package org.tim_18.UberApp.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import org.tim_18.UberApp.dto.DocumentDTO;
+import org.tim_18.UberApp.dto.documentDTOs.DocumentDTO;
 
 import java.io.Serializable;
 
@@ -23,16 +23,15 @@ public class Document implements Serializable {
     public Document() {}
 
     public Document(Integer id, String name, String documentImage, Driver driver) {
-        this.id             = id;
         this.name           = name;
         this.documentImage  = documentImage;
         this.driver         = driver;
     }
-    public Document makeDocumentFromDTO(DocumentDTO documentDTO,Driver driver){
-        setName(documentDTO.getName());
-        setDocumentImage(documentDTO.getDocumentImage());
-        setDriver(driver);
-        return this;
+
+    public Document(DocumentDTO documentDTO,Driver driver) {
+        this.name           = documentDTO.getName();
+        this.documentImage  = documentDTO.getDocumentImage();
+        this.driver         = driver;
     }
     public Integer getId() {
         return id;

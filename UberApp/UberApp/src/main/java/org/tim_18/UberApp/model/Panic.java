@@ -2,13 +2,10 @@ package org.tim_18.UberApp.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.Data;
-import org.tim_18.UberApp.dto.ReasonDTO;
-import org.tim_18.UberApp.exception.UserNotFoundException;
+import org.tim_18.UberApp.dto.rejectionDTO.ReasonDTO;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 
 @Entity
 @Table(name = "panics")
@@ -25,15 +22,13 @@ public class Panic implements Serializable {
     private Date time;
     private String reason;
 
-
+    public Panic() {}
     public Panic(Ride ride, User user, Date time, String reason) {
         this.ride   = ride;
         this.user   = user;
         this.time   = time;
         this.reason = reason;
     }
-
-    public Panic() {}
 
     public void updatePanic(User user, ReasonDTO reasonDTO,Ride ride){
         setUser(user);

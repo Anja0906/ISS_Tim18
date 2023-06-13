@@ -20,21 +20,12 @@ public class LocationsForFavoriteRide implements Serializable {
     @ManyToOne(cascade = {CascadeType.ALL})
     private FavoriteRide ride;
 
-    public LocationsForFavoriteRide() {
-    }
-
-
-    public LocationsForFavoriteRide(Integer id, Location departure, Location destination, FavoriteRide ride) {
-        this.id = id;
-        this.departure = departure;
-        this.destination = destination;
-        this.ride = ride;
-    }
+    public LocationsForFavoriteRide() {}
 
     public LocationsForFavoriteRide(Location departure, Location destination, FavoriteRide ride) {
-        this.departure = departure;
-        this.destination = destination;
-        this.ride = ride;
+        this.departure      = departure;
+        this.destination    = destination;
+        this.ride           = ride;
     }
 
     public Integer getId() {
@@ -67,5 +58,15 @@ public class LocationsForFavoriteRide implements Serializable {
 
     public void setRide(FavoriteRide ride) {
         this.ride = ride;
+    }
+
+    @Override
+    public String toString() {
+        return "LocationsForFavoriteRide{" +
+                "id=" + id +
+                ", departure=" + departure +
+                ", destination=" + destination +
+                ", ride=" + ride +
+                '}';
     }
 }

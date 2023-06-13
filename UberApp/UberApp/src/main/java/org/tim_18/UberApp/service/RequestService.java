@@ -4,14 +4,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.tim_18.UberApp.dto.UserDTO;
+import org.tim_18.UberApp.dto.userDTOs.UserDTO;
 import org.tim_18.UberApp.model.Request;
-import org.tim_18.UberApp.model.Review;
-import org.tim_18.UberApp.model.User;
 import org.tim_18.UberApp.repository.RequestRepository;
 
 import java.util.List;
-import java.util.Set;
 
 @Service("requestService")
 public class RequestService {

@@ -17,27 +17,6 @@ public class Location implements Serializable {
     private Double latitude;
     private String address;
 
-//    @ManyToMany(fetch = FetchType.LAZY, cascade = {
-//            CascadeType.PERSIST,
-//            CascadeType.MERGE,
-//            CascadeType.ALL
-//    })
-//    @JoinTable(name = "locations_favorite_rides",
-//            joinColumns = @JoinColumn(name = "location_id"),
-//            inverseJoinColumns = @JoinColumn(name = "fav_ride_id"))
-//    private Set<FavoriteRide> favoriteRides;
-
-
-//    @ManyToMany(fetch = FetchType.LAZY, cascade = {
-//            CascadeType.PERSIST,
-//            CascadeType.MERGE,
-//            CascadeType.ALL
-//    })
-//    @JoinTable(name = "locations_rides",
-//            joinColumns = @JoinColumn(name = "location_id"),
-//            inverseJoinColumns = @JoinColumn(name = "ride_id"))
-//    private Set<Ride> rides;
-
     public Location() {}
 
     public Location(Integer id, Double longitude, Double latitude, String address) {
@@ -85,19 +64,4 @@ public class Location implements Serializable {
         this.id = id;
     }
 
-//    public Set<FavoriteRide> getFavoriteRides() {
-//        return favoriteRides;
-//    }
-//
-//    public void setFavoriteRides(Set<FavoriteRide> favoriteRides) {
-//        this.favoriteRides = favoriteRides;
-//    }
-//
-//    public Set<Ride> getRides() {
-//        return rides;
-//    }
-//
-//    public void setRides(Set<Ride> rides) {
-//        this.rides = rides;
-//    }
 }

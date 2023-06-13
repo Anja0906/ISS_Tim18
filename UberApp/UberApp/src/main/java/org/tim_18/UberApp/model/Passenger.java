@@ -39,7 +39,6 @@ public class Passenger extends User {
     @JoinColumn(name = "passenger_id")
     private Set<Review> review;
 
-
     public Passenger(){}
 
     public Passenger(String name, String surname, String profilePicture, String telephoneNumber, String email, String address, String password, boolean blocked, boolean active, String verification) {
@@ -47,21 +46,23 @@ public class Passenger extends User {
     }
 
 
-    public Passenger(String name, String surname, String profilePicture, String telephoneNumber, String email, String address, String password, boolean blocked, boolean active, Integer id, HashSet<Location> favouriteLocations, HashSet<Ride> rides, HashSet<FavoriteRide> favoriteRides) {
+    public Passenger(String name, String surname, String profilePicture, String telephoneNumber, String email, String address, String password, boolean blocked, boolean active, HashSet<Location> favouriteLocations, HashSet<Ride> rides, HashSet<FavoriteRide> favoriteRides) {
         super(name, surname, profilePicture, telephoneNumber, email, address, password, blocked, active);
-        this.id                 = id;
         this.favouriteLocations = favouriteLocations;
         this.rides              = rides;
         this.favoriteRides      = favoriteRides;
     }
-
-    public Passenger(String name, String surname, String profilePicture, String telephoneNumber, String email, String address, String password, boolean blocked, boolean active) {
-        super(name, surname, profilePicture, telephoneNumber, email, address, password, blocked, active);
-    }
-
     public Passenger(User user) {
         super(user.getName(), user.getSurname(), user.getProfilePicture(), user.getTelephoneNumber(),
                 user.getEmail(), user.getAddress(), user.getPassword(), user.isBlocked(), user.isActive(), user.getVerificationCode());
+    }
+    public void passengerUpdate(PassengerDTOnoPassword dto) {
+        setName(dto.getName());
+        setSurname(dto.getSurname());
+        setProfilePicture(dto.getProfilePicture());
+        setTelephoneNumber(dto.getTelephoneNumber());
+        setAddress(dto.getAddress());
+        setEmail(dto.getEmail());
     }
     @Override
     public Integer getId() {
@@ -96,20 +97,6 @@ public class Passenger extends User {
     public void setFavoriteRides(Set<FavoriteRide> favoriteRides) {
         this.favoriteRides = favoriteRides;
     }
-    
-    @Override
-    public String toString() {
-        return "Passenger{" +
-                "id=" + id +
-                '}';
-    }
 
-    public void passengerUpdate(PassengerDTOnoPassword dto) {
-        setName(dto.getName());
-        setSurname(dto.getSurname());
-        setProfilePicture(dto.getProfilePicture());
-        setTelephoneNumber(dto.getTelephoneNumber());
-        setAddress(dto.getAddress());
-        setEmail(dto.getEmail());
-    }
+
 }

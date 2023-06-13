@@ -12,20 +12,17 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.tim_18.UberApp.dto.UserDTO;
-import org.tim_18.UberApp.dto.UserDTOwithPassword;
-import org.tim_18.UberApp.dto.UserDTO;
-import org.tim_18.UberApp.dto.UserDTOwithPassword;
+import org.tim_18.UberApp.dto.userDTOs.UserDTO;
+import org.tim_18.UberApp.dto.userDTOs.UserDTOwithPassword;
+import org.tim_18.UberApp.exception.FavoriteRideNotFoundException;
+import org.tim_18.UberApp.exception.RideNotFoundException;
 import org.tim_18.UberApp.exception.UserNotFoundException;
-import org.tim_18.UberApp.model.Role;
-import org.tim_18.UberApp.model.User;
+import org.tim_18.UberApp.model.*;
 import org.tim_18.UberApp.repository.UserRepository;
 
 import java.io.UnsupportedEncodingException;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Random;
+import java.security.Principal;
+import java.util.*;
 
 @Service("userService")
 public class UserService {
@@ -208,6 +205,48 @@ public class UserService {
         }else {
             return false;
         }
+    }
+
+    public void checkDriversAuthorities(Principal principal, Ride ride) throws RideNotFoundException{
+        User user = findUserByEmail(principal.getName());
+        Integer userId = user.getId();
+        Driver driver = ride.getDriver();
+        if (!driver.getId().equals(userId)) {
+            throw new RideNotFoundException("Active ride does not exist!");
+        }
+    }
+
+    public void checkPassengersAuthorities(Principal principal, Ride ride) throws RideNotFoundException{
+        User user = findUserByEmail(principal.getName());
+        Integer userId = user.getId();
+        Set<Passenger> passengers = ride.getPassengers();
+        for (Passenger p : passengers)
+            if (p.getId().equals(userId))
+                return;
+        throw new RideNotFoundException("Active ride does not exist!");
+    }
+
+    public void checkRole(Principal principal, Ride ride) {
+        User user = findUserByEmail(principal.getName());
+        if (user.getRoles().contains(roleService.findById(2)))
+            checkPassengersAuthorities(principal, ride);
+        else
+            checkDriversAuthorities(principal, ride);
+
+    }
+
+    public void checkPassengersAuthorities(Principal principal, FavoriteRide ride) throws RideNotFoundException{
+        User user = findUserByEmail(principal.getName());
+        Integer userId = user.getId();
+        Set<Passenger> passengers = ride.getPassengers();
+        for (Passenger p : passengers) {
+            if (p.getId().equals(userId)) {
+                // passenger ima pristup ride-u i ne mora da se baci exception
+                // ali nam nije bitan pa funkcija ne mora nista bitno da radi :P
+                return;
+            }
+        }
+        throw new FavoriteRideNotFoundException("Favorite Ride does not exist");
     }
 
     public User getByResetPasswordToken(String token) {

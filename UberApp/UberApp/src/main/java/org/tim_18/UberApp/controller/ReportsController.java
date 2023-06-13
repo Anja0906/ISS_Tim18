@@ -1,14 +1,13 @@
 package org.tim_18.UberApp.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.tim_18.UberApp.dto.ReportDTO;
+import org.tim_18.UberApp.dto.reportDTOS.ReportDTO;
 import org.tim_18.UberApp.exception.DriverNotFoundException;
 import org.tim_18.UberApp.exception.PassengerNotFoundException;
 import org.tim_18.UberApp.exception.UserNotFoundException;
@@ -104,16 +103,6 @@ public class ReportsController {
         }
     }
 
-//    private ReportDTO getReportsDTO(Page<Ride> rides) {
-//        ReportDTO reportDTO = new ReportDTO(this.reportsService.getRidesPerDay(rides),
-//                this.reportsService.getKilometersPerDay(rides),
-//                this.reportsService.getMoneyCountPerDay(rides),
-//                this.reportsService.getMoneySum(rides),
-//                this.reportsService.getAverage(rides),
-//                this.reportsService.getTotalKilometers(this.reportsService.getKilometersPerDay(rides)));
-//
-//        return reportDTO;
-//    }
 
     private ReportDTO getReportsDTO(List<Ride> rides) {
         ReportDTO reportDTO = new ReportDTO(this.reportsService.getRidesPerDay(rides),

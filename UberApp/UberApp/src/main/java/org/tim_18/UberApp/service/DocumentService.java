@@ -20,9 +20,7 @@ public class DocumentService {
 
     public DocumentService(DocumentRepository documentRepository) {this.documentRepository = documentRepository;}
     public Document addDocument(Document document) {return documentRepository.save(document);}
-    public void deleteDocument(Document document){ documentRepository.delete(document);}
-    public void deleteById(int id) {documentRepository.deleteById(id);}
-    public List<Document> findAllDocuments() {return documentRepository.findAll();}
+    public void deleteDocumentById(int id) {documentRepository.deleteDocumentById(id);}
     public HashSet<Document> findByDriverId(Integer id){return documentRepository.findByDriverId(id);}
     public Document updateDocument(Document document) {return documentRepository.save(document);}
     public Document findDocumentById(Integer id) {

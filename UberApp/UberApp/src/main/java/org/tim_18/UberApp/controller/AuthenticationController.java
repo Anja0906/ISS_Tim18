@@ -8,23 +8,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.parameters.P;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 import org.tim_18.UberApp.Validation.ErrorMessage;
 import org.tim_18.UberApp.dto.JwtAuthenticationRequest;
-import org.tim_18.UberApp.dto.UserDTOwithPassword;
-import org.tim_18.UberApp.dto.UserTokenState;
+import org.tim_18.UberApp.dto.userDTOs.UserDTOwithPassword;
 import org.tim_18.UberApp.exception.ResourceConflictException;
 import org.tim_18.UberApp.exception.UserNotFoundException;
-import org.tim_18.UberApp.mapper.UserDTOwithPasswordMapper;
+import org.tim_18.UberApp.mapper.userDTOmappers.UserDTOwithPasswordMapper;
 import org.tim_18.UberApp.model.*;
 import org.tim_18.UberApp.security.TokenUtils;
 import org.tim_18.UberApp.service.DriverService;
@@ -33,7 +30,6 @@ import org.tim_18.UberApp.service.RoleService;
 import org.tim_18.UberApp.service.UserService;
 
 import java.io.UnsupportedEncodingException;
-import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -127,7 +123,7 @@ public class AuthenticationController {
 			Passenger passenger = new Passenger(user);
 			passenger.setRoles(getRoles(1));
 
-			this.passengerService.save(passenger);
+			this.passengerService.addPassenger(passenger);
 			try{
 
 				this.userService.sendVerificationEmail(user, "http://localhost:8080/api/user");
@@ -167,7 +163,7 @@ public class AuthenticationController {
 
 		Driver driver = new Driver(user);
 		driver.setRoles(getRoles(2));
-		this.driverService.save(driver);
+		this.driverService.addDriver(driver);
 
 		return new ResponseEntity<>(driver, HttpStatus.CREATED);
 	}

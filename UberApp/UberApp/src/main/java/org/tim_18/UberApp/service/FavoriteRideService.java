@@ -24,6 +24,5 @@ public class FavoriteRideService {
         return this.favoriteRideRepository.findFavoriteRideById(id)
                 .orElseThrow(() -> new FavoriteRideNotFoundException("Favorite Ride by id " + id + " was not found"));
     }
-    public FavoriteRide update(FavoriteRide favRide) {return this.favoriteRideRepository.save(favRide);}
     public FavoriteRide updateRide(FavoriteRide favRide) {return this.favoriteRideRepository.save(favRide);}
 }
