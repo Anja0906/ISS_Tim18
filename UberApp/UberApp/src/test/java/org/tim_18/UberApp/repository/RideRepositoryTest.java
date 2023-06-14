@@ -17,6 +17,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.tim_18.UberApp.UberAppApplication;
 import org.tim_18.UberApp.exception.DriverNotFoundException;
 import org.tim_18.UberApp.model.Ride;
+import org.tim_18.UberApp.model.Status;
+import org.tim_18.UberApp.service.RideService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,13 +42,16 @@ public class RideRepositoryTest {
     @Autowired
     private RideRepository rideRepository;
 
+    @Autowired
+    RideService rideService;
 
 
 
     @Test
     @DisplayName(value = "Find ride by id valid")
     public void testFindRideById(){
-        Optional<Ride> ride = rideRepository.findRideById(1);
+        Optional<Ride> ride = rideRepository.findRideById(7);
+        System.out.println(ride);
         assertNotEquals(ride,Optional.empty());
         assertNotNull(ride.get());
     }
@@ -58,28 +63,25 @@ public class RideRepositoryTest {
         assertEquals(Optional.empty(), ride);
     }
 
-
     @Test
-    @DisplayName(value = "Find ride by valid id and compare ride details")
+    @DisplayName(value = "Find ride by by valid id and compare details")
     public void testFindRideByIdAndCompareDetails() {
         Optional<Ride> ride = rideRepository.findRideById(1);
         assertTrue(ride.isPresent());
         assertEquals(null, ride.get().getDriver());
         assertEquals(500, ride.get().getTotalCost());
-        assertEquals(0, ride.get().getPassengers().size());
-
-
+        assertEquals(Status.FINISHED, ride.get().getStatus());
     }
 
     @Test
-    @DisplayName(value = "Find rides by passenger id")
+    @DisplayName(value = "Find rides by passenger id from date to date")
     public void testFindRidesByPassengerId() {
-        Page<Ride> rides = rideRepository.findRidesByPassengersId(1, "2021-10-10", "2024-10-10", PageRequest.of(0, 10));
+        Page<Ride> rides = rideRepository.findRidesByPassengersId(5, "2021-10-10", "2024-10-10", PageRequest.of(0, 10));
         assertNotNull(rides);
         for(Ride ride:rides){
-            System.out.println(ride.toString());
+            System.out.println(ride.getId());
         }
-        assertEquals(0, rides.getNumberOfElements()); // assumes you have at least 5 rides for this passenger in the given date range
+        assertEquals(3, rides.getNumberOfElements()); // assumes you have at least 5 rides for this passenger in the given date range
     }
 
 //    @Test

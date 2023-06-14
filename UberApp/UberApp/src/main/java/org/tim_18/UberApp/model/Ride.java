@@ -21,11 +21,11 @@ public class Ride implements Serializable {
     private Date scheduledTime;
     private long totalCost;
     @JsonIgnore
-    @ManyToOne
+    @ManyToOne(targetEntity = Driver.class,fetch = FetchType.EAGER, cascade = {CascadeType.ALL})
     @JoinColumn(name = "driver_id")
     private Driver driver;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL}, mappedBy = "rides")
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.ALL}, mappedBy = "rides")
     private Set<Passenger> passengers;
     private int estimatedTimeInMinutes;
     private VehicleType vehicleType;
@@ -149,12 +149,6 @@ public class Ride implements Serializable {
             rejection.setRide(this);
     }
 
-    public void removeRejection() {
-        if (rejection != null) {
-            rejection.setRide(null);
-            this.rejection = null;
-        }
-    }
 
     public Status getStatus() {
         return status;
