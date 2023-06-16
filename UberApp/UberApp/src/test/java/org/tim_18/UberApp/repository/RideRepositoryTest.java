@@ -16,6 +16,7 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.tim_18.UberApp.UberAppApplication;
 import org.tim_18.UberApp.exception.DriverNotFoundException;
+import org.tim_18.UberApp.model.Driver;
 import org.tim_18.UberApp.model.Ride;
 import org.tim_18.UberApp.model.Status;
 import org.tim_18.UberApp.service.RideService;
@@ -42,6 +43,11 @@ public class RideRepositoryTest {
     @Autowired
     private RideRepository rideRepository;
 
+
+
+
+
+
     @Autowired
     RideService rideService;
 
@@ -50,8 +56,7 @@ public class RideRepositoryTest {
     @Test
     @DisplayName(value = "Find ride by id valid")
     public void testFindRideById(){
-        Optional<Ride> ride = rideRepository.findRideById(7);
-        System.out.println(ride);
+        Optional<Ride> ride = rideRepository.findRideById(2);
         assertNotEquals(ride,Optional.empty());
         assertNotNull(ride.get());
     }

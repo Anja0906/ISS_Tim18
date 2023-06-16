@@ -20,12 +20,13 @@ public class Ride implements Serializable {
 
     private Date scheduledTime;
     private long totalCost;
+
     @JsonIgnore
-    @ManyToOne(targetEntity = Driver.class,fetch = FetchType.EAGER, cascade = {CascadeType.ALL})
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "driver_id")
     private Driver driver;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.ALL}, mappedBy = "rides")
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL}, mappedBy = "rides")
     private Set<Passenger> passengers;
     private int estimatedTimeInMinutes;
     private VehicleType vehicleType;

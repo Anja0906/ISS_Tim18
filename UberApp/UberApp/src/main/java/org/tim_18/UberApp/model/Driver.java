@@ -76,14 +76,5 @@ public class Driver extends User{
     public Boolean getIsOnline() {return isOnline;}
     public void setIsOnline(Boolean online) {isOnline = online;}
 
-    @Override
-    public String toString() {
-        return "Driver{" +
-                "id=" + id +
-                ", documents=" + documents +
-                ", rides=" + rides +
-                ", vehicle=" + vehicle +
-                ", isOnline=" + isOnline +
-                '}';
-    }
+
 }
