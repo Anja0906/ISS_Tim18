@@ -1,39 +1,26 @@
 package org.tim_18.UberApp.repository;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.tim_18.UberApp.UberAppApplication;
-import org.tim_18.UberApp.exception.DriverNotFoundException;
-import org.tim_18.UberApp.model.Driver;
 import org.tim_18.UberApp.model.Ride;
 import org.tim_18.UberApp.model.Status;
-import org.tim_18.UberApp.model.VehicleType;
-import org.tim_18.UberApp.service.RideService;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.assertThat;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 import static org.junit.jupiter.api.Assertions.*;
 
-import static org.mockito.Mockito.when;
 
 @SpringBootTest(classes = UberAppApplication.class)
 @ExtendWith(SpringExtension.class)
