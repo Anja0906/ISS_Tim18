@@ -24,76 +24,76 @@ public class RideService {
 
 
 
-    public RideService(RideRepository rideRepository) {this.rideRepository = rideRepository;}
+    public RideService(RideRepository rideRepository) {this.rideRepository = rideRepository;}//
 
     public Page<Ride> findRidesByPassengersId(Integer id, String from, String to, Pageable pageable) {
-        return rideRepository.findRidesByPassengersId(id, from, to, pageable);
+        return rideRepository.findRidesByPassengersId(id, from, to, pageable);//
     }
 
-    public Page<Ride> findPendingRidesByStatus(String status,Pageable pageable) {
+    public Page<Ride> findPendingRidesByStatus(String status,Pageable pageable) {//
         return rideRepository.findPendingRidesByStatus(status,pageable);
     }
 
     public Ride createRide(Ride ride){
         return rideRepository.save(ride);
-    }
+    } //
 
-    public Ride getDriverActiveRide(Integer driverId) {
+    public Ride getDriverActiveRide(Integer driverId) {//
         return rideRepository.findDriverActiveRide(driverId)
                 .orElseThrow(() -> new RideNotFoundException("Ride was not found"));
     }
-    public Optional<Ride> getActiveRideDriver(Integer driverId) {
+    public Optional<Ride> getActiveRideDriver(Integer driverId) {//
         return rideRepository.findDriverActiveRide(driverId);
     }
 
-    public List<Ride> getDriverAcceptedRides(Integer driverId) {
+    public List<Ride> getDriverAcceptedRides(Integer driverId) {//
         return rideRepository.findDriverAcceptedRides(driverId, "ACCEPTED", "PENDING");
-
     }
 
-    public Ride getPassengerActiveRide(Integer passengerId) {
+    public Ride getPassengerActiveRide(Integer passengerId) {//
         return rideRepository.findPassengerActiveRide(passengerId, "ACCEPTED")
                 .orElseThrow(() -> new RideNotFoundException("Ride was not found"));
     }
 
-    public Ride findRideById(Integer id) {
+    public Ride findRideById(Integer id) {//
         return rideRepository.findRideById(id)
                 .orElseThrow(() -> new RideNotFoundException("Ride was not found"));
     }
 
     public Ride updateRide(Ride ride) {
         return rideRepository.save(ride);
-    }
+    }//
 
     public Page<Ride> findRidesForDriver(Integer id, String start, String end, Pageable pageable){
-        return rideRepository.findRidesForDriver(id,start,end,pageable);
+        return rideRepository.findRidesForDriver(id,start,end,pageable);//
     }
 
     public List<Ride> findRidesForDriver(Integer id, String start, String end, String sort){
-        return rideRepository.findRidesForDriver(id,start,end, sort);
+        return rideRepository.findRidesForDriver(id,start,end, sort);//
     }
     public List<Ride> findRidesForPassenger(Integer id, String start, String end, String sort){
-        return rideRepository.findRidesForPassenger(id,start,end, sort);
+        return rideRepository.findRidesForPassenger(id,start,end, sort);//
     }
-    public boolean checkRide(Integer passengerId) {
-        List<Ride> pendingRides = rideRepository.findPassengersRidesByStatus(passengerId, "PENDING");
+    public boolean checkRide(Integer passengerId) {//
+        List<Ride> pendingRides = rideRepository.findPassengersRidesByStatus(passengerId,
+                "PENDING");
         return pendingRides.isEmpty();
     }
     public List<Ride> findRidesInDateRange(String start, String end, String sort) {
-        return rideRepository.findRidesInDateRange(start,end, sort);
+        return rideRepository.findRidesInDateRange(start,end, sort);//
     }
 
     public List<Ride> findRidesByUser(Integer id, String from, String to, String sort) {
-        return rideRepository.findRidesForUser(id, from, to, sort);
+        return rideRepository.findRidesForUser(id, from, to, sort);//
     }
 
-    public List<Ride> findScheduledRides(double time, VehicleType vehicleType, boolean babyTransport, boolean petTransport) {
+    public List<Ride> findScheduledRides(double time, VehicleType vehicleType, boolean babyTransport, boolean petTransport) {//
         return rideRepository.findScheduledRides(time, vehicleType.toString(), babyTransport, petTransport);
     }
 
     public List<Ride> findScheduledRides(double time) {
         return rideRepository.findScheduledRides(time);
-    }
+    }//
 
     public OsrmResponse getSteps (LocationsForRide locations) {
         RestTemplate restTemplate = new RestTemplate();
