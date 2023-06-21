@@ -764,4 +764,276 @@ public class RideControllerTest {
     }
 
 
+    @Test
+    @DisplayName("Test endRide where driver doesn't have permission to end the ride")
+    public void testEndRide_NoPermissionToEnd() {
+        loginDriverWithoutRide();
+        ResponseEntity<String> responseEntity = restTemplate.exchange(BASE_PATH+"/"+1+"/end",
+                HttpMethod.PUT,
+                new HttpEntity<>(driverEntity.getHeaders()),
+                String.class);
+        System.out.println(responseEntity.getBody());
+        assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
+    }
+
+    @Test
+    @DisplayName("Test endRide where ride is not in STARTED status")
+    public void testEndRide_NotStartedRide() {
+        loginDriverWithoutRide();
+        ResponseEntity<String> responseEntity = restTemplate.exchange(BASE_PATH+"/"+4+"/end",
+                HttpMethod.PUT,
+                new HttpEntity<>(driverEntity.getHeaders()),
+                String.class);
+        System.out.println(responseEntity.getBody());
+        assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
+    }
+
+
+    @Test
+    @DisplayName("Test endRide where ride is in STARTED status")
+    public void testEndRide_StartedRide() {
+        loginDriverWithRide();
+        ResponseEntity<RideRetDTO> responseEntity = restTemplate.exchange(BASE_PATH+"/"+1+"/end",
+                HttpMethod.PUT,
+                new HttpEntity<>(driverEntity.getHeaders()),
+                RideRetDTO.class);
+        System.out.println(responseEntity.getBody());
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+    }
+
+    @Test
+    @DisplayName("Test cancelRide where user role is not a DRIVER")
+    public void testCancelRide_NonDriverUser() {
+        loginPassenger();
+        ReasonDTO reasonDTO = new ReasonDTO();
+        reasonDTO.setReason("reason");
+        ResponseEntity<String> responseEntity = restTemplate.exchange(BASE_PATH+"/"+1+"/cancel",
+                HttpMethod.PUT,
+                new HttpEntity<>(reasonDTO,passengerEntity.getHeaders()),
+                String.class);
+        System.out.println(responseEntity.getBody());
+        assertEquals(HttpStatus.FORBIDDEN, responseEntity.getStatusCode());
+    }
+
+    @Test
+    @DisplayName("Test cancelRide where ride doesn't exist")
+    public void testCancelRide_NonexistentRide() {
+        loginDriverWithoutRide();
+        ReasonDTO reasonDTO = new ReasonDTO();
+        reasonDTO.setReason("reason");
+        ResponseEntity<String> responseEntity = restTemplate.exchange(BASE_PATH+"/"+10000000+"/cancel",
+                HttpMethod.PUT,
+                new HttpEntity<>(reasonDTO,driverEntity.getHeaders()),
+                String.class);
+        System.out.println(responseEntity.getBody());
+        assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
+    }
+
+    @Test
+    @DisplayName("Test cancelRide where driver doesn't have permission to cancel the ride")
+    public void testCancelRide_NoPermissionToCancel() {
+        loginDriverWithRide();
+        ReasonDTO reasonDTO = new ReasonDTO();
+        reasonDTO.setReason("reason");
+        ResponseEntity<String> responseEntity = restTemplate.exchange(BASE_PATH+"/"+4+"/cancel",
+                HttpMethod.PUT,
+                new HttpEntity<>(reasonDTO,driverEntity.getHeaders()),
+                String.class);
+        System.out.println(responseEntity.getBody());
+        assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
+    }
+
+    @Test
+    @DisplayName("Test cancelRide where ride is not in PENDING or ACCEPTED status")
+    public void testCancelRide_NotPendingOrAcceptedRide() {
+        loginDriverWithRide();
+        ReasonDTO reasonDTO = new ReasonDTO();
+        reasonDTO.setReason("reason");
+        ResponseEntity<String> responseEntity = restTemplate.exchange(BASE_PATH+"/"+1+"/cancel",
+                HttpMethod.PUT,
+                new HttpEntity<>(reasonDTO,driverEntity.getHeaders()),
+                String.class);
+        System.out.println(responseEntity.getBody());
+        assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
+    }
+
+    @Test
+    @DisplayName("Test cancelRide where ride is in PENDING or ACCEPTED status")
+    public void testCancelRide_PendingOrAcceptedRide() {
+        loginDriverWithoutRide();
+        ReasonDTO reasonDTO = new ReasonDTO();
+        reasonDTO.setReason("reason");
+        ResponseEntity<String> responseEntity = restTemplate.exchange(BASE_PATH+"/"+5+"/cancel",
+                HttpMethod.PUT,
+                new HttpEntity<>(reasonDTO,driverEntity.getHeaders()),
+                String.class);
+        System.out.println(responseEntity.getBody());
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+    }
+
+    @Test
+    @DisplayName("Test createFavRide where user role is not a PASSENGER")
+    public void testCreateFavRide_NonPassengerUser() {
+        loginAdmin();
+        FavoriteRideDTO favoriteRideDTO = makeFavoriteRideDTO(adminJWT.getId(),adminJWT.getEmail());
+        ResponseEntity<String> responseEntity = restTemplate.exchange(BASE_PATH+"/favorites",
+                HttpMethod.POST,
+                new HttpEntity<>(favoriteRideDTO, adminEntity.getHeaders()),
+                String.class);
+        System.out.println(responseEntity.getBody());
+        assertEquals(HttpStatus.FORBIDDEN, responseEntity.getStatusCode());
+    }
+
+
+
+    @Test
+    @DisplayName("Test createFavRide where there is a bad request")
+    public void testCreateFavRide_BadRequest() {
+        loginPassenger();
+        loginAdmin();
+        FavoriteRideDTO favoriteRideDTO = makeFavoriteRideDTO(adminJWT.getId(),adminJWT.getEmail());
+        ResponseEntity<String> responseEntity = restTemplate.exchange(BASE_PATH+"/favorites",
+                HttpMethod.POST,
+                new HttpEntity<>(favoriteRideDTO, passengerEntity.getHeaders()),
+                String.class);
+        System.out.println(responseEntity.getBody());
+        assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
+    }
+
+    @Test
+    @DisplayName("Test createFavRide successfully")
+    public void testCreateFavRide_Success() {
+        loginPassengerWithRide();
+        FavoriteRideDTO favoriteRideDTO = makeFavoriteRideDTO(passengerJWT.getId(),passengerJWT.getEmail());
+        ResponseEntity<String> responseEntity = restTemplate.exchange(BASE_PATH+"/favorites",
+                HttpMethod.POST,
+                new HttpEntity<>(favoriteRideDTO, passengerEntity.getHeaders()),
+                String.class);
+        System.out.println(responseEntity.getBody());
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+    }
+
+    @Test
+    @DisplayName("Test findAllFavs for PASSENGER role")
+    public void testFindAllFavs_PassengerUser() {
+        loginPassenger();
+        ResponseEntity<String> responseEntity = restTemplate.exchange(BASE_PATH + "/favorites",
+                HttpMethod.GET,
+                new HttpEntity<>(passengerEntity.getHeaders()),
+                String.class);
+        System.out.println(responseEntity.getBody());
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        assertFalse(responseEntity.getBody().isEmpty());
+    }
+
+    @Test
+    @DisplayName("Test findAllFavs without Login")
+    public void testFindAllFavs_withoutLogin() {
+        ResponseEntity<String> responseEntity = restTemplate.exchange(BASE_PATH + "/favorites",
+                HttpMethod.GET,
+                new HttpEntity<>(null),
+                String.class);
+        assertEquals(HttpStatus.UNAUTHORIZED, responseEntity.getStatusCode());
+    }
+
+    @Test
+    @DisplayName("Test findAllFavs where user role is not a PASSENGER")
+    public void testFindAllFavs_NonPassengerUser() {
+        loginAdmin();
+        ResponseEntity<String> responseEntity = restTemplate.exchange(BASE_PATH + "/favorites",
+                HttpMethod.GET,
+                new HttpEntity<>(adminEntity.getHeaders()),
+                String.class);
+        assertEquals(HttpStatus.FORBIDDEN, responseEntity.getStatusCode());
+    }
+
+
+    @Test
+    @DisplayName("Test findAllFavs without user login")
+    public void testFindAllFavs_NoLogin() {
+        ResponseEntity<String> responseEntity = restTemplate.exchange(BASE_PATH + "/favorites",
+                HttpMethod.GET,
+                null,
+                String.class);
+        assertEquals(HttpStatus.UNAUTHORIZED, responseEntity.getStatusCode());
+    }
+
+    @Test
+    @DisplayName("Test findAllFavs for PASSENGER role with no favorite rides")
+    public void testFindAllFavs_NoFavoriteRides() {
+        loginPassengerWithoutAnyRidesHistory();
+        ResponseEntity<List<FavoriteRideWithTimeDTO>> responseEntity = restTemplate.exchange(BASE_PATH + "/favorites",
+                HttpMethod.GET,
+                new HttpEntity<>(passengerEntity.getHeaders()),
+                new ParameterizedTypeReference<List<FavoriteRideWithTimeDTO>>(){});
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        assertTrue(responseEntity.getBody().isEmpty());
+    }
+
+    @Test
+    @DisplayName("Test deleteFavRideById for PASSENGER role")
+    public void testDeleteFavRideById_PassengerUser() {
+        loginPassenger();
+        ResponseEntity<String> responseEntity = restTemplate.exchange(BASE_PATH + "/favorites/" + 1,
+                HttpMethod.DELETE,
+                new HttpEntity<>(passengerEntity.getHeaders()),
+                String.class);
+
+        assertEquals(HttpStatus.NO_CONTENT, responseEntity.getStatusCode());
+
+
+    }
+
+    @Test
+    @DisplayName("Test deleteFavRideById where user role is not a PASSENGER")
+    public void testDeleteFavRideById_NonPassengerUser() {
+        loginAdmin();
+
+        ResponseEntity<String> responseEntity = restTemplate.exchange(BASE_PATH + "/favorites/" + 1,
+                HttpMethod.DELETE,
+                new HttpEntity<>(adminEntity.getHeaders()),
+                String.class);
+
+        assertEquals(HttpStatus.FORBIDDEN, responseEntity.getStatusCode());
+    }
+
+
+    @Test
+    @DisplayName("Test deleteFavRideById without user login")
+    public void testDeleteFavRideById_withoutLogin() {
+
+        ResponseEntity<String> responseEntity = restTemplate.exchange(BASE_PATH + "/favorites/" + 1,
+                HttpMethod.DELETE,
+                null,
+                String.class);
+
+        assertEquals(HttpStatus.UNAUTHORIZED, responseEntity.getStatusCode());
+    }
+
+    @Test
+    @DisplayName("Test deleteFavRideById with non-existing favorite ride")
+    public void testDeleteFavRideById_NonExistingFavRide() {
+        loginPassenger();
+
+        ResponseEntity<String> responseEntity = restTemplate.exchange(BASE_PATH + "/favorites/" + 100,
+                HttpMethod.DELETE,
+                new HttpEntity<>(passengerEntity.getHeaders()),
+                String.class);
+
+        assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
+    }
+
+    @Test
+    @DisplayName("Test deleteFavRideById with a favorite ride not belonging to the logged-in passenger")
+    public void testDeleteFavRideById_RideNotBelongingToPassenger() {
+        loginPassenger();
+        ResponseEntity<String> responseEntity = restTemplate.exchange(BASE_PATH + "/favorites/" + 4,
+                HttpMethod.DELETE,
+                new HttpEntity<>(passengerEntity.getHeaders()),
+                String.class);
+
+        assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
+    }
+
+
 }

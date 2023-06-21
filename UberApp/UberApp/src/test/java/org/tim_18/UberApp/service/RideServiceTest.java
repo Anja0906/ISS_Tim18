@@ -3,6 +3,7 @@ package org.tim_18.UberApp.service;
 import net.bytebuddy.pool.TypePool;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -119,6 +120,7 @@ public class RideServiceTest {
     }
 
     @Test
+    @DisplayName("Test findRidesByPassenger with no rides")
     void testFindRidesByPassengersIdWithNoRides() {
         when(rideRepository.findRidesByPassengersId(any(Integer.class), anyString(), anyString(), any(Pageable.class))).thenReturn(new PageImpl<Ride>(Collections.emptyList()));
         Page<Ride> rides = rideService.findRidesByPassengersId(1, "Start", "End", pageable);
@@ -126,6 +128,7 @@ public class RideServiceTest {
     }
 
     @Test
+    @DisplayName("Test findRidesByPassenger with rides")
     void testFindRidesByPassengersIdWithRides() {
         Ride ride = new Ride(); // fill this with appropriate data
         List<Ride> rideList = Arrays.asList(ride);
@@ -136,6 +139,7 @@ public class RideServiceTest {
     }
 
     @Test
+    @DisplayName("Test findRidesByPassenger with invalid input")
     void testFindRidesByPassengersIdWithInvalidId() {
         when(rideRepository.findRidesByPassengersId(any(Integer.class), anyString(), anyString(), any(Pageable.class))).thenReturn(new PageImpl<Ride>(Collections.emptyList()));
         Page<Ride> rides = rideService.findRidesByPassengersId(-1, "2023-12-11 23:59:59", "2023-12-11 23:59:59", pageable);
@@ -143,6 +147,7 @@ public class RideServiceTest {
     }
 
     @Test
+    @DisplayName("Test findRidesByPassenger with invalid page number")
     public void testFindRidesByPassengersIdWithInvalidPageNumber() {
         assertThrows(IllegalArgumentException.class, () -> {
             rideService.findRidesByPassengersId(1,
@@ -151,6 +156,7 @@ public class RideServiceTest {
     }
 
     @Test
+    @DisplayName("Test findPendingRidesByStatus with no rides")
     void testFindPendingRidesByStatusWithNoRides() {
         when(rideRepository.findPendingRidesByStatus(any(String.class), any(Pageable.class))).thenReturn(Page.empty());
         Page<Ride> rides = rideService.findPendingRidesByStatus("PENDING", pageable);
@@ -158,6 +164,7 @@ public class RideServiceTest {
     }
 
     @Test
+    @DisplayName("Test findPendingRidesByStatus with rides")
     void testFindPendingRidesByStatusWithRides() {
         ArrayList<Ride> rides = new ArrayList<Ride>();
         rides.add(this.ride);
@@ -168,6 +175,7 @@ public class RideServiceTest {
     }
 
     @Test
+    @DisplayName("Test findPendingRidesByStatus with invalid status")
     void testFindPendingRidesByStatusWithInvalidStatus() {
         when(rideRepository.findPendingRidesByStatus(any(String.class), any(Pageable.class))).thenReturn(Page.empty());
         Page<Ride> rides = rideService.findPendingRidesByStatus("INVALID_STATUS", pageable);
@@ -175,6 +183,7 @@ public class RideServiceTest {
     }
 
     @Test
+    @DisplayName("Test findPendingRidesByStatus with invalid page number")
     public void testFindPendingRidesByStatusWithInvalidPageNumber() {
         String status = "PENDING";
         assertThrows(IllegalArgumentException.class, () -> {
@@ -183,6 +192,7 @@ public class RideServiceTest {
     }
 
     @Test
+    @DisplayName("Test createRide with valid data")
     public void testCreateRideWithValidData() {
         when(rideRepository.save(any(Ride.class))).thenReturn(this.ride);
         Ride savedRide = rideService.createRide(this.ride);
@@ -193,6 +203,7 @@ public class RideServiceTest {
     }
 
     @Test
+    @DisplayName("Test createRide with invalid data")
     public void testCreateRideWithInvalidParameters() {
         when(rideRepository.save(null)).thenThrow(new IllegalArgumentException());
         assertThrows(IllegalArgumentException.class, () -> {
@@ -202,6 +213,7 @@ public class RideServiceTest {
     }
 
     @Test
+    @DisplayName("Test getDriverActiveRide with valid parameters")
     public void testGetDriverActiveRideWithValidParameters() {
         Integer driverId = 1;
         when(rideRepository.findDriverActiveRide(anyInt())).thenReturn(Optional.of(this.ride));
@@ -213,6 +225,7 @@ public class RideServiceTest {
     }
 
     @Test
+    @DisplayName("Test getDriverActiveRide with null parameters")
     public void testGetDriverActiveRideWithNullParameters() {
         Integer driverId = 1;
         when(rideRepository.findDriverActiveRide(anyInt())).thenReturn(Optional.empty());
@@ -222,6 +235,7 @@ public class RideServiceTest {
     }
 
     @Test
+    @DisplayName("Test getDriverActiveRide with invalid parameters")
     public void testGetDriverActiveRideWithInvalidParameters() {
         Integer driverId = -1;
         when(rideRepository.findDriverActiveRide(driverId)).thenThrow(new IllegalArgumentException());
@@ -231,6 +245,7 @@ public class RideServiceTest {
     }
 
     @Test
+    @DisplayName("Test getDriverActiveRide with valid parameters")
     public void testGetActiveDriverRideWithValidParameters() {
         Integer driverId = 1;
         when(rideRepository.findDriverActiveRide(anyInt())).thenReturn(Optional.of(this.ride));
@@ -242,6 +257,7 @@ public class RideServiceTest {
     }
 
     @Test
+    @DisplayName("Test getDriverActiveRide with invalid parameters")
     public void testGetActiveDriverRideWithInvalidParameters() {
         Integer driverId = -1;
         when(rideRepository.findDriverActiveRide(driverId)).thenThrow(new IllegalArgumentException());
@@ -251,6 +267,7 @@ public class RideServiceTest {
     }
 
     @Test
+    @DisplayName("Test getDriverAcceptedRides with valid parameters")
     public void testGetDriverAcceptedRidesWithValidParameters() {
         Integer driverId = 1;
         Ride ride2 = this.ride;
@@ -265,6 +282,7 @@ public class RideServiceTest {
     }
 
     @Test
+    @DisplayName("Test getDriverAcceptedRides with invalid parameters")
     public void testGetDriverAcceptedRidesWithInvalidParameters() {
         Integer driverId = 1;
         when(rideRepository.findDriverAcceptedRides(eq(driverId), eq("ACCEPTED"), eq("PENDING"))).thenReturn(Arrays.asList());
@@ -275,6 +293,7 @@ public class RideServiceTest {
     }
 
     @Test
+    @DisplayName("Test getDriverAcceptedRides with invalid driver id")
     public void testGetDriverAcceptedRidesWithInvalidDriverId() {
         Integer driverId = -1;
         when(rideRepository.findDriverAcceptedRides(eq(driverId), eq("ACCEPTED"),
@@ -286,6 +305,7 @@ public class RideServiceTest {
     }
 
     @Test
+    @DisplayName("Test getDriverAcceptedRides with exception from repository")
     public void testGetDriverAcceptedRidesWithExceptionFromRepository() {
         Integer driverId = 1;
         when(rideRepository.findDriverAcceptedRides(eq(driverId), eq("ACCEPTED"),
@@ -297,6 +317,7 @@ public class RideServiceTest {
     }
 
     @Test
+    @DisplayName("Test getDriverAcceptedRides with invalid status")
     public void testGetDriverAcceptedRidesWithInvalidStatuses() {
         Integer driverId = 1;
         when(rideRepository.findDriverAcceptedRides(eq(driverId), eq("COMPLETED"), eq("REJECTED"))).thenReturn(new ArrayList<>());
@@ -307,6 +328,7 @@ public class RideServiceTest {
     }
 
     @Test
+    @DisplayName("Test getDriverAcceptedRides with null driver id")
     public void testGetDriverAcceptedRidesWithNullDriverId() {
         Integer driverId = null;
         List<Ride> allRides = Arrays.asList(new Ride(), new Ride());
@@ -317,6 +339,7 @@ public class RideServiceTest {
         verify(rideRepository, times(1)).findDriverAcceptedRides(driverId, "ACCEPTED", "PENDING");
     }
     @Test
+    @DisplayName("Test getPassengerActiveRide with valid parameters")
     public void testGetPassengerActiveRideWithValidParameters() {
         Integer passengerId = 1;
         when(rideRepository.findPassengerActiveRide(eq(passengerId), eq("ACCEPTED"))).thenReturn(Optional.of(ride));
@@ -327,6 +350,7 @@ public class RideServiceTest {
     }
 
     @Test
+    @DisplayName("Test getPassengerActiveRide with no ride")
     public void testGetPassengerActiveRideWithNoRide() {
         Integer passengerId = 1;
         when(rideRepository.findPassengerActiveRide(eq(passengerId), eq("ACCEPTED"))).thenReturn(Optional.empty());
@@ -337,6 +361,7 @@ public class RideServiceTest {
     }
 
     @Test
+    @DisplayName("Test getPassengerActiveRide with null passenger id")
     public void testGetPassengerActiveRideWithNullPassengerId() {
         Integer passengerId = null;
         when(rideRepository.findPassengerActiveRide(eq(passengerId), eq("ACCEPTED"))).thenReturn(Optional.empty());
@@ -347,6 +372,7 @@ public class RideServiceTest {
     }
 
     @Test
+    @DisplayName("Test findRideById with valid parameters")
     public void testFindRideByIdWithValidParameters() {
         Integer id = 1;
         when(rideRepository.findRideById(eq(id))).thenReturn(Optional.of(ride));
@@ -357,6 +383,7 @@ public class RideServiceTest {
     }
 
     @Test
+    @DisplayName("Test findRideById with no ride ")
     public void testFindRideByIdWithNoRide() {
         Integer id = 1;
         when(rideRepository.findRideById(eq(id))).thenReturn(Optional.empty());
@@ -367,6 +394,7 @@ public class RideServiceTest {
     }
 
     @Test
+    @DisplayName("Test findRideById with null id")
     public void testFindRideByIdWithNullId() {
         Integer id = null;
         when(rideRepository.findRideById(eq(id))).thenReturn(Optional.empty());
@@ -377,6 +405,7 @@ public class RideServiceTest {
     }
 
     @Test
+    @DisplayName("Test updateRide with valid parameters")
     public void testUpdateRideWithValidParameters() {
         when(rideRepository.save(eq(ride))).thenReturn(ride);
         Ride returnedRide = rideService.updateRide(ride);
@@ -386,6 +415,7 @@ public class RideServiceTest {
     }
 
     @Test
+    @DisplayName("Test updateRide with invalid parameters")
     public void testUpdateRideWithInvalidParameters() {
         Ride ride = null;
         when(rideRepository.save(null)).thenThrow(new IllegalArgumentException());
@@ -396,6 +426,7 @@ public class RideServiceTest {
     }
 
     @Test
+    @DisplayName("Test findRidesForDriver with valid parameters")
     public void testFindRidesForDriverWithValidParameters() {
         Integer id = 1;
         String start = "2023-01-01";
@@ -412,6 +443,7 @@ public class RideServiceTest {
     }
 
     @Test
+    @DisplayName("Test findRidesForDriver with null id")
     public void testFindRidesForDriverWithNullId() {
         Integer id = null;
         String start = "2023-01-01";
@@ -424,6 +456,7 @@ public class RideServiceTest {
     }
 
     @Test
+    @DisplayName("Test findRidesForDriver with incorrect page number")
     public void testFindRidesForDriverWithWrongPageable() {
         Integer id = 1;
         String start = "2023-01-01";
@@ -434,6 +467,7 @@ public class RideServiceTest {
     }
 
     @Test
+    @DisplayName("Test findRidesForDriver with incorrect date")
     public void testFindRidesForDriverWithWrongDates() {
         Integer id = 1;
         Pageable pageable = PageRequest.of(0, 5);
@@ -444,6 +478,7 @@ public class RideServiceTest {
     }
 
     @Test
+    @DisplayName("Test findRidesForDriver with valid data")
     public void testFindRidesForDriverWithValidData() {
         Integer id = 1;
         String start = "2023-01-01";
@@ -459,6 +494,7 @@ public class RideServiceTest {
 
 
     @Test
+    @DisplayName("Test findRidesForPassenger with valid inputs")
     void testFindRidesForPassengerWithValidInputs() {
         Integer id = 1;
         String start = "LocationA";
@@ -474,6 +510,7 @@ public class RideServiceTest {
     }
 
     @Test
+    @DisplayName("Test findRidesForPassenger with invalid inputs")
     void testFindRidesForPassengerWithInvalidInputs(){
         Integer id = null;
         String start = "";
@@ -486,6 +523,7 @@ public class RideServiceTest {
     }
 
     @Test
+    @DisplayName("Test findRidesForPassenger with non-existing passenger")
     void testFindRidesForPassengerWithNonExistingPassenger(){
         Integer id = 999;
         String start = "LocationA";
@@ -497,6 +535,7 @@ public class RideServiceTest {
     }
 
     @Test
+    @DisplayName("Test findRidesForPassenger with invalid sort")
     void testFindRidesForPassengerWithInvalidSort(){
         Integer id = 1;
         String start = "LocationA";
@@ -508,6 +547,7 @@ public class RideServiceTest {
     }
 
     @Test
+    @DisplayName("Test checkRide with valid parameters")
     void testCheckRideWithValidParameters(){
         int passengerId = 1;
         ArrayList<Ride> rides = new ArrayList<>();
@@ -519,6 +559,7 @@ public class RideServiceTest {
     }
 
     @Test
+    @DisplayName("Test checkRide with no pending ride exist")
     void testCheckRideWithValidNoPendingRidesExist(){
         int passengerId = 1;
         when(rideRepository.findPassengersRidesByStatus(passengerId,
@@ -528,6 +569,7 @@ public class RideServiceTest {
     }
 
     @Test
+    @DisplayName("Test checkRide with non-existing passenger id")
     void testCheckRideWithNonExistingPassengerId(){
         int passengerId = 1000;
         when(rideRepository.findPassengersRidesByStatus(passengerId,
@@ -537,6 +579,7 @@ public class RideServiceTest {
     }
 
     @Test
+    @DisplayName("Test checkRide with invalid passenger id")
     void testCheckRideWithInvalidPassengerId(){
         int passengerId = -1;
         when(rideRepository.findPassengersRidesByStatus(passengerId,
@@ -547,6 +590,7 @@ public class RideServiceTest {
     }
 
     @Test
+    @DisplayName("Test findRidesInDateRange with valid parameters")
     void testFindRidesInDateRangeWithValidParameters(){
         String start = "2023-06-01", end = "2023-06-30", sort = "asc";
         ArrayList<Ride> rides = new ArrayList<>();
@@ -557,6 +601,7 @@ public class RideServiceTest {
     }
 
     @Test
+    @DisplayName("Test findRidesInDateRange with empty parameters")
     void testFindRidesInDateRangeWithEmptyParameters(){
         String start = "", end = "", sort = "";
         when(rideRepository.findRidesInDateRange(start, end, sort)).thenReturn(Collections.emptyList());
@@ -565,6 +610,7 @@ public class RideServiceTest {
     }
 
     @Test
+    @DisplayName("Test findRidesInDateRange with non-existing rides")
     void testFindRidesInDateRangeWithNonExistingRides(){
         String start = "2023-06-01", end = "2023-06-30", sort = "asc";
         when(rideRepository.findRidesInDateRange(start, end, sort)).thenReturn(Collections.emptyList());
@@ -573,6 +619,7 @@ public class RideServiceTest {
     }
 
     @Test
+    @DisplayName("Test findRidesInDateRange with invalid date format")
     void testFindRidesInDateRangeWithInvalidDateFormat(){
         String start = "2023/06/01", end = "2023-06-30", sort = "asc";
         when(rideRepository.findRidesInDateRange(start, end, sort)).thenThrow(new IllegalArgumentException());
@@ -582,6 +629,7 @@ public class RideServiceTest {
     }
 
     @Test
+    @DisplayName("Test findRidesInDateRange with invalid sort")
     void testFindRidesInDateRangeWithInvalidSort(){
         String start = "2023-06-01", end = "2023-06-30", sort = "invalid";
         when(rideRepository.findRidesInDateRange(start, end, sort)).thenThrow(new IllegalArgumentException());
@@ -591,6 +639,7 @@ public class RideServiceTest {
     }
 
     @Test
+    @DisplayName("Test findRidesByUser with valid parameters")
     void testFindRidesByUserWithValidParameters(){
         int userId = 1;
         String start = "2023-06-01", end = "2023-06-30", sort = "asc";
@@ -602,6 +651,7 @@ public class RideServiceTest {
     }
 
     @Test
+    @DisplayName("Test findRidesByUser with invalid parameters")
     void testFindRidesByUserWithInvalidParameters(){
         int userId = -1;
         String start = "", end = "", sort = "";
@@ -612,6 +662,7 @@ public class RideServiceTest {
     }
 
     @Test
+    @DisplayName("Test findRidesByUser with non-existing user")
     void testFindRidesByUserWithNonExistingUser(){
         int userId = 1000;
         String start = "2023-06-01", end = "2023-06-30", sort = "asc";
@@ -621,6 +672,7 @@ public class RideServiceTest {
     }
 
     @Test
+    @DisplayName("Test findRidesByUser with valid rides")
     void testFindRidesByUserWithNonExistingRides(){
         int userId = 7;
         String start = "2023-06-01", end = "2023-06-30", sort = "asc";
@@ -630,6 +682,7 @@ public class RideServiceTest {
     }
 
     @Test
+    @DisplayName("Test findRidesByUser with invalid dates")
     void testFindRidesByUserWithInvalidDates(){
         int userId = 2;
         String start = "2023/06/01", end = "2023-06-30", sort = "asc";
@@ -640,6 +693,7 @@ public class RideServiceTest {
     }
 
     @Test
+    @DisplayName("Test findScheduledRides with valid parameters")
     void testFindScheduledRidesWithValidInput(){
         double time = 55.5;
         VehicleType vehicleType = VehicleType.KOMBI;
@@ -653,6 +707,7 @@ public class RideServiceTest {
     }
 
     @Test
+    @DisplayName("Test findScheduledRides with invalid parameters")
     void testFindScheduledRidesWithInvalidInput(){
         double time = -55.5;
         VehicleType vehicleType = VehicleType.KOMBI;
@@ -665,6 +720,7 @@ public class RideServiceTest {
     }
 
     @Test
+    @DisplayName("Test findScheduledRides with null parameters")
     void testFindScheduledRidesWithNullParameters(){
         double time = 0.0;
         VehicleType vehicleType = VehicleType.LUKSUZNO;
@@ -676,6 +732,7 @@ public class RideServiceTest {
     }
 
     @Test
+    @DisplayName("Test findScheduledRides with valid input")
     void testFindScheduledRidesByTimeWithValidInput(){
         double time = 55.5;
         List<Ride> rides = new ArrayList<>();
@@ -686,6 +743,7 @@ public class RideServiceTest {
     }
 
     @Test
+    @DisplayName("Test findScheduledRides with invalid input")
     void testFindScheduledRidesByTimeWithInvalidInput(){
         double time = -55.5;
         when(rideRepository.findScheduledRides(time)).thenThrow(new IllegalArgumentException());
@@ -695,6 +753,7 @@ public class RideServiceTest {
     }
 
     @Test
+    @DisplayName("Test findScheduledRides with null parameters")
     void testFindScheduledRidesByTimeWithNullParameters(){
         double time = 0.0;
         when(rideRepository.findScheduledRides(time)).thenReturn(Collections.emptyList());
@@ -703,6 +762,7 @@ public class RideServiceTest {
     }
 
     @Test
+    @DisplayName("Test getSteps with valid parameters")
     void testGetStepsWithValidLocations() {
         Location departure = new Location(1, 52.5200, 13.4050, "");
         Location destination = new Location(2, 48.8566, 2.3522, "");
@@ -718,12 +778,14 @@ public class RideServiceTest {
     }
 
     @Test
+    @DisplayName("Test getSteps with null parameters")
     void testGetStepsWithNullLocations() {
         LocationsForRide locations = null;
         assertThrows(NullPointerException.class, () -> restTemplate.getForObject(String.format("http://router.project-osrm.org/route/v1/driving/%s,%s;%s,%s?steps=true", locations.getDeparture().getLatitude(), locations.getDeparture().getLongitude(), locations.getDestination().getLatitude(), locations.getDestination().getLongitude()), OsrmResponse.class));
     }
 
     @Test
+    @DisplayName("Test getSteps with invalid parameters")
     void testGetStepsWithLocationsWithNullCoordinates() {
         Location departure = new Location(0, null, null, "");
         Location destination = new Location(0, null, null, "");
@@ -737,6 +799,7 @@ public class RideServiceTest {
 
 
     @Test
+    @DisplayName("Test getSteps when external service fails")
     void testGetStepsWhenExternalServiceFails() {
         Location departure = new Location(1, 52.5200, 13.4050, ""); // Berlin
         Location destination = new Location(2, 48.8566, 2.3522, ""); // Paris
@@ -749,6 +812,7 @@ public class RideServiceTest {
     }
 
     @Test
+    @DisplayName("Test checkScheduledTime with time in past")
     void testCheckScheduledTimeWithTimeInPast() {
         RideRecDTO oldDTO = new RideRecDTO();
         Instant pastTime = Instant.now().minusSeconds(60);
@@ -757,6 +821,7 @@ public class RideServiceTest {
     }
 
     @Test
+    @DisplayName("Test checkScheduledTime with time in more than 5 hours")
     void testCheckScheduledTimeWithTimeInMoreThan5Hours() {
         RideRecDTO oldDTO = new RideRecDTO();
         Instant futureTime = Instant.now().plusSeconds(60 * 60 * 7);
@@ -765,6 +830,7 @@ public class RideServiceTest {
     }
 
     @Test
+    @DisplayName("Test checkScheduledTime with time within 5 hours")
     void testCheckScheduledTimeWithTimeWithin5Hours() {
         RideRecDTO oldDTO = new RideRecDTO();
         Instant futureTime = Instant.now().plusSeconds(60 * 60 * 4);
@@ -773,6 +839,7 @@ public class RideServiceTest {
     }
 
     @Test
+    @DisplayName("Test checkScheduledTime with null time")
     void testCheckScheduledTimeWIthScheduledTimeNull() {
         RideRecDTO oldDTO = new RideRecDTO();
         oldDTO.setScheduledTime(null);
