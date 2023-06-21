@@ -36,6 +36,10 @@ public class FavoriteRide implements Serializable {
         this.passengers = passengers;
     }
 
+    public FavoriteRide() {
+
+    }
+
     public Integer getId() {
         return id;
     }

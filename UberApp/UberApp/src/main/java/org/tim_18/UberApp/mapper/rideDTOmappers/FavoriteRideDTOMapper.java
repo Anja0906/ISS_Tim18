@@ -12,6 +12,8 @@ import org.tim_18.UberApp.model.FavoriteRide;
 public class FavoriteRideDTOMapper {
     private static ModelMapper modelMapper;
 
+
+
     @Autowired
     public FavoriteRideDTOMapper(ModelMapper modelMapper) {this.modelMapper = modelMapper;
         this.modelMapper = modelMapper;

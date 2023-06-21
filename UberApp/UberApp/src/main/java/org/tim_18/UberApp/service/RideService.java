@@ -14,6 +14,7 @@ import org.tim_18.UberApp.repository.RideRepository;
 import java.time.Instant;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -62,7 +63,7 @@ public class RideService {
 
     public Ride updateRide(Ride ride) {
         return rideRepository.save(ride);
-    }//
+    }
 
     public Page<Ride> findRidesForDriver(Integer id, String start, String end, Pageable pageable){
         return rideRepository.findRidesForDriver(id,start,end,pageable);//
@@ -103,14 +104,19 @@ public class RideService {
     }
 
     public void checkScheduledTime(RideRecDTO oldDTO) throws BadRequestException {
-        if (oldDTO.getScheduledTime()==null)
+        Date scheduledTimeDate = null;
+        if (oldDTO.getScheduledTime()==null || oldDTO.getScheduledTime().equals(""))
             return;
-        Date scheduledTimeDate = Date.from(Instant.parse(oldDTO.getScheduledTime()));
+
+        scheduledTimeDate = Date.from(Instant.parse(oldDTO.getScheduledTime()));
+
         long diff = scheduledTimeDate.getTime() - new Date().getTime();
         if (diff <= 0)
             throw new BadRequestException("Scheduled time should be in the future!");
+
         long diffHours = diff / (60 * 60 * 1000) % 24;
         if (diffHours > 5)
             throw new BadRequestException("You can schedule only in next 5 hours!");
+
     }
 }

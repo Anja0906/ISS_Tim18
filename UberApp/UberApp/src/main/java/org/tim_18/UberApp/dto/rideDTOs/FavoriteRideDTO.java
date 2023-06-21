@@ -11,7 +11,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-@Data
 public class FavoriteRideDTO {
 
     private Integer id;
@@ -60,25 +59,59 @@ public class FavoriteRideDTO {
         this.passengers             = passengerSet;
     }
 
-//    public FavoriteRideDTO(FavoriteRide ride, Passenger passenger){
-//        Set<Passenger> passengerSet = new HashSet<>();
-//        passengerSet.add(passenger);
-//        new FavoriteRideDTO(ride.getId(), ride.getFavoriteName(), ride.getLocations(),
-//                passengerSet, ride.getVehicleType(),
-//                ride.isBabyTransport(), ride.isPetTransport());
-//    }
-//
-//    public FavoriteRideDTO(FavoriteRide ride, Set<LocationsForFavoriteRide> locations){
-//        this(ride.getId(), ride.getFavoriteName(), locations,
-//                ride.getPassengers(), ride.getVehicleType(),
-//                ride.isBabyTransport(), ride.isPetTransport());
-//    }
-//
-//    public static List<FavoriteRideDTO> getFavoriteRidesDTO(List<FavoriteRide> favoriteRides) {
-//        List<FavoriteRideDTO> favoriteRidesDTO = new ArrayList<>() ;
-//        for (FavoriteRide fr : favoriteRides) {
-//            favoriteRidesDTO.add(new FavoriteRideDTO(fr));
-//        }
-//        return favoriteRidesDTO;
-//    }
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getFavoriteName() {
+        return favoriteName;
+    }
+
+    public void setFavoriteName(String favoriteName) {
+        this.favoriteName = favoriteName;
+    }
+
+    public Set<LocationSetDTO> getLocations() {
+        return locations;
+    }
+
+    public void setLocations(Set<LocationSetDTO> locations) {
+        this.locations = locations;
+    }
+
+    public Set<PassengerIdEmailDTO> getPassengers() {
+        return passengers;
+    }
+
+    public void setPassengers(Set<PassengerIdEmailDTO> passengers) {
+        this.passengers = passengers;
+    }
+
+    public VehicleType getVehicleType() {
+        return vehicleType;
+    }
+
+    public void setVehicleType(VehicleType vehicleType) {
+        this.vehicleType = vehicleType;
+    }
+
+    public boolean isBabyTransport() {
+        return babyTransport;
+    }
+
+    public void setBabyTransport(boolean babyTransport) {
+        this.babyTransport = babyTransport;
+    }
+
+    public boolean isPetTransport() {
+        return petTransport;
+    }
+
+    public void setPetTransport(boolean petTransport) {
+        this.petTransport = petTransport;
+    }
 }

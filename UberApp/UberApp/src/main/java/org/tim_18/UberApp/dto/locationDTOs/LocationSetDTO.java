@@ -15,6 +15,8 @@ public class LocationSetDTO {
         this.destination    = new LocationDTO(destination);
     }
 
+
+
     public LocationDTO getDeparture() {
         return departure;
     }

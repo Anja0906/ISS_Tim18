@@ -72,6 +72,7 @@ public class RideController {
         boolean canMakeRide;
         for (PassengerIdEmailDTO p : oldDTO.getPassengers()) {
             try {
+
                 passenger = passengerService.findByEmail(p.getEmail());
                 canMakeRide = rideService.checkRide(passenger.getId());
                 if (!canMakeRide)
@@ -94,14 +95,24 @@ public class RideController {
     @PostMapping
     public ResponseEntity<?> createRide(Principal principal, @RequestBody RideRecDTO oldDTO) {
         try {
+
             checkPassengersForRide(principal, oldDTO);
             rideService.checkScheduledTime(oldDTO);
             Ride ride = fromDTOtoRide(oldDTO);
+            System.out.println("333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333");
             ride = rideService.createRide(ride);
+            System.out.println("3");
+
             Set<LocationsForRide> lfr = locationService.addLocations(oldDTO, ride);
+            System.out.println("3");
+
             passengerService.addPassengers(oldDTO, ride);
+            System.out.println("3");
+
             if (ride.getDriver()!=null)
-                this.simpMessagingTemplate.convertAndSend("/socket-topic/driver-new-ride/" + ride.getDriver().getId(), new RideRetDTO(ride, lfr));
+                System.out.println("3");
+
+            this.simpMessagingTemplate.convertAndSend("/socket-topic/driver-new-ride/" + ride.getDriver().getId(), new RideRetDTO(ride, lfr));
 
             for (Passenger passenger : ride.getPassengers())
                 this.simpMessagingTemplate.convertAndSend("/socket-topic/passenger-new-ride/" + passenger.getId(), new RideRetDTO(ride, lfr));
@@ -119,14 +130,17 @@ public class RideController {
     @GetMapping("/driver/{driverId}/active")
     public ResponseEntity<?> getDriverActiveRide(Principal principal, @PathVariable("driverId") Integer driverId) {
         try {
+            Driver driver = driverService.findDriverById(driverId);
             User user = userService.findUserByEmail(principal.getName());
             if(user.getRoles().get(1).getName().equals("ROLE_DRIVER"))
                 if (!user.getId().equals(driverId))
-                    return new ResponseEntity<>("Active ride does not exist!",HttpStatus.NOT_FOUND);
+                    return new ResponseEntity<>("Active ride does not exist!",HttpStatus.FORBIDDEN);
             Ride ride = rideService.getDriverActiveRide(driverId);
             return new ResponseEntity<>(new RideRetDTO(ride, locationsForRideService.getByRideId(ride.getId())), HttpStatus.OK);
         } catch(RideNotFoundException e){
             return new ResponseEntity<>("Active ride does not exist!",HttpStatus.NOT_FOUND);
+        }catch (DriverNotFoundException e){
+            return new ResponseEntity<>("Driver Not Found!",HttpStatus.NOT_FOUND);
         }
     }
     
@@ -150,6 +164,7 @@ public class RideController {
         try {
             Ride ride = rideService.findRideById(id);
             userService.checkRole(principal, ride);
+
             return new ResponseEntity<>(new RideRetDTO(ride, locationsForRideService.getByRideId(id)), HttpStatus.OK);
         }catch (RideNotFoundException e) {
             return new ResponseEntity<>("Ride does not exist!", HttpStatus.NOT_FOUND);
@@ -203,6 +218,7 @@ public class RideController {
         try {
             Ride ride = rideService.findRideById(id);
             userService.checkRole(principal, ride);
+
             if (ride.getStatus() == Status.STARTED) {
                 User user = userService.findUserByEmail(principal.getName());
                 Panic panic = panicService.findById(ride.getPanic().getId());
@@ -225,6 +241,7 @@ public class RideController {
         try {
             Ride ride = rideService.findRideById(id);
             userService.checkDriversAuthorities(principal, ride);
+
             if (ride.getStatus() == Status.PENDING) {
                 ride.setStatus(Status.ACCEPTED);
                 ride = rideService.updateRide(ride);
@@ -317,7 +334,7 @@ public class RideController {
                     this.simpMessagingTemplate.convertAndSend("/socket-topic/cancelled/" + passenger.getId(), new RideRetDTO(ride, locationsForRideService.getByRideId(ride.getId())));
                 return new ResponseEntity<>(new RideRetDTO(ride, locationsForRideService.getByRideId(ride.getId())), HttpStatus.OK);
             } else {
-                return new ResponseEntity<>(new ErrorMessage("Cannot accept a ride that is not in status PENDING or ACCEPTED!"), HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>(new ErrorMessage("Cannot cancel a ride that is not in status PENDING or ACCEPTED!"), HttpStatus.BAD_REQUEST);
             }
         } catch(RideNotFoundException e){
             return new ResponseEntity<>("Ride does not exist!",HttpStatus.NOT_FOUND);
@@ -386,18 +403,27 @@ public class RideController {
     }
     private Ride fromDTOtoRide(RideRecDTO dto) throws DriverNotFoundException {
         Date startTime = getStartTime(dto);
+
         Date endTime = getEndTime(dto, startTime);
+
+
         long totalCost = getTotalCost(dto);
+
+
         HashSet<Passenger> passengers = new HashSet<>();
         HashSet<Review> reviews = new HashSet<>();
 
         for (PassengerIdEmailDTO passDTO: dto.getPassengers())
             passengers.add(passengerService.findByEmail(passDTO.getEmail()));
+
         Review review = reviewService.addReview(new Review());
         reviews.add(review);
+
         Panic panic = panicService.addPanic(new Panic());
+
         Rejection newRejection = new Rejection("",new Date());
         rejectionService.addRejection(newRejection);
+
 
         return new Ride(startTime, endTime, totalCost, getDriver(dto), passengers, getDriverTime(dto),
                 dto.getVehicleType(), dto.isBabyTransport(), dto.isPetTransport(), newRejection,
@@ -444,10 +470,11 @@ public class RideController {
     }
 
     private Date getStartTime(RideRecDTO dto) {
-        Date date = dto.getScheduledTime() != null ? Date.from(Instant.parse(dto.getScheduledTime())) : null;
+        Date date = dto.getScheduledTime() != null && !dto.getScheduledTime().equals("") ? Date.from(Instant.parse(dto.getScheduledTime())) : null;
         if (date != null)
             return date;
         DriverTime driverTime = generateDriver(dto);
+
         long timeInSecs = Calendar.getInstance().getTimeInMillis();
         return new Date(timeInSecs + ((long) driverTime.getTime() * 60 * 1000));
     }
@@ -459,9 +486,8 @@ public class RideController {
 
 
         ArrayList<Driver> potentialDriversCarEdition = driverService.filterDriversByVehicleSpec(activeDrivers,ride);
-        for(Driver d:potentialDriversCarEdition){
-            System.out.println(d.getId());
-        }
+
+
         if (potentialDriversCarEdition.isEmpty())
             throw new DriverNotFoundException("Driver not found");
 

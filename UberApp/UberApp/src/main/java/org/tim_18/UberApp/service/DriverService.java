@@ -40,11 +40,14 @@ public class DriverService {
         ArrayList<Driver> potentialDriversCarEdition = new ArrayList<>();
         for (Driver driver : activeDrivers) {
             Vehicle vehicle = driver.getVehicle();
-            if (vehicle.getVehicleType().equals(ride.getVehicleType()) && vehicle.getPassengerSeats() >= ride.getPassengers().size()
+            System.out.println(vehicle.getVehicleType() + "     "+ride.getVehicleType());
+            System.out.println(vehicle.getPassengerSeats() + "  =>   "+ride.getPassengers().size());
+            System.out.println(vehicle.getBabyTransport() + "     "+ride.isBabyTransport());
+            System.out.println(vehicle.getPetTransport() + "     "+ride.isPetTransport());
+            if ((vehicle.getVehicleType().equals(ride.getVehicleType())) && (vehicle.getPassengerSeats() >= ride.getPassengers().size())
                     && (ride.isBabyTransport() && vehicle.getBabyTransport()) && (ride.isPetTransport() && vehicle.getPetTransport()))
                 potentialDriversCarEdition.add(driver);
         }
-        System.out.println(potentialDriversCarEdition.size()+"BABABABABABABABABABABABABABABA");
         return potentialDriversCarEdition;
     }
 }

@@ -115,7 +115,7 @@ public class RideRepositoryTest {
     @Test
     @DisplayName(value = "Attempt to find accepted rides by driver ID with no accepted rides")
     public void testFindAcceptedRidesByDriverIdWithoutAcceptedRides() {
-        List<Ride> rides = rideRepository.findDriverAcceptedRides(1, "1", "0");
+        List<Ride> rides = rideRepository.findDriverAcceptedRides(2, "1", "0");
         assertNotNull(rides);
         assertEquals(0, rides.size());
     }
